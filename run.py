@@ -19,22 +19,22 @@ def run(mode):
     app.run()
 
 @app.route('/')
-def home():
-    return render_template('home.html', pages="")
+def index():
+    return render_template('home.j2', page_title="Home", module_data=page_data[0])
 
 @app.route('/<page>')
-def index(page):
+def subpage(page):
     if page in page_list:
         if page == 'home':
-            return redirect(url_for('home'))
+            return redirect(url_for('index'))
         else:
-            return render_template('home.html', pages=page)
+            return render_template('home.j2', page_title=page, module_data=list(page_data.keys()))
     else:
-        return render_template('404.html'), 404
+        return render_template('404.j2'), 404
 
 @app.route('/admin')
 def admin():
-    return render_template('admin.html')
+    return render_template('admin.j2')
 
 @app.route('/page-data', methods=['POST', 'GET'])
 def send_modules():

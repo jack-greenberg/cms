@@ -8,9 +8,13 @@
     <link href="{{url_for('static', filename='bundle.css')}}" rel="stylesheet">
 </head>
 <body>
-    {% block header %}{% endblock %}
-    {% block content %}{% endblock %}
+    {#% with pageTitle=module_data["modules"][0]["Header"]["pageTitle"], author=module_data["modules"][0]["Header"]["author"] %}
+        {% include "modules/%s.j2" % (module_data["modules"][0]|list)[0] %}
+    {% endwith %#}
 
-    <!-- <script src="{{url_for('static', filename='bundle.js')}}"></script> -->
+    {% for module in module_data["modules"] %}
+
+    {% endfor %}
+
 </body>
 </html>
