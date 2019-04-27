@@ -28,7 +28,7 @@ def subpage(page):
         if page == 'home':
             return redirect(url_for('index'))
         else:
-            return render_template('home.j2', page_title=page, module_data=list(page_data.keys()))
+            return render_template('home.j2', page_title=page, module_data=page_data)
     else:
         return render_template('404.j2'), 404
 
