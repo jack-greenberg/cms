@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import routes from './routes.js';
-
-ReactDOM.render(routes, document.getElementById("content"));
+// import React from 'react';
+// import ReactDOM from 'react-dom';
+// import AppRouter from './routes.js';
+//
+// ReactDOM.render(<AppRouter />, document.getElementById("content"));

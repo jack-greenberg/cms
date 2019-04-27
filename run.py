@@ -1,13 +1,10 @@
-from flask import Flask, render_template, url_for, Blueprint, jsonify
+from flask import Flask, render_template, url_for, Blueprint, jsonify, redirect
 import click
 import sys
 import config
-# from flask_pymongo import PyMongo
-from modules.pagelist import pages
+from modules.page_data import page_data, page_list
 
 app = Flask(__name__, static_folder='./site/static/build', template_folder='./site/templates')
-
-# mongo = PyMongo(app, uri="mongodb://localhost:27017/cms", username="jackg", password="observe coleman sullivan guam")
 
 @click.command()
 @click.option('--mode', '-m', default='development', help='Production mode (production, development)', required=True)
@@ -22,16 +19,26 @@ def run(mode):
     app.run()
 
 @app.route('/')
-def index():
-    return render_template('home.html')
+def home():
+    return render_template('home.html', pages="")
+
+@app.route('/<page>')
+def index(page):
+    if page in page_list:
+        if page == 'home':
+            return redirect(url_for('home'))
+        else:
+            return render_template('home.html', pages=page)
+    else:
+        return render_template('404.html'), 404
 
 @app.route('/admin')
 def admin():
     return render_template('admin.html')
 
-@app.route('/module-list', methods=['POST', 'GET'])
+@app.route('/page-data', methods=['POST', 'GET'])
 def send_modules():
-    return jsonify(pages)
+    return jsonify(page_data)
 
 if __name__ == '__main__':
     run()
