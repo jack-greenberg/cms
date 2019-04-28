@@ -2,9 +2,22 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-    <div id="content"></div>
+    {#
+        Cycle through the modules and include them & send data to them
+    #}
+    {% for module_index in range(module_data["modules"]|length) %}
 
-{# <script charset="UTF-8">
-        console.log({{ pages|tojson }});
-    </script> #}
+        {% set module_name = (module_data["modules"][module_index]|list)[0] %}
+
+            {% with data = module_data["modules"][module_index][module_name] %}
+
+                {% include "modules/%s.j2" % module_name %}
+
+            {% endwith %}
+
+    {% endfor %}
+
+    {# <script>
+            console.log({{ pages|tojson }});
+        </script> #}
 {% endblock %}

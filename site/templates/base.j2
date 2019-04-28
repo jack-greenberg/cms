@@ -8,20 +8,7 @@
     <link href="{{url_for('static', filename='bundle.css')}}" rel="stylesheet">
 </head>
 <body>
-    {#
-        Cycle through the modules and include them & send data to them
-    #}
-    {% for module_index in range(module_data["modules"]|length) %}
+    {% block content %}{% endblock %}
 
-        {% set module_name = (module_data["modules"][module_index]|list)[0] %}
-
-            {% with data = module_data["modules"][module_index][module_name] %}
-
-                {% include "modules/%s.j2" % module_name %}
-
-            {% endwith %}
-
-    {% endfor %}
-    
 </body>
 </html>
