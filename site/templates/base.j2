@@ -8,23 +8,20 @@
     <link href="{{url_for('static', filename='bundle.css')}}" rel="stylesheet">
 </head>
 <body>
-    {#{ module_data["modules"][0]|list }#}<br>
+    {#
+        Cycle through the modules and include them & send data to them
+    #}
+    {% for module_index in range(module_data["modules"]|length) %}
 
-    {#% with pageTitle=module_data["modules"][0]["Header"]["pageTitle"], author=module_data["modules"][0]["Header"]["author"] %}
-        {% include "modules/%s.j2" % (module_data["modules"][0]|list)[0] %}
-    {% endwith %#}
+        {% set module_name = (module_data["modules"][module_index]|list)[0] %}
 
-    {% for n in range(module_data["modules"]|length) %}
-
-        {% set module_name = (module_data["modules"][n]|list)[0] %}
-
-            {% with data = module_data["modules"][n][module_name] %}
+            {% with data = module_data["modules"][module_index][module_name] %}
 
                 {% include "modules/%s.j2" % module_name %}
 
             {% endwith %}
 
     {% endfor %}
-
+    
 </body>
 </html>
