@@ -4,7 +4,7 @@ import sys
 import config
 from modules.page_data import page_data, page_list
 
-app = Flask(__name__, static_folder='./site/static/build', template_folder='./site/templates')
+app = Flask(__name__, static_folder='./static/build')
 
 @click.command()
 @click.option('--mode', '-m', default='development', help='Production mode (production, development)', required=True)
