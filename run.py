@@ -20,7 +20,7 @@ def run(mode):
 
 @app.route('/')
 def index():
-    return render_template('site/home.j2', page_title="Home", module_data=page_data[0])
+    return render_template('site/home.j2', page_title="Home", module_data=page_data['home'])
 
 @app.route('/<page>')
 def subpage(page):
@@ -28,7 +28,7 @@ def subpage(page):
         if page == 'home':
             return redirect(url_for('index'))
         else:
-            return render_template('site/home.j2', page_title=page, module_data=page_data)
+            return render_template('site/home.j2', page_title=page, module_data=page_data[page])
     else:
         return render_template('404.j2'), 404
 
