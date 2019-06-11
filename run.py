@@ -1,8 +1,11 @@
 from flask import Flask, render_template, url_for, Blueprint, jsonify, redirect
+from werkzeug.security import check_password_hash, generate_password_hash
 import click
+import functools
 import sys
 import config
 from modules.page_data import page_data, page_list
+from modules.auth import User, authenticate #, auth_needed
 
 app = Flask(__name__, static_folder='./static/build')
 
@@ -33,12 +36,17 @@ def subpage(page):
         return render_template('404.j2'), 404
 
 @app.route('/admin')
+# @auth_needed
 def admin():
     return render_template('admin/admin.j2')
 
 @app.route('/page-data', methods=['POST', 'GET'])
 def send_modules():
     return jsonify(page_data)
+
+@app.route('/api', methods=['POST'])
+def response():
+    return jsonify("API Coming Soon")
 
 if __name__ == '__main__':
     run()
