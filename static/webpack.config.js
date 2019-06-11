@@ -7,6 +7,10 @@ module.exports =  {
         bundle: [
             './css/index.scss',
             './js/index.js'
+        ],
+        backend: [
+            './backend/css/index.scss',
+            './backend/js/index.js'
         ]
     },
     output: {

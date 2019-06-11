@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin</title>
-    <link href="{{url_for('static', filename='bundle.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='backend.css')}}" rel="stylesheet">
 </head>
 <body>
-    <header><h1>CMS</h1></header>
+    <!-- <header><h1>CMS</h1></header>
 
     <div class="nav-wrapper">
         <nav>
@@ -17,6 +17,8 @@
                 <li><a href="">Users</a></li>
             </ul>
         </nav>
-    </div>
+    </div> -->
+    <div id="root"></div>
+    <script src="{{url_for('static', filename='backend.js')}}" charset="utf-8"></script>
 </body>
 </html>
