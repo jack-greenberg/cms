@@ -1,6 +1,5 @@
 {% extends 'base.j2' %}
 {% block title %}{{ page_title }}{% endblock %}
-
 {% block content %}
     {#
         Cycle through the modules and include them & send data to them
@@ -11,7 +10,7 @@
 
             {% with data = module_data["modules"][module_index][module_name] %}
 
-                {% include "modules/%s.j2" % module_name %}
+                {% include "site/modules/%s.j2" % module_name %}
 
             {% endwith %}
 
