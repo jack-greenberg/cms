@@ -42,7 +42,7 @@ class App extends React.Component {
     render() {
         if (this.state.isLoaded) {
             return (
-                <PageContext.Provider value={Object.keys(this.state.pageData).toString()}>
+                <PageContext.Provider value={this.state.pageData}>
                     <BrowserRouter basename="/admin/">
                         <Route exact path="/" render={(props) => <Home {...props} />} />
                         <Route path="/pages/" render={(props) => <Pages {...props} />} />
