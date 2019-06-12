@@ -16,7 +16,7 @@ export class Navigation extends React.Component {
                             <PageContext.Consumer>
                                 {context => (
                                     <React.Fragment>
-                                        {Object.keys(context).map((page, index) => <NavLink to={"/pages" + context[page].path} activeClassName="active" activeStyle={{ fontWeight: 'bold' }} exact>{context[page].name}</NavLink>)}
+                                        {Object.keys(context).map((page, index) => <NavLink to={"/pages/" + context[page].name.toLowerCase().replace(/ /, "_")} activeClassName="active" activeStyle={{ fontWeight: 'bold' }} exact>{context[page].name}</NavLink>)}
                                     </React.Fragment>
                                 )}
                             </PageContext.Consumer>
