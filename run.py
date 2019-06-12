@@ -41,16 +41,15 @@ def admin_root():
     return render_template('admin/admin.j2')
 
 @app.route('/admin/<page>/')
-def admin__sub(page=None):
+def admin_sub(page=None):
     return render_template('admin/admin.j2')
 
-@app.route('/page-data', methods=['POST', 'GET'])
-def send_modules():
-    return jsonify(page_data)
-
-@app.route('/api', methods=['POST'])
-def response():
-    return jsonify("API Coming Soon")
+@app.route('/api/<request>/', methods=['POST'])
+def response(request):
+    if (request == 'page-data'):
+        return jsonify(page_data)
+    else:
+        return jsonify("No endpoint requested")
 
 if __name__ == '__main__':
     run()
