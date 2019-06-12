@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Link } from "react-router-dom";
+import { Route, NavLink } from "react-router-dom";
 
 export class Navigation extends React.Component {
     render() {
@@ -7,22 +7,18 @@ export class Navigation extends React.Component {
             <nav>
                 <ul>
                     <li>
-                        <Link to="/">Home</Link>
+                        <NavLink to="/" activeClassName="active" activeStyle={{ fontWeight: 'bold' }} exact>Home</NavLink>
                     </li>
                     <li>
-                        <Link to="/pages">Pages</Link>
+                        Pages
+
+                        <NavLink to="/pages/" activeClassName="active" activeStyle={{ fontWeight: 'bold' }} exact>Pages</NavLink>
                     </li>
                     <li>
-                        <Link to="/modules">Modules</Link>
+                        <NavLink to="/modules/" activeClassName="active" activeStyle={{ fontWeight: 'bold' }} exact>Modules</NavLink>
                     </li>
                     <li>
-                        <Link to="">Images</Link>
-                    </li>
-                    <li>
-                        <Link to="">Styles</Link>
-                    </li>
-                    <li>
-                        <Link to="">Settings</Link>
+                        <NavLink to="/settings/" activeClassName="active" activeStyle={{ fontWeight: 'bold' }} exact>Settings</NavLink>
                     </li>
                 </ul>
             </nav>

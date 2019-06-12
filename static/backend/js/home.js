@@ -1,17 +1,12 @@
 import React from 'react';
+import { Header } from './header.js';
 
 export class Home extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            test: 'test',
-        };
-    }
-
     render() {
         return (
-            <h1>Home</h1>
+            <>
+                <Header />
+            </>
         );
     };
 };

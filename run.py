@@ -35,9 +35,13 @@ def subpage(page):
     else:
         return render_template('404.j2'), 404
 
-@app.route('/admin')
-# @auth_needed
-def admin():
+
+@app.route('/admin/')
+def admin_root():
+    return render_template('admin/admin.j2')
+
+@app.route('/admin/<page>/')
+def admin__sub(page=None):
     return render_template('admin/admin.j2')
 
 @app.route('/page-data', methods=['POST', 'GET'])
