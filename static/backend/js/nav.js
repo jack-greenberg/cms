@@ -1,4 +1,5 @@
 import React from 'react';
+import { PageContext } from './index.js';
 import { Route, NavLink } from "react-router-dom";
 
 export class Navigation extends React.Component {
@@ -21,6 +22,7 @@ export class Navigation extends React.Component {
                         <NavLink to="/settings/" activeClassName="active" activeStyle={{ fontWeight: 'bold' }} exact>Settings</NavLink>
                     </li>
                 </ul>
+                <PageContext.Consumer>{context => <p>{context}</p>}</PageContext.Consumer>
             </nav>
         )
     }
