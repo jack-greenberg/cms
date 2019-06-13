@@ -33,22 +33,22 @@ class General extends React.Component {
 
                 <div className="section__body">
                     <fieldset className="form-container">
-                        <label htmlFor="form-general--site-title" className="input-container">
-                            <div className="input__label">Site Title</div>
-                            <input type="text" className="input--text  input--text--short  input--text--important" id="input-general--site-title"/>
-                        </label>
-                        <label htmlFor="form-general--author" className="input-container">
-                            <div className="input__label">Author / Organization</div>
+                        <div className="input-container">
+                            <label htmlFor="form-general--site-title" className="input__label">Site Title</label>
+                            <input type="text" className="input--text  input--text--short  input--important" id="form-general--site-title"/>
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="form-general--author" className="input__label">Author / Organization</label>
                             <input type="text" className="input--text  input--text--short" id="form-general--author"/>
-                        </label>
-                        <label htmlFor="form-general--url" className="input-container">
-                            <div className="input__label">URL</div>
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="form-general--url" className="input__label">URL</label>
                             <input type="text" className="input--text  input--text--short" id="form-general--url"/>
-                        </label>
-                        <label htmlFor="form-general--google-analytics" className="input-container">
-                            <div className="input__label">Google Analytics Tracking Code</div>
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="form-general--google-analytics" className="input__label">Google Analytics Tracking Code</label>
                             <input type="text" className="input--text  input--text--short" id="form-general--google-analytics"/>
-                        </label>
+                        </div>
                     </fieldset>
                 </div>
             </section>
@@ -69,38 +69,38 @@ class SEO extends React.Component {
 
                 <div className="section__body">
                     <fieldset className="form-container">
-                        <label htmlFor="form-general--meta-description" className="input-container  input-container--text">
-                            <div className="input__label">Meta Description</div>
-                            <input type="text" className="input--text  input--text--long" id="input-general--meta-description"/>
-                        </label>
-                        <label htmlFor="form-general--favicon" className="input-container  input-container--file">
-                            <div className="input__label">Favicon</div>
-                            <input type="file" id="form-general--favicon" className="input--file"/>
-                            <div className="input--file-text-wrapper">
-                                <div className="input--file__name"><span className="text--faint">No file selected</span></div>
-                                <div className="input--file__button">Choose a file...</div>
+                        <div className="input-container">
+                            <label htmlFor="form-seo--meta-description" className="input__label">Meta Description</label>
+                            <input type="text" className="input--" id="form-seo--meta-description"/>
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="form-seo--favicon" className="input__label">Favicon</label>
+                            <input type="file" id="form-seo--favicon" className="input--file"/>
+                            <div className="file-interface">
+                                <div className="file-interface__filename"><span className="text--faint">No file selected</span></div>
+                                <div className="file-interface__button">Choose a file...</div>
                             </div>
-                        </label>
-                        <label htmlFor="form-general--meta-image" className="input-container  input-container--file">
-                            <div className="input__label">Meta Image</div>
-                            <input type="file" id="form-general--meta-image" className="input--file"/>
-                            <div className="input--file-text-wrapper">
-                                <div className="input--file__name"><span className="text--faint">No file selected</span></div>
-                                <div className="input--file__button">Choose a file...</div>
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="form-seo--meta-image" className="input__label">Meta Image</label>
+                            <input type="file" id="form-seo--meta-image" className="input--file"/>
+                            <div className="file-interface">
+                                <div className="file-interface__filename"><span className="text--faint">No file selected</span></div>
+                                <div className="file-interface__button">Choose a file...</div>
                             </div>
-                        </label>
-                        <label htmlFor="form-general--robots-txt" className="input-container  input-container--text">
-                            <div className="input__label">robots.txt</div>
-                            <textarea rows="4" className="input--text  input--text--long  input--text--multiline" id="form-general--robots-txt"/>
-                        </label>
-                        <label htmlFor="form-general--sitemap" className="input-container  input-container--file">
-                            <div className="input__label">Sitemap</div>
-                            <input type="file" id="form-general--sitemap" className="input--file"/>
-                            <div className="input--file-text-wrapper">
-                                <div className="input--file__name"><span className="text--faint">No file selected</span></div>
-                                <div className="input--file__button">Choose a file...</div>
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="form-seo--robots-txt" className="input__label">robots.txt</label>
+                            <textarea name="" id="" cols="30" rows="4" className="input--text  input--text--long  input--text--multiline" />
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="form-seo--sitemap" className="input__label">Sitemap</label>
+                            <input type="file" id="form-seo--sitemap" className="input--file"/>
+                            <div className="file-interface">
+                                <div className="file-interface__filename"><span className="text--faint">No file selected</span></div>
+                                <div className="file-interface__button">Choose a file...</div>
                             </div>
-                        </label>
+                        </div>
                     </fieldset>
                 </div>
             </section>

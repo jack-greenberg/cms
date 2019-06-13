@@ -36,27 +36,27 @@
     margin: 1.5em 0;
     display: block;
 
-    &--file {
-
-        .input--file-text-wrapper {
-            display: flex;
-            // justify-content: space-between;
-            align-items: center;
-        }
-        .input--file__name {
-            font-size: .8em;
-            font-family: $sans;
-            padding: .4em;
-            border: .5px solid $gray--lighter;
-            border-radius: 2px;
-        }
-        .input--file__button {
-            font-size: .8em;
-            font-family: $sans;
-            text-decoration: underline;
-            margin-left: 1em;
-        }
-    }
+    // &--file {
+    //
+    //     .input--file-text-wrapper {
+    //         display: flex;
+    //         // justify-content: space-between;
+    //         align-items: center;
+    //     }
+    //     .input--file__name {
+    //         font-size: .8em;
+    //         font-family: $sans;
+    //         padding: .4em;
+    //         border: .5px solid $gray--lighter;
+    //         border-radius: 2px;
+    //     }
+    //     .input--file__button {
+    //         font-size: .8em;
+    //         font-family: $sans;
+    //         text-decoration: underline;
+    //         margin-left: 1em;
+    //     }
+    // }
     .input__label {
         font-size: .6em;
         font-family: $sans;
@@ -94,6 +94,24 @@
         overflow: hidden;
         position: absolute;
         z-index: -1;
+    }
+    .file-interface {
+        display: flex;
+        align-items: center;
+
+        &__filename {
+            font-size: .8em;
+            font-family: $sans;
+            padding: .4em;
+            border: .5px solid $gray--lighter;
+            border-radius: 2px;
+        }
+        &__button {
+            font-size: .8em;
+            font-family: $sans;
+            text-decoration: underline;
+            margin-left: 1em;
+        }
     }
 }
 
