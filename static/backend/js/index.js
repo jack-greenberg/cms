@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'boxicons';
+import * as Icon from 'react-feather';
 import { ErrorBoundary } from './errorhandler.js';
 import { Home } from './home.js';
 import { Pages } from './pages.js'
@@ -53,24 +53,31 @@ class App extends React.Component {
             );
         } else {
             return (
-                <Loader />
+                <LoadScreen />
             );
         };
     };
 };
 
-class Loader extends React.Component {
+class LoadScreen extends React.Component {
     constructor(props) {
         super(props);
+
+        this.phraseList = [
+            "We're getting your page ready...",
+            "Sit tight while we get our stuff together...",
+            "Hold on a second while we organize...",
+            "One moment while we make our AJAX calls...",
+        ];
     }
 
     render() {
         return (
-            <div>
-                <div>
-                    We're getting your page ready...
+            <div className="loading-screen">
+                <div className="loading-screen__text">
+                    {this.phraseList[Math.floor(Math.random() * this.phraseList.length)]}
                 </div>
-                <box-icon name='loader' animation='spin'></box-icon>
+                <Icon.Loader className="loading-screen__icon  animate--rotate" />
             </div>
         )
     }
