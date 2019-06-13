@@ -116,9 +116,12 @@
 }
 
 //---> Sections
+body {
+    background-color: $canvas
+}
 .main {
     background-color: $canvas;
-    padding: 1.25em;
+    padding: 1.25em 1.25em 0;
 }
 .section {
     padding: 1rem;

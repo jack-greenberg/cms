@@ -2,10 +2,9 @@
 
 .footer {
     font-size: .7em;
-    background-color: $canvas;
     font-family: $sans;
     color: $gray;
-    padding: 0 1rem;
+    padding: 0 1rem 1rem;
 
     a {
         color: darken($gray, 20%);
