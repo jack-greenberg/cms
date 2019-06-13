@@ -1,2 +1,174 @@
-@import "reset.scss";
 @import "components";
+@import "reset.scss";
+@import "header.scss";
+@import "footer.scss";
+
+// Basics, Globals, and Defaults
+.emoji {
+    font-family: Helvetica;
+}
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+.animate--rotate {
+    @keyframes rotate {
+        0% {transform: rotate(0deg)}
+        100% {transform: rotate(360deg)}
+    }
+    animation: rotate 3s linear infinite;
+}
+.text--faint {
+    opacity: .5;
+}
+
+//---> Inputs
+.input-container {
+    font-size: 1em;
+    margin: 1.5em 0;
+    display: block;
+
+    &--file {
+
+        .input--file-text-wrapper {
+            display: flex;
+            // justify-content: space-between;
+            align-items: center;
+        }
+        .input--file__name {
+            font-size: .8em;
+            font-family: $sans;
+            padding: .4em;
+            border: .5px solid $gray--lighter;
+            border-radius: 2px;
+        }
+        .input--file__button {
+            font-size: .8em;
+            font-family: $sans;
+            text-decoration: underline;
+            margin-left: 1em;
+        }
+    }
+    .input__label {
+        font-size: .6em;
+        font-family: $sans;
+        margin-left: 1em;
+    }
+    .input--text {
+        font-size: 1em;
+        padding: .4em;
+        appearance: none;
+        border: 0.5px solid $gray--lighter;
+        border-radius: 2px;
+        background-color: transparent;
+
+        &--short {
+            width: 100%;
+            max-width: 15em;
+        }
+        &--multiline {
+            font-size: .8em;
+            width: 100%;
+            resize: vertical;
+            font-family: $mono;
+        }
+        &--long {
+            width: 100%;
+        }
+        &--important {
+            font-weight: 700;
+        }
+    }
+    .input--file {
+        width: .1px;
+        height: .1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+}
+
+//---> Sections
+.main {
+    background-color: $canvas;
+    padding: 1.25em;
+}
+.section {
+    padding: 1rem;
+    margin: 1em 0;
+    background-color: $white;
+    box-shadow: $shadow;
+
+    &__heading {
+        font-size: 1.5em;
+        font-family: $sans;
+        font-weight: 700;
+    }
+}
+fieldset {
+    appearance: none;
+    border: none;
+}
+
+//---> Other
+.breadcrumbs {
+    font-size: .75em;
+    font-family: $sans;
+    color: $gray;
+}
+//---> Buttons
+.btn {
+
+    &--icon {
+        font-size: 2em;
+    }
+    &:focus, &:active {
+        outline: none;
+        border: none;
+    }
+}
+.icon {
+    width: 1em;
+    height: 1em;
+}
+
+
+
+
+////// Loading Screen
+.loading-screen {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: $canvas;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+
+    &__text {
+        font-family: $sans;
+        margin-bottom: 30vh;
+        width: 70%;
+    }
+    &__icon {
+        width: 3em;
+        height: 3em;
+        position: absolute;
+        top: calc(50% - 1.5em);
+        left: calc(50% - 1.5em);
+        stroke: $gray;
+        stroke-width: 1;
+    }
+}

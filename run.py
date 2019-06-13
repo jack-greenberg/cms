@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, Blueprint, jsonify, redirect
+from flask import Flask, render_template, url_for, Blueprint, jsonify, redirect, make_response
 from werkzeug.security import check_password_hash, generate_password_hash
 import click
 import functools
@@ -23,7 +23,7 @@ def run(mode):
 
 @app.route('/')
 def index():
-    return render_template('site/home.j2', page_title="Home", module_data=page_data['home'])
+    return render_template('site/home.j2', page_title="Home", module_data=page_data['Home'])
 
 @app.route('/<page>')
 def subpage(page):
