@@ -118,7 +118,18 @@ export class FileInput extends React.Component {
         };
     };
     handleFinalizeEdit() {
-        // axios call
+        let formData = new FormData();
+        formData.append('dbForm', this.props.form)
+        formData.append('dbName', this.props.name)
+        formData.append('dbData', $('#form-' + this.props.form + '--' + this.props.name).prop('files')[0])
+
+        axios.post('/api/upload/siteData/', formData, {
+            'Content-Type': 'multipart/form-data',
+        })
+        .then(function(response) {
+            console.log(response.data);
+        });
+
         this.setState({
             edited: false,
             storedValue: this.inputRef.current.value.split('\\').pop(),
@@ -157,7 +168,7 @@ export class FileInput extends React.Component {
         return (
             <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
                 <div className="input__label">{this.props.label}</div>
-                <input type="file" id={"form-" + this.props.form + '--' + this.props.name} className="input--file" onChange={this.handleFileChange} accept={this.props.accept} ref={this.inputRef} />
+                <input type="file" encType="multipart/form-data" id={"form-" + this.props.form + '--' + this.props.name} className="input--file" onChange={this.handleFileChange} accept={this.props.accept} ref={this.inputRef} />
                 <label htmlFor={"form-" + this.props.form + '--' + this.props.name} className="align--horizontal">
                     <div className="input--file__filename">{this.state.tempValue ? this.state.tempValue : <span className="text--faint">No file saved</span>}</div>
                     {this.state.tempValue ?

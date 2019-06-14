@@ -93,9 +93,9 @@ class SEO extends React.Component {
                     <fieldset className="form-container">
                         <TextInput multiline storedValue={this.state.inputData['meta-description']} form="seo" name="meta-description" label="Meta Description"/>
                         <FileInput storedValue={this.state.inputData['favicon']} form="seo" name="favicon" label="Favicon" accept=".ico,.png,.jpg"/>
-                        <FileInput storedValue={this.state.inputData['favicon']} form="seo" name="meta-image" label="Meta Image" accept=".jpg,.png"/>
+                        <FileInput storedValue={this.state.inputData['meta-image']} form="seo" name="meta-image" label="Meta Image" accept=".jpg,.png"/>
                         <TextInput multiline code storedValue={this.state.inputData['robots']} form="seo" name="robots" label="robots.txt"/>
-                        <FileInput storedValue={this.state.inputData['favicon']} form="seo" name="sitemap" label="Sitemap" accept=".xml"/>
+                        <FileInput storedValue={this.state.inputData['sitemap']} form="seo" name="sitemap" label="Sitemap" accept=".xml"/>
                     </fieldset>
                 </div>
             </section>

@@ -1,11 +1,11 @@
 from flask import Flask, render_template, url_for, Blueprint, jsonify, redirect, make_response, request
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 import click
 import functools
-import sys
+import sys, os
 import config
-# from modules.page_data import page_data, page_list
-from modules.auth import User, authenticate #, auth_needed
+from modules.auth import User, authenticate
 from modules.database import db
 from bson import json_util
 import json
@@ -71,6 +71,21 @@ def response(action, endpoint):
                 {
                     "$set": {
                         "data." + _name: _data,
+                    }
+                }
+            )
+        elif (action == 'upload'):
+            _form = request.form['dbForm']
+            _name = request.form['dbName']
+
+            f = request.files['dbData']
+            f.save(os.getcwd() + '/tmp/' + secure_filename(f.filename))
+
+            db.siteData.update_one(
+                {'name': _form},
+                {
+                    "$set": {
+                        "data." + _name: secure_filename(f.filename),
                     }
                 }
             )
