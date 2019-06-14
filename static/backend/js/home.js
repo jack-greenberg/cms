@@ -1,7 +1,7 @@
 import React from 'react';
 import { Header } from './header.js';
 import { Footer } from './footer.js';
-import { TextInput } from './components.js';
+import { TextInput, FileInput } from './components.js';
 import axios from 'axios';
 
 export class Home extends React.Component {
@@ -78,7 +78,6 @@ class SEO extends React.Component {
     constructor(props) {
         super(props);
         this.handleFileInput = this.handleFileInput.bind(this);
-        this.handleTextChange = this.handleTextChange.bind(this);
 
         this.state = {
             inputData: this.props.inputData,
@@ -92,12 +91,6 @@ class SEO extends React.Component {
             inputData: inputDataCopy,
         });
     };
-    handleTextChange(e) {
-        // get the input field
-        // see how it compares to the saved value
-        // if different, change the color of the box shadow, and of the color of the changed input (add a class (--modified, --deleted, --added))
-        // click a lock to prevent changes?
-    };
     render() {
         return (
             <section className="section  section--seo">
@@ -108,31 +101,10 @@ class SEO extends React.Component {
                 <div className="section__body">
                     <fieldset className="form-container">
                         <TextInput multiline storedValue={this.state.inputData['meta-description']} form="seo" name="meta-description" label="Meta Description"/>
-                        <div className="input-container">
-                            <div className="input__label">Favicon</div>
-                            <input type="file" id="form-seo--favicon" className="input--file" onChange={this.handleFileInput} data-input-field="favicon" />
-                            <label htmlFor="form-seo--favicon" className="align--horizontal">
-                                <div className="input--file__filename">{this.state.inputData['favicon'] ? this.state.inputData['favicon'] : <span className="text--faint">No file saved</span>}</div>
-                                <div className="input--file__button">Choose a file...</div>
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <div className="input__label">Meta Image</div>
-                            <input type="file" id="form-seo--meta-image" className="input--file" onChange={this.handleFileInput} data-input-field="favicon"/>
-                            <label htmlFor="form-seo--meta-image" className="align--horizontal">
-                                <div className="input--file__filename">{this.state.inputData['meta-image'] ? this.state.inputData['meta-image'] : <span className="text--faint">No file saved</span>}</div>
-                                <div className="input--file__button">Choose a file...</div>
-                            </label>
-                        </div>
+                        <FileInput storedValue={this.state.inputData['favicon']} form="seo" name="favicon" label="Favicon" accept=".ico,.png,.jpg"/>
+                        <FileInput storedValue={this.state.inputData['favicon']} form="seo" name="meta-image" label="Meta Image" accept=".jpg,.png"/>
                         <TextInput multiline code storedValue={this.state.inputData['robots']} form="seo" name="robots" label="robots.txt"/>
-                        <div className="input-container">
-                            <div className="input__label">Sitemap</div>
-                            <input type="file" id="form-seo--sitemap" className="input--file" onChange={this.handleFileInput} data-input-field="sitemap" />
-                            <label htmlFor="form-seo--sitemap" className="align--horizontal">
-                                <div className="input--file__filename">{this.state.inputData['sitemap'] ? this.state.inputData['sitemap'] : <span className="text--faint">No file saved</span>}</div>
-                                <div className="input--file__button">Choose a file...</div>
-                            </label>
-                        </div>
+                        <FileInput storedValue={this.state.inputData['favicon']} form="seo" name="sitemap" label="Sitemap" accept=".xml"/>
                     </fieldset>
                 </div>
             </section>
