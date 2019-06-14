@@ -10,39 +10,37 @@ import { Settings } from './settings.js';
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import axios from 'axios';
 
-export const PageContext = React.createContext({})
+export const PageContext = React.createContext({});
 
 class App extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            // self
             isLoaded: false,
-            // data
-
         };
     };
 
     componentDidMount() {
-        axios.post('/api/page-data/')
+        axios.post('/api/page-list/')
             .then(function (response) {
                 setTimeout(function() {
                     this.setState({
-                        pageData: response.data,
+                        pageList: response.data,
                         isLoaded: true,
                     });
                 }.bind(this), 500);
             }.bind(this))
             .catch(function (error) {
-                console.log(error);
+                throw new Error(error);
+                console.error(error);
             });
     };
 
     render() {
         if (this.state.isLoaded) {
             return (
-                <PageContext.Provider value={this.state.pageData}>
+                <PageContext.Provider value={this.state.pageList}>
                     <BrowserRouter basename="/admin/">
                         <Route exact path="/" render={(props) => <Home {...props} />} />
                         <Route path="/pages/" render={(props) => <Pages {...props} />} />
