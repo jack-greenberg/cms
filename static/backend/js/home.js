@@ -94,8 +94,8 @@ class SEO extends React.Component {
     render() {
         return (
             <section className="section  section--seo">
-                <div className="section__heading">
-                    <h2>Search Engine Optimization</h2>
+                <div className="section__heading-wrapper">
+                    <h2 className="section__heading">Search Engine Optimization</h2>
                 </div>
 
                 <div className="section__body">
