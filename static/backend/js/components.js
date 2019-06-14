@@ -1,6 +1,7 @@
 import React from 'react';
 import * as Icon from 'react-feather';
 var autosize = require('autosize');
+import axios from 'axios';
 
 /*
     <TextInput [fullWidth, important, multiline] storedValue={} name={""} form={""} label={""} handleUpdate={this.handleTextUpdate} />
@@ -43,7 +44,16 @@ export class TextInput extends React.Component {
         };
     };
     handleFinalizeEdit() {
-        // make axios call
+        console.log(this.props.form, this.props.name, this.inputRef.current.value);
+        axios.post('/api/update/siteData/', {
+            dbForm: this.props.form,
+            dbName: this.props.name,
+            dbData: this.inputRef.current.value,
+        })
+        .then(function(response) {
+            console.log(response.data);
+        });
+
         this.setState({
             edited: false,
             storedValue: this.inputRef.current.value,
@@ -82,9 +92,11 @@ export class TextInput extends React.Component {
         return (
             <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
                 <label htmlFor={"form-" + this.props.form + '--' + this.props.name} className="input__label">{this.props.label}</label>
-                <input type="text" name={this.props.name} className={inputClassList} id={"form-" + this.props.form + '--' + this.props.name} defaultValue={this.state.storedValue} onKeyUp={this.handleTextEdit} ref={this.inputRef} />
+                <div className="finalize-edit-container">
+                    <input type="text" name={this.props.name} className={inputClassList} id={"form-" + this.props.form + '--' + this.props.name} defaultValue={this.state.storedValue} onKeyUp={this.handleTextEdit} ref={this.inputRef} />
 
-                {this.state.edited ? <FinalizeEditBox handleFinalizeEdit={this.handleFinalizeEdit} handleCancelEdit={this.handleCancelEdit} /> : null}
+                    {this.state.edited ? <FinalizeEditBox handleFinalizeEdit={this.handleFinalizeEdit} handleCancelEdit={this.handleCancelEdit} /> : null}
+                </div>
             </div>
         )
     }

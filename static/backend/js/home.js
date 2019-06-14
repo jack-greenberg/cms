@@ -13,7 +13,7 @@ export class Home extends React.Component {
         };
     };
     componentDidMount() {
-        axios.post('/api/backend-data/')
+        axios.post('/api/get/siteData/')
             .then(function(response) {
                 this.setState({
                     backendData: response.data,
@@ -77,20 +77,11 @@ class General extends React.Component {
 class SEO extends React.Component {
     constructor(props) {
         super(props);
-        this.handleFileInput = this.handleFileInput.bind(this);
 
         this.state = {
             inputData: this.props.inputData,
         };
     }
-    handleFileInput(e) {
-        let fileName = e.target.value.split('\\').pop();
-        let inputDataCopy = this.state.inputData;
-        inputDataCopy[e.target.getAttribute('data-input-field')] = fileName;
-        this.setState({
-            inputData: inputDataCopy,
-        });
-    };
     render() {
         return (
             <section className="section  section--seo">

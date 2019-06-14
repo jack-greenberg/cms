@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, Blueprint, jsonify, redirect, make_response
+from flask import Flask, render_template, url_for, Blueprint, jsonify, redirect, make_response, request
 from werkzeug.security import check_password_hash, generate_password_hash
 import click
 import functools
@@ -22,7 +22,7 @@ def run(mode):
     else:
         click.echo("Please use either development or production mode.")
         sys.exit()
-    app.run()
+    app.run(host='0.0.0.0')
 
 @app.route('/')
 def index():
@@ -55,27 +55,42 @@ def admin_sub(page=None):
 
 
 # API
-@app.route('/api/<request>/', methods=['POST'])
-def response(request):
-    if (request == 'backend-data'):
-        backend_data = {}
-        robot_text = ""
+@app.route('/api/<action>/<endpoint>/', methods=['POST'])
+# action: update, get
+def response(action, endpoint):
+    if (endpoint == 'siteData'):
+        site_data = {}
 
+        if (action == 'update'):
+            requestData = json.loads(request.get_data(as_text=True))
+            _form = requestData['dbForm']
+            _name = requestData['dbName']
+            _data = requestData['dbData']
+            db.siteData.update_one(
+                {'name': _form},
+                {
+                    "$set": {
+                        "data." + _name: _data,
+                    }
+                }
+            )
+
+        for doc in db.siteData.find():
+            site_data[doc["name"]] = (json.loads(json_util.dumps(doc)));
+
+        robot_text = ""
         with app.open_resource('robots.txt') as f:
             robot_text = f.read()
 
-        for doc in db.siteData.find():
-            backend_data[doc["name"]] = (json.loads(json_util.dumps(doc)));
-
-        backend_data["seo"]["data"]["robots"] = robot_text.decode()
-        return jsonify(backend_data);
-    elif (request == 'page-list'):
+        site_data["seo"]["data"]["robots"] = robot_text.decode()
+        return jsonify(site_data);
+    elif (endpoint == 'page-list'):
         page_list = []
 
         for page in db.pages.find():
             page_list.append(page["name"])
         return jsonify(page_list)
-    elif (request == 'robots'):
+    elif (endpoint == 'robots'):
         response = ""
         robots = f.open('robots.txt')
         for line in robots:

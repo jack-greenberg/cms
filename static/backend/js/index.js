@@ -22,7 +22,7 @@ class App extends React.Component {
     };
 
     componentDidMount() {
-        axios.post('/api/page-list/')
+        axios.post('/api/get/page-list/')
             .then(function (response) {
                 setTimeout(function() {
                     this.setState({
