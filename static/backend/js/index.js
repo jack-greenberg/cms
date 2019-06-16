@@ -9,8 +9,27 @@ import { Modules } from './modules.js';
 import { Settings } from './settings.js';
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export const PageContext = React.createContext({});
+
+export const client = axios.create({
+    withCredentials: true,
+    headers: {'X-CSRF-TOKEN': Cookies.get('csrf_access_token'), 'X-CSRF-REFRESH-TOKEN' : Cookies.get('csrf_refresh_token')}
+});
+
+client.interceptors.response.use(function(response) {
+    return response;
+}, function(error) {
+    if (error.response.status == 401) {
+        axios.post('/api/token-refresh/')
+        .then(response => {
+            console.log(response);
+        });
+    } else {
+        return Promise.reject(error);
+    };
+});
 
 class App extends React.Component {
     constructor(props) {
@@ -22,7 +41,7 @@ class App extends React.Component {
     };
 
     componentDidMount() {
-        axios.post('/api/get/page-list/')
+        client.post('/api/get/page-list/')
             .then(function (response) {
                 setTimeout(function() {
                     this.setState({
@@ -31,9 +50,8 @@ class App extends React.Component {
                     });
                 }.bind(this), 500);
             }.bind(this))
-            .catch(function (error) {
-                throw new Error(error);
-                console.error(error);
+            .catch(function(error) {
+                console.log(error);
             });
     };
 

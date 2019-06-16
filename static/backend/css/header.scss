@@ -4,7 +4,7 @@
     background-color: $white;
     box-shadow: $shadow;
     position: relative;
-    z-index: 9;
+    z-index: 999;
     padding: 1rem;
     display: flex;
     position: sticky;
@@ -26,6 +26,10 @@
     top: .5em;
     right: .5em;
     z-index: 999;
+
+    .show-navigation & {
+        position: fixed;
+    }
 }
 .nav-trigger {
     font-size: 2em;

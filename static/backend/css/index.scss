@@ -39,6 +39,7 @@
     font-size: 1em;
     margin: 1.5em 0;
     display: block;
+    -webkit-appearance: none;
 
     &--edited {
         input.input--text, textarea.input--text {
@@ -56,11 +57,14 @@
         font-family: $sans;
         padding: .4em;
         appearance: none;
-        box-shadow: 0px 0px 0px .5px $gray--lighter;
+        box-shadow: 0px 0px 0px 1px $gray--lighter;
         border: none;
         border-radius: 2px;
         background-color: transparent;
         width: 100%;
+        z-index: 99;
+        position: relative;
+        display: block;
 
         &--small {
             max-width: 15em;
@@ -96,7 +100,7 @@
             font-size: .8em;
             font-family: $sans;
             padding: .4em;
-            border: .5px solid $gray--lighter;
+            border: 1px solid $gray--lighter;
             border-radius: 2px;
             text-align: center;
             max-width: 10em;
@@ -119,7 +123,7 @@ body {
 }
 .main {
     background-color: $canvas;
-    padding: 1.25em 1.25em 0;
+    padding: 1em 1em 0;
 }
 .section {
     padding: 1rem;
@@ -147,8 +151,13 @@ fieldset {
 //---> Buttons
 .btn {
     cursor: pointer;
+    appearance: none;
+    display: inline;
 
     &--icon {
+        width: 1.5em;
+        height: 1.5em;
+        appearance: none;
 
         svg {
             width: 100%;
@@ -174,8 +183,49 @@ fieldset {
 .icon {
     width: 1em;
     height: 1em;
+    appearance: none;
 }
 
+.finalize-edits {
+    display: flex;
+    margin-top: .5em;
+    align-items: center;
+    justify-content: flex-end;
+
+    .btn:not(:first-child) {
+        margin-left: 1em;
+    }
+}
+.finalize-edit-container {
+    display: flex;
+    align-items: center;
+
+    .input--text {
+        flex-grow: 2;
+    }
+    .finalize-edits {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        height: 100%;
+        margin-top: 0;
+        margin-left: .4em;
+        min-width: 4em;
+
+        .btn:first-child {
+            flex-grow: 2;
+        }
+    }
+
+}
+.finalize-edits {
+    // margin-top: .5em;
+    // display: flex;
+
+    .btn:not(:last-child) {
+        // margin-right: 1em;
+    }
+}
 
 
 ////// Loading Screen

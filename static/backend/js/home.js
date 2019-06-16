@@ -2,8 +2,8 @@ import React from 'react';
 import { Header } from './header.js';
 import { Footer } from './footer.js';
 import { TextInput, FileInput } from './components.js';
-import axios from 'axios';
-
+import { client } from './index.js';
+//
 export class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -13,15 +13,14 @@ export class Home extends React.Component {
         };
     };
     componentDidMount() {
-        axios.post('/api/get/siteData/')
+        client.post('/api/get/siteData/')
             .then(function(response) {
                 this.setState({
                     backendData: response.data,
                 });
             }.bind(this))
             .catch(function(error) {
-                throw new Error(error);
-                console.error(error);
+                console.log(error);
             });
     }
     render() {
