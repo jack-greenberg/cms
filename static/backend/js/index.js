@@ -15,7 +15,7 @@ export const PageContext = React.createContext({});
 
 export const client = axios.create({
     withCredentials: true,
-    headers: {'X-CSRF-TOKEN': Cookies.get('csrf_access_token'), 'X-CSRF-REFRESH-TOKEN' : Cookies.get('csrf_refresh_token')}
+    headers: {'X-CSRF-TOKEN': Cookies.get('csrf_access_token'), 'X-CSRF-REFRESH-TOKEN': Cookies.get('csrf_refresh_token')}
 });
 
 client.interceptors.response.use(function(response) {

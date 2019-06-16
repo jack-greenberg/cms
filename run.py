@@ -25,6 +25,9 @@ app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 # they aren't needed.
 app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 app.config['JWT_REFRESH_COOKIE_PATH'] = '/api/token-refresh/'
+app.config['JWT_CSRF_IN_COOKIES'] = True
+
+app.config['JWT_REFRESH_CSRF_HEADER_NAME'] = 'X-CSRF-REFRESH-TOKEN'
 
 # Disable CSRF protection for this example. In almost every case,
 # this is a bad idea. See examples/csrf_protection_with_cookies.py
