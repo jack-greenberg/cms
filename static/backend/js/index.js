@@ -15,20 +15,67 @@ export const PageContext = React.createContext({});
 
 export const client = axios.create({
     withCredentials: true,
-    headers: {'X-CSRF-TOKEN': Cookies.get('csrf_access_token'), 'X-CSRF-REFRESH-TOKEN': Cookies.get('csrf_refresh_token')}
+    headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+    }
 });
+
+var isAlreadyFetchingAccessToken = false;
+var subscribers = [];
+
+async function resetTokenAndReattemptRequest(error) {
+    try {
+        const { response: errorResponse } = error;
+        const resetToken = localStorage.getItem('refresh_token')
+        if (!resetToken) {
+            return Promise.reject(error);
+        }
+        const retryOriginalRequest = new Promise(resolve => {
+            addSubscriber(access_token => {
+                errorResponse.config.headers.Authorization = 'Bearer ' + access_token;
+                resolve(client(errorResponse.config));
+            });
+        });
+        if (!isAlreadyFetchingAccessToken) {
+            isAlreadyFetchingAccessToken = true;
+            const response = await axios({
+                method: 'post',
+                url: '/api/token-refresh/',
+                headers: {
+                    Authorization: 'Bearer ' + resetToken
+                }
+            });
+
+            if (!response.data) {
+                return Promise.reject(error);
+            }
+            const newToken = response.data['access_token'];
+            localStorage.setItem('access_token', newToken)
+            isAlreadyFetchingAccessToken = false;
+            onAccessTokenFetched(newToken);
+        }
+        return retryOriginalRequest;
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+function onAccessTokenFetched(access_token) {
+    subscribers.forEach(callback => callback(access_token));
+    subscribers = [];
+}
+
+function addSubscriber(callback) {
+    subscribers.push(callback);
+}
 
 client.interceptors.response.use(function(response) {
     return response;
 }, function(error) {
     if (error.response.status == 401) {
-        axios.post('/api/token-refresh/')
-        .then(response => {
-            console.log(response);
-        });
-    } else {
-        return Promise.reject(error);
+        return resetTokenAndReattemptRequest(error);
     };
+    return Promise.reject(error);
 });
 
 class App extends React.Component {
@@ -43,12 +90,16 @@ class App extends React.Component {
     componentDidMount() {
         client.post('/api/get/page-list/')
             .then(function (response) {
-                setTimeout(function() {
-                    this.setState({
-                        pageList: response.data,
-                        isLoaded: true,
-                    });
-                }.bind(this), 500);
+                if (response.status == 200) {
+                    setTimeout(function() {
+                        this.setState({
+                            pageList: response.data,
+                            isLoaded: true,
+                        });
+                    }.bind(this), 500);
+                } else {
+                    throw new Error("Invalid token");
+                };
             }.bind(this))
             .catch(function(error) {
                 console.log(error);

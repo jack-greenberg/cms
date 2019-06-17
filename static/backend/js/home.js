@@ -1,6 +1,7 @@
 import React from 'react';
 import { Header } from './header.js';
 import { Footer } from './footer.js';
+import { Navigation } from './nav.js';
 import { TextInput, FileInput } from './components.js';
 import { client } from './index.js';
 //
@@ -27,6 +28,7 @@ export class Home extends React.Component {
         if (this.state.backendData) {
             return (
                 <>
+                    <Navigation />
                     <Header siteTitle={this.state.backendData['general']['data']['site-title']}/>
                     <main className="main">
                         <div className="breadcrumbs">

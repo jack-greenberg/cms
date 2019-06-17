@@ -1,5 +1,4 @@
 import React from 'react';
-import { Navigation } from './nav.js';
 
 export class Header extends React.Component {
     constructor(props) {
@@ -16,7 +15,6 @@ export class Header extends React.Component {
         return (
             <header className="header">
                 <a href="/admin" className="header__title">{this.state.siteTitle}</a>
-                <Navigation />
             </header>
         )
     }

@@ -10,7 +10,11 @@ module.exports =  {
         ],
         backend: [
             './backend/css/index.scss',
-            './backend/js/index.js'
+            './backend/js/index.js',
+            'babel-polyfill',
+        ],
+        login: [
+            './backend/js/login.js'
         ]
     },
     output: {

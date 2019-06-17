@@ -10,19 +10,20 @@
 <body>
     <main>
         <form method="post" class="login-form">
-            <input type="hidden" name="redirect" value="{{ request.args.get('redirect') }}">
+            <input type="hidden" class="js-redirect" name="redirect" value="{{ request.args.get('redirect') }}">
 
             <label for="username">Username</label>
-            <input type="text" name="username" id="username">
+            <input type="text" class="js-username" name="username" id="username">
 
             <label for="password">Password</label>
-            <input type="password" name="password" id="password">
+            <input type="password" class="js-password" name="password" id="password">
 
             <label for="remember">Remember for 30 days</label>
-            <input type="checkbox" name="remember">
+            <input type="checkbox" class="js-remember" name="remember">
 
-            <input type="submit" name="submit" value="Login">
+            <input type="submit" class="js-submit" name="submit" value="Login">
         </form>
     </main>
+    <script src="{{url_for('static', filename='login.js')}}" charset="utf-8"></script>
 </body>
 </html>
