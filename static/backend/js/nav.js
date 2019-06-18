@@ -2,11 +2,13 @@ import React from 'react';
 import { PageContext } from './index.js';
 import * as Icon from 'react-feather';
 import { Route, NavLink } from "react-router-dom";
+import { client } from './index.js';
 
 export class Navigation extends React.Component {
     constructor(props) {
         super(props);
         this.triggerNavigation = this.triggerNavigation.bind(this);
+        this.logout = this.logout.bind(this);
 
         this.state = {
             isOpen: false,
@@ -23,7 +25,15 @@ export class Navigation extends React.Component {
             $('body').toggleClass("show-navigation");
         }
     }
-
+    logout() {
+        client.post('/logout/')
+        .then(response => {
+            window.location.href = '/';
+        })
+        .catch(error => {
+            console.error(error.response);
+        })
+    }
     render() {
         return (
             <>
@@ -58,6 +68,9 @@ export class Navigation extends React.Component {
                         </li>
                         <li>
                             <a href="/" className="btn  btn--green">Visit Site</a>
+                        </li>
+                        <li>
+                            <button onClick={this.logout} className="btn  btn--green">Logout</button>
                         </li>
                     </ul>
                 </nav>

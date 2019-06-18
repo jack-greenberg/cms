@@ -14,7 +14,8 @@ module.exports =  {
             'babel-polyfill',
         ],
         login: [
-            './backend/js/login.js'
+            './backend/js/login.js',
+            './backend/css/login.scss',
         ]
     },
     output: {

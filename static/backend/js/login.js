@@ -19,6 +19,10 @@ $('.js-submit').on('click', function(e) {
         window.location.href = '/admin/'
     })
     .catch(error => {
-        console.log(error);
+        if (error.response.status != 200) {
+            $('.js-username').css("box-shadow", "0 0 0 1px #f7484e");
+            $('.js-password').css("box-shadow", "0 0 0 1px #f7484e");
+            // $('.js-message-flash').html("<span class=\"message-flash__title\">"+error.response.statusText+": </span><span class=\"message-flash__message\">"+error.response.data+"</span>");
+        }
     })
 })
