@@ -4,7 +4,7 @@
     background-color: $white;
     box-shadow: $shadow;
     position: relative;
-    z-index: 999;
+    z-index: 500;
     padding: 1rem;
     display: flex;
     position: sticky;
@@ -22,17 +22,16 @@
 
 // Navigation
 .nav-trigger-container {
-    position: absolute;
-    top: .5em;
-    right: .5em;
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    // left: calc(100% - 4em);
     z-index: 999;
 
-    .show-navigation & {
-        position: fixed;
+    .btn--nav-trigger {
+        width: 2em;
+        height: 2em;
     }
-}
-.nav-trigger {
-    font-size: 2em;
 }
 .navigation {
     display: none;
@@ -45,7 +44,7 @@
         right: 0;
         bottom: 0;
         left: 0;
-        z-index: 99;
+        z-index: 600;
     }
 }
 .show-navigation .main, .show-navigation .footer {
