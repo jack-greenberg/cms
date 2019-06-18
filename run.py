@@ -83,16 +83,29 @@ def login():
         requestData = json.loads(request.get_data(as_text=True))
         username = requestData['username']
         password = requestData['password']
-        permanent_session = requestData['remember']
+        try:
+            permanent_session = requestData['remember']
+        except:
+            permanent_session = False
+
         request_path = requestData['redirect']
         if request_path == 'None':
             request_path = 'admin'
-        storedHash = db.users.find_one({'username': username}, {'hash': 1, "_id": 0})['hash']
+
+        try:
+            storedHash = db.users.find_one({'username': username}, {'hash': 1, "_id": 0})['hash']
+        except TypeError:
+            storedHash = None
+
+        if not storedHash:
+            return jsonify("No user found"), 400
 
         if (bcrypt.checkpw(password.encode(), storedHash.encode())):
+            session.clear()
             if (permanent_session):
-                session.clear()
                 session['username'] = username
+            else:
+                session.pop('username', None)
 
             access_token = create_access_token(identity=username, fresh=True)
             refresh_token = create_refresh_token(identity=username)
@@ -101,18 +114,16 @@ def login():
 
             return jsonify(access_token=access_token, refresh_token=refresh_token), 200
         else:
-            flash('Wrong password')
-            return redirect(url_for('login')), 401
+            return jsonify("Wrong password"), 400
 
     return render_template('admin/login.j2')
 
-@app.route('/logout/')
+@app.route('/logout/', methods=['POST'])
 def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
-    response = redirect(url_for('index'))
-    unset_jwt_cookies(response)
-    return response
+    response = jsonify({'success': 'true'})
+    return response, 200
 
 @app.route('/admin/')
 @login_required
