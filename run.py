@@ -186,7 +186,7 @@ def response(action, endpoint):
             )
 
         for doc in db.siteData.find():
-            site_data[doc["name"]] = (json.loads(json_util.dumps(doc)));
+            site_data[doc["name"]] = json.loads(json_util.dumps(doc));
 
         robot_text = ""
         with app.open_resource('robots.txt') as f:
@@ -194,12 +194,12 @@ def response(action, endpoint):
 
         site_data["seo"]["data"]["robots"] = robot_text.decode()
         return jsonify(site_data);
-    elif (endpoint == 'page-list'):
-        page_list = []
+    elif (endpoint == 'page-data'):
+        page_data = []
 
-        for page in db.pages.find():
-            page_list.append(page["name"])
-        return jsonify(page_list)
+        for doc in db.pages.find():
+            page_data.append(json.loads(json_util.dumps(doc)));
+        return jsonify(page_data)
     elif (endpoint == 'robots'):
         response = ""
         robots = f.open('robots.txt')

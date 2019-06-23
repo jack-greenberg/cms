@@ -200,3 +200,27 @@ class FinalizeEditBox extends React.Component {
         )
     }
 }
+
+export class ToggleSwitch extends React.Component {
+    constructor(props) {
+        super(props);
+        this.toggle = this.toggle.bind(this);
+
+        this.state = {
+            isChecked: this.props.isChecked,
+        };
+    }
+    toggle() {
+        this.setState({
+            isChecked: !this.state.isChecked,
+        })
+    }
+    render() {
+        return (
+            <label htmlFor={this.props.forId} className="toggle" onClick={this.toggle}>
+                <input type="checkbox" defaultChecked={this.state.isChecked ? true : false} id={this.props.forId} />
+                <span className="toggle__slider"></span>
+            </label>
+        )
+    }
+}

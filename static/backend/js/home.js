@@ -5,7 +5,7 @@ import { Navigation } from './nav.js';
 import { TextInput, FileInput } from './components.js';
 import { browserHistory } from 'react-router';
 import { client } from './index.js';
-//
+
 export class Home extends React.Component {
     constructor(props) {
         super(props);

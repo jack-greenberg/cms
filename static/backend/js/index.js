@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import * as Icon from 'react-feather';
 import { ErrorBoundary } from './errorhandler.js';
 import { Home } from './home.js';
-import { Pages } from './pages.js'
-import { Posts } from './posts.js'
+import { Pages } from './pages.js';
+import { Posts } from './posts.js';
 import { Header } from './header.js';
 import { Settings } from './settings.js';
 import { NoMatch } from './nomatch.js';
@@ -92,12 +92,6 @@ class App extends React.Component {
         client.post('/api/get/page-list/')
             .then(function (response) {
                 if (response.status == 200) {
-                    // setTimeout(function() {
-                    //     this.setState({
-                    //         pageList: response.data,
-                    //         isLoaded: true,
-                    //     });
-                    // }.bind(this), 500);
                     this.setState({
                         pageList: response.data,
                         isLoaded: true,
