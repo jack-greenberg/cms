@@ -3,6 +3,7 @@ import { Header } from './header.js';
 import { Footer } from './footer.js';
 import { Navigation } from './nav.js';
 import { TextInput, FileInput } from './components.js';
+import { browserHistory } from 'react-router';
 import { client } from './index.js';
 //
 export class Home extends React.Component {
@@ -34,8 +35,10 @@ export class Home extends React.Component {
                         <div className="breadcrumbs">
                             <h1>Admin / Home</h1>
                         </div>
-                        <General inputData={this.state.backendData['general']['data']} />
-                        <SEO inputData={this.state.backendData['seo']['data']} />
+                        <div className="flex-wrapper">
+                            <General inputData={this.state.backendData['general']['data']} />
+                            <SEO inputData={this.state.backendData['seo']['data']} />
+                        </div>
                     </main>
                     <Footer />
                 </>

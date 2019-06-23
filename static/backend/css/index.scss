@@ -2,6 +2,7 @@
 @import "reset.scss";
 @import "header.scss";
 @import "footer.scss";
+@import "nav.scss";
 
 // Basics, Globals, and Defaults
 .emoji {
@@ -50,6 +51,7 @@
         font-size: .6em;
         font-family: $sans;
         margin-left: 1em;
+        margin-bottom: .2em;
         display: block;
     }
     .input--text {
@@ -124,6 +126,20 @@ body {
 .main {
     background-color: $canvas;
     padding: 1em 1em 0;
+
+    @media only screen and (min-width: $large) {
+        .flex-wrapper {
+            display: flex;
+
+            .section {
+                flex-basis: 50%;
+                max-width: 31.25em;
+            }
+            section:not(:last-child) {
+                margin-right: 1em;
+            }
+        }
+    }
 }
 .section {
     padding: 1rem;
@@ -166,8 +182,29 @@ fieldset {
         &--green {
             svg {stroke: $green};
         }
+    }
+    &--text {
+        font-size: 1em;
+        font-family: $sans;
+        color: $white;
+        padding: .2em .35em;
+        border: none;
+        border-radius: .25em;
+        text-decoration: none;
+
         &--red {
-            svg {stroke: $red};
+            background-color: $red;
+
+            &:hover {
+                background-color: darken($red, 10%);
+            }
+        }
+        &--blue {
+            background-color: $blue;
+
+            &:hover {
+                background-color: lighten($blue, 10%);
+            }
         }
     }
     &--delete-file {
@@ -255,4 +292,56 @@ fieldset {
         stroke: $gray;
         stroke-width: 1;
     }
+}
+
+.error-page {
+    text-align: center;
+    padding: 2em 1em;
+
+    @media only screen and (min-width: $medium) {
+        font-size: 1.25em;
+    }
+    &__title {
+        font-size: 1.5em;
+        font-family: $sans;
+        color: $black;
+        font-weight: 800;
+        margin-bottom: 2em;
+    }
+    &__link {
+        font-size: 1em;
+        font-family: $sans;
+        color: $black;
+        font-weight: 600;
+        margin-top: 2em;
+        display: block;
+    }
+    .periscope {
+        width: 80%;
+        display: block;
+        margin: 0 auto;
+    }
+
+    @keyframes look {
+        0% {
+            transform: translateX(10px);
+        }
+        30% {
+            transform: translateX(10px)
+        }
+        70% {
+            transform: translateX(-11px);
+        }
+        100% {
+            transform: translateX(-11px);
+        }
+    }
+    .pupil {
+        animation-name: look;
+        animation-direction: alternate;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+    }
+
 }
