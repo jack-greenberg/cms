@@ -4,10 +4,12 @@ import * as Icon from 'react-feather';
 import { ErrorBoundary } from './errorhandler.js';
 import { Home } from './home.js';
 import { Pages } from './pages.js'
+import { Posts } from './posts.js'
 import { Header } from './header.js';
 import { Modules } from './modules.js';
 import { Settings } from './settings.js';
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { NoMatch } from './nomatch.js';
+import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -38,7 +40,7 @@ async function resetTokenAndReattemptRequest(error) {
         });
         if (!isAlreadyFetchingAccessToken) {
             isAlreadyFetchingAccessToken = true;
-            const response = await axios({
+            const response = await axios({ // use global client to not send access token header, only reset token
                 method: 'post',
                 url: '/api/token-refresh/',
                 headers: {
@@ -91,12 +93,16 @@ class App extends React.Component {
         client.post('/api/get/page-list/')
             .then(function (response) {
                 if (response.status == 200) {
-                    setTimeout(function() {
-                        this.setState({
-                            pageList: response.data,
-                            isLoaded: true,
-                        });
-                    }.bind(this), 500);
+                    // setTimeout(function() {
+                    //     this.setState({
+                    //         pageList: response.data,
+                    //         isLoaded: true,
+                    //     });
+                    // }.bind(this), 500);
+                    this.setState({
+                        pageList: response.data,
+                        isLoaded: true,
+                    })
                 } else {
                     throw new Error("Invalid token");
                 };
@@ -111,10 +117,13 @@ class App extends React.Component {
             return (
                 <PageContext.Provider value={this.state.pageList}>
                     <BrowserRouter basename="/admin/">
-                        <Route exact path="/" render={(props) => <Home {...props} />} />
-                        <Route path="/pages/" render={(props) => <Pages {...props} />} />
-                        <Route path="/modules/" render={(props) => <Modules {...props} />} />
-                        <Route path="/settings/" render={(props) => <Settings {...props} />} />
+                        <Switch>
+                            <Route exact path="/" render={(props) => <Home {...props} />} />
+                            <Route path="/pages/" render={(props) => <Pages {...props} />} />
+                            <Route path="/posts/" render={(props) => <Posts {...props} />} />
+                            <Route path="/settings/" render={(props) => <Settings {...props} />} />
+                            <Route component={NoMatch} /> {/* 404 */}
+                        </Switch>
                     </BrowserRouter>
                 </PageContext.Provider>
             );
