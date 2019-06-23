@@ -1,7 +1,8 @@
 import React from 'react';
 import * as Icon from 'react-feather';
 var autosize = require('autosize');
-import axios from 'axios';
+// import axios from 'axios';
+import { client } from './index.js';
 
 /*
     <TextInput [fullWidth, important, multiline] storedValue={} name={""} form={""} label={""} handleUpdate={this.handleTextUpdate} />
@@ -45,7 +46,7 @@ export class TextInput extends React.Component {
     };
     handleFinalizeEdit() {
         console.log(this.props.form, this.props.name, this.inputRef.current.value);
-        axios.post('/api/update/siteData/', {
+        client.post('/api/update/siteData/', {
             dbForm: this.props.form,
             dbName: this.props.name,
             dbData: this.inputRef.current.value,
@@ -123,7 +124,7 @@ export class FileInput extends React.Component {
         formData.append('dbName', this.props.name)
         formData.append('dbData', $('#form-' + this.props.form + '--' + this.props.name).prop('files')[0])
 
-        axios.post('/api/upload/siteData/', formData, {
+        client.post('/api/upload/siteData/', formData, {
             'Content-Type': 'multipart/form-data',
         })
         .then(function(response) {
