@@ -17,7 +17,6 @@ app = Flask(__name__, static_folder='./static/build')
 app.config['SECRET_KEY'] = b'dev'
 app.config['JWT_SECRET_KEY'] = b'dev'
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 10
 app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 app.config['JWT_REFRESH_COOKIE_PATH'] = '/api/token-refresh/'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
@@ -54,7 +53,8 @@ def start_session():
         assert session['username']
     except (AssertionError, KeyError):
         session['username'] = ""
-    session.permanent = True
+        # return redirect(url_for('index'))
+    # session.permanent = True
 
 @app.route('/')
 def index():
@@ -79,6 +79,11 @@ def subpage(page):
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
+    try:
+        assert session['username']
+        return redirect(url_for('admin_root'))
+    except (AssertionError, KeyError):
+        pass
     if request.method == 'POST':
         requestData = json.loads(request.get_data(as_text=True))
         username = requestData['username']
