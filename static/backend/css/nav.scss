@@ -3,9 +3,11 @@
     position: fixed;
     top: 1em;
     right: 1em;
-    // left: calc(100% - 4em);
     z-index: 999;
 
+    @media only screen and (min-width: $large) {
+        display: none;
+    }
     .btn--nav-trigger {
         width: 2em;
         height: 2em;
@@ -14,6 +16,19 @@
 .navigation-wrapper {
     display: none;
 
+    @media only screen and (min-width: $large) {
+        display: block;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        background-color: $white;
+        min-height: 100vh;
+        z-index: 600;
+        width: 20em;
+        font-size: 0.7em;
+        box-shadow: $shadow;
+        position: relative;
+    }
     .show-navigation & {
         display: block;
         position: fixed;
@@ -24,7 +39,6 @@
         min-height: 100vh;
         z-index: 600;
         width: 100%;
-        max-width: 400px;
     }
 }
 
@@ -33,6 +47,11 @@
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+
+    @media only screen and (min-width: $large) {
+        position: fixed;
+        height: 100vh;
+    }
 }
 .navlink {
     font-size: 1.4em;
@@ -51,6 +70,13 @@
             fill: $primary;
         }
     }
+    &:hover {
+        color: $black;
+
+        svg {
+            fill: $black;
+        }
+    }
     svg {
         fill: $gray;
         width: 1.5em;
@@ -60,11 +86,11 @@
 }
 .main-navigation {
     display: block;
-    padding: 4em 0 0 1em;
+    padding: 4em 0 0 2em;
 }
 .secondary-navigation {
     align-self: flex-end;
     display: block;
     width: 100%;
-    padding: 0 0 1em 1em;
+    padding: 0 0 1em 2em;
 }

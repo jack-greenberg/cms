@@ -50,6 +50,7 @@
     .input__label {
         font-size: .6em;
         font-family: $sans;
+        color: $gray;
         margin-left: 1em;
         margin-bottom: .2em;
         display: block;
@@ -88,6 +89,7 @@
         }
         &:focus, &:active {
             outline: none;
+            box-shadow: 0 0 0 2px $gray--lighter;
         }
     }
     .input--file {
@@ -123,11 +125,17 @@
 body {
     background-color: $canvas
 }
+.body-inner-wrapper {
+    display: flex;
+}
+.main-wrapper {
+    width: 100%;
+}
 .main {
     background-color: $canvas;
     padding: 1em 1em 0;
 
-    @media only screen and (min-width: $large) {
+    @media only screen and (min-width: $xx-large) {
         .flex-wrapper {
             display: flex;
 
@@ -145,6 +153,8 @@ body {
     padding: 1rem;
     margin: 1em 0;
     background-color: $white;
+    border-radius: .5em;
+    border: 1px solid $gray--lighter;
     box-shadow: $shadow;
 
     &__heading {

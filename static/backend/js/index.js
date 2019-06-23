@@ -6,7 +6,6 @@ import { Home } from './home.js';
 import { Pages } from './pages.js'
 import { Posts } from './posts.js'
 import { Header } from './header.js';
-import { Modules } from './modules.js';
 import { Settings } from './settings.js';
 import { NoMatch } from './nomatch.js';
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";

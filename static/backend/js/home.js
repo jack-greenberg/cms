@@ -30,17 +30,19 @@ export class Home extends React.Component {
             return (
                 <>
                     <Navigation />
-                    <Header siteTitle={this.state.backendData['general']['data']['site-title']}/>
-                    <main className="main">
-                        <div className="breadcrumbs">
-                            <h1>Admin / Home</h1>
-                        </div>
-                        <div className="flex-wrapper">
-                            <General inputData={this.state.backendData['general']['data']} />
-                            <SEO inputData={this.state.backendData['seo']['data']} />
-                        </div>
-                    </main>
-                    <Footer />
+                    <div className="main-wrapper">
+                        <Header siteTitle={this.state.backendData['general']['data']['site-title']}/>
+                        <main className="main">
+                            <div className="breadcrumbs">
+                                <h1>Admin / Home</h1>
+                            </div>
+                            <div className="flex-wrapper">
+                                <General inputData={this.state.backendData['general']['data']} />
+                                <SEO inputData={this.state.backendData['seo']['data']} />
+                            </div>
+                        </main>
+                        <Footer />
+                    </div>
                 </>
             );
         } else {
