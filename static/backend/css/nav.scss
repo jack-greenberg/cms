@@ -1,0 +1,70 @@
+// Navigation
+.nav-trigger-container {
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    // left: calc(100% - 4em);
+    z-index: 999;
+
+    .btn--nav-trigger {
+        width: 2em;
+        height: 2em;
+    }
+}
+.navigation-wrapper {
+    display: none;
+
+    .show-navigation & {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-color: $white;
+        min-height: 100vh;
+        z-index: 600;
+        width: 100%;
+        max-width: 400px;
+    }
+}
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+.navlink {
+    font-size: 1.4em;
+    font-family: $sans;
+    font-weight: 600;
+    color: $gray;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: .5em;
+
+    &.active {
+        color: $primary;
+
+        svg {
+            fill: $primary;
+        }
+    }
+    svg {
+        fill: $gray;
+        width: 1.5em;
+        height: 1.5em;
+        margin-right: 1.5em;
+    }
+}
+.main-navigation {
+    display: block;
+    padding: 4em 0 0 1em;
+}
+.secondary-navigation {
+    align-self: flex-end;
+    display: block;
+    width: 100%;
+    padding: 0 0 1em 1em;
+}

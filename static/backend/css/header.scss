@@ -19,34 +19,3 @@
         text-decoration: none;
     }
 }
-
-// Navigation
-.nav-trigger-container {
-    position: fixed;
-    top: 1em;
-    right: 1em;
-    // left: calc(100% - 4em);
-    z-index: 999;
-
-    .btn--nav-trigger {
-        width: 2em;
-        height: 2em;
-    }
-}
-.navigation {
-    display: none;
-
-    .show-navigation & {
-        display: block;
-        background-color: $white;
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 600;
-    }
-}
-.show-navigation .main, .show-navigation .footer {
-    display: none;
-}
