@@ -140,6 +140,11 @@ def admin_root():
 def admin_sub(page=None):
     return render_template('admin/admin.j2')
 
+@app.route('/admin/pages/<page>/')
+@login_required
+def admin_pages_sub(page=None):
+    return render_template('admin/admin.j2')
+
 
 @app.route('/api/token-refresh/', methods=['POST'])
 @jwt_refresh_token_required
@@ -186,26 +191,39 @@ def response(action, endpoint):
             )
 
         for doc in db.siteData.find():
-            site_data[doc["name"]] = json.loads(json_util.dumps(doc));
+            site_data[doc["name"]] = json.loads(json_util.dumps(doc))
 
         robot_text = ""
         with app.open_resource('robots.txt') as f:
             robot_text = f.read()
 
         site_data["seo"]["data"]["robots"] = robot_text.decode()
-        return jsonify(site_data);
+        return jsonify(site_data)
     elif (endpoint == 'page-data'):
         page_data = []
 
         for doc in db.pages.find():
-            page_data.append(json.loads(json_util.dumps(doc)));
+            page_data.append(json.loads(json_util.dumps(doc)))
         return jsonify(page_data)
+    elif (endpoint == 'backend-data'):
+        backend_data = {}
+
+        for doc in db.siteData.find():
+            backend_data[doc["name"]] = json.loads(json_util.dumps(doc))
+
+        return jsonify(backend_data)
     elif (endpoint == 'robots'):
         response = ""
         robots = f.open('robots.txt')
         for line in robots:
             response += line + '\n'
         return jsonify(response)
+    elif (endpoint == 'post-data'):
+        post_data = []
+
+        for doc in db.posts.find():
+            post_data.append(json.loads(json_util.dumps(doc)))
+        return jsonify(post_data)
     else:
         return jsonify("No endpoint requested")
 
