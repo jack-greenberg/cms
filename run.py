@@ -41,9 +41,9 @@ def login_required(f):
         if (request.method == 'GET'):
             try:
                 if not session['username']:
-                    return redirect(url_for('login', redirect=request.path), 401)
+                    return redirect(url_for('login', redirect=request.path))
             except KeyError:
-                return redirect(url_for('login', redirect=request.path), 401)
+                return redirect(url_for('login', redirect=request.path))
             return f(*args, **kwargs)
     return decorated_function
 
