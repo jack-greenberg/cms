@@ -1,4 +1,5 @@
 import React from 'react';
+import { BackendDataContext } from './index.js';
 
 export class Header extends React.Component {
     constructor(props) {
@@ -13,9 +14,13 @@ export class Header extends React.Component {
     }
     render() {
         return (
-            <header className="header">
-                <a href="/admin" className="header__title">{this.state.siteTitle}</a>
-            </header>
+            <BackendDataContext.Consumer>
+                {context => (
+                    <header className="header">
+                        <a href="/admin" className="header__title">{context.general.data['site-title']}</a>
+                    </header>
+                )}
+            </BackendDataContext.Consumer>
         )
     }
 }

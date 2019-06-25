@@ -13,6 +13,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 export const PageContext = React.createContext({});
+export const BackendDataContext = React.createContext({});
 
 export const client = axios.create({
     withCredentials: true,
@@ -60,16 +61,13 @@ async function resetTokenAndReattemptRequest(error) {
         console.log(err);
     }
 }
-
 function onAccessTokenFetched(access_token) {
     subscribers.forEach(callback => callback(access_token));
     subscribers = [];
 }
-
 function addSubscriber(callback) {
     subscribers.push(callback);
 }
-
 client.interceptors.response.use(function(response) {
     return response;
 }, function(error) {
@@ -85,17 +83,19 @@ class App extends React.Component {
 
         this.state = {
             isLoaded: false,
+            backendData: {},
         };
     };
 
     componentDidMount() {
-        client.post('/api/get/page-list/')
+        client.post('/api/get/backend-data/')
             .then(function (response) {
                 if (response.status == 200) {
                     this.setState({
-                        pageList: response.data,
+                        backendData: response.data,
                         isLoaded: true,
                     })
+                    console.log(response.data);
                 } else {
                     throw new Error("Invalid token");
                 };
@@ -108,17 +108,20 @@ class App extends React.Component {
     render() {
         if (this.state.isLoaded) {
             return (
-                <PageContext.Provider value={this.state.pageList}>
-                    <BrowserRouter basename="/admin/">
-                        <Switch>
-                            <Route exact path="/" render={(props) => <Home {...props} />} />
-                            <Route path="/pages/" render={(props) => <Pages {...props} />} />
-                            <Route path="/posts/" render={(props) => <Posts {...props} />} />
-                            <Route path="/settings/" render={(props) => <Settings {...props} />} />
-                            <Route component={NoMatch} /> {/* 404 */}
-                        </Switch>
-                    </BrowserRouter>
-                </PageContext.Provider>
+                <BackendDataContext.Provider value={this.state.backendData}>
+                    <PageContext.Provider value={this.state.pageList}>
+                        <BrowserRouter basename="/admin/">
+                            <Switch>
+                                <Route exact path="/" render={(props) => <Home {...props} />} />
+                                <Route exact path="/pages/" render={(props) => <Pages {...props} />} />
+                                <Route path="/pages/:page/" render={(props) => <NoMatch {...props} />} />
+                                <Route path="/posts/" render={(props) => <Posts {...props} />} />
+                                <Route path="/settings/" render={(props) => <Settings {...props} />} />
+                                <Route component={NoMatch} /> {/* 404 */}
+                            </Switch>
+                        </BrowserRouter>
+                    </PageContext.Provider>
+                </BackendDataContext.Provider>
             );
         } else {
             return (
