@@ -5,6 +5,9 @@
     font-family: $sans;
     color: $gray;
     padding: 0 1rem 1rem;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
 
     a {
         color: darken($gray, 20%);
