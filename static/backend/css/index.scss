@@ -3,6 +3,7 @@
 @import "header.scss";
 @import "footer.scss";
 @import "nav.scss";
+@import "posts.scss";
 
 // Basics, Globals, and Defaults
 .emoji {
@@ -130,6 +131,8 @@ body {
 }
 .main-wrapper {
     width: 100%;
+    min-height: 100vh;
+    position: relative;
 }
 .main {
     background-color: $canvas;
@@ -307,7 +310,7 @@ fieldset {
 .toggle {
     position: relative;
     display: inline-block;
-    width: 2.1em;
+    width: 2em;
     height: 1em;
     border-radius: .5em;
     font-size: 1.2em;
@@ -371,7 +374,88 @@ fieldset {
             position: absolute;
             top: .15em;
             right: .15em;
-            transform: translateX(-1.05em);
+            transform: translateX(-1em);
+        }
+    }
+}
+
+// Page List //
+.page-list {
+    display: grid;
+    width: 100%;
+    max-width: 34em;
+
+    &__head {
+        font-size: .6em;
+        font-family: $sans;
+        color: $gray;
+        font-weight: 300;
+        text-transform: uppercase;
+        text-align: left;
+        display: grid;
+        grid-template-columns: 3rem 1fr 1fr 1fr;
+        padding: 1rem;
+    }
+    &__body {
+        display: grid;
+
+        .page {
+            background-color: $white;
+            width: 100%;
+            margin-bottom: 1em;
+            box-shadow: $shadow, 0 0 0 1px $gray--lighter;
+            border-radius: .5em;
+            display: grid;
+            grid-template-columns: 3rem 1fr 1fr 1fr;
+            padding: 1rem;
+
+            &--checked {
+                box-shadow: 0 0 0 2px $primary, $shadow;
+            }
+            &__checkbox {
+
+                input {
+                    width: 1em;
+                    height: 1em;
+                    appearance: none;
+                    box-shadow: 0 0 0 1px $gray--lighter;
+                    border: none;
+                    border-radius: .1em;
+                    outline: none;
+                    position: relative;
+                    cursor: pointer;
+
+                    &:checked {
+                        background-color: $primary;
+                        box-shadow: 0 0 0 1px $primary;
+                    }
+                    &:checked::after {
+                        content: "";
+                        font-size: .7em;
+                        position: absolute;
+                        top: calc(50% - 0.75em);
+                        left: calc(50% - .35em);
+                        width: .5em;
+                        height: 1em;
+                        border: 1px solid $white;
+                        border-width: 0 .2em .2em 0;
+                        transform: rotate(45deg);
+                    }
+                }
+            }
+            &__name {
+                font-family: $sans;
+                font-weight: 500;
+
+                a {
+                    text-decoration: none;
+                    color: inherit;
+                }
+            }
+            &__last-edited {
+                font-family: $sans;
+                font-weight: 500;
+            }
         }
     }
 }
@@ -428,5 +512,54 @@ fieldset {
         animation-iteration-count: infinite;
         animation-timing-function: ease-in-out;
     }
+}
+.toolbar {
+    display: flex;
+    align-items: center;
+    background-color: $white;
+    border-radius: .5em;
+    box-shadow: 0 0 0 1px $gray--lighter, $shadow;
+    padding: .45em;
 
+    .btn {
+        margin: 0 .75em;
+    }
+    .filter-wrapper {
+        position: relative;
+        margin-left: 2em;
+    }
+    .filter {
+        appearance: none;
+        border: none;
+        box-shadow: none;
+        border-bottom: 1px solid $gray--lighter;
+        padding-left: 1.75em;
+        width: 10em;
+
+        font-size: 1em;
+        font-family: $sans;
+        color: $black;
+
+        &:focus {
+            outline: none;
+            border-bottom: 1px solid $primary;
+        }
+        &::placeholder {
+            color: $gray--lighter;
+            opacity: 1;
+        }
+        &__label {
+            position: absolute;
+            height: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            &__icon {
+                fill: $gray--lighter;
+                width: 1.25em;
+                height: 1.25em;
+            }
+        }
+    }
 }
