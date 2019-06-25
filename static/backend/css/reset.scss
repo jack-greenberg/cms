@@ -17,6 +17,7 @@ html {
 * {
 	box-sizing: border-box; /* apply a natural box layout model to all elements; see http://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 a img {
 	border: 0;
