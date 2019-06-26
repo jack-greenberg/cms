@@ -145,6 +145,17 @@ def admin_sub(page=None):
 def admin_pages_sub(page=None):
     return render_template('admin/admin.j2')
 
+@app.route('/admin/posts/<post_id>/')
+@login_required
+def admin_posts_sub(post_id=None):
+    return render_template('admin/admin.j2')
+
+@app.route('/admin/posts/private/<post_id>/')
+@login_required
+def private_post(post_id=None):
+    # get post data from db
+    post_data = db.posts.find_one({'postID': int(post_id)}, {"_id": 0})
+    return render_template('post.j2', post_data=post_data)
 
 @app.route('/api/token-refresh/', methods=['POST'])
 @jwt_refresh_token_required
@@ -219,6 +230,14 @@ def response(action, endpoint):
             response += line + '\n'
         return jsonify(response)
     elif (endpoint == 'post-data'):
+        try:
+            requestData = json.loads(request.get_data(as_text=True))
+            if (requestData['postID']):
+                post_data = db.posts.find_one({'postID': int(requestData['postID'])}, {"_id": 0})
+                return jsonify(json.loads(json_util.dumps(post_data)))
+        except json.decoder.JSONDecodeError:
+            pass
+
         post_data = []
 
         for doc in db.posts.find():
