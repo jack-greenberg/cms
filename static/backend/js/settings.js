@@ -5,6 +5,10 @@ import { Navigation } from './nav.js';
 import { client } from './index.js';
 
 export class Settings extends React.Component {
+    /*
+        Settings page
+        path: /admin/settings/
+    */
     constructor(props) {
         super(props);
 

@@ -8,6 +8,11 @@ import { client } from './index.js';
 import ReactTooltip from 'react-tooltip';
 
 export class Pages extends React.Component {
+    /*
+        List of pages
+        path: /admin/pages/
+
+    */
     constructor(props) {
         super(props);
 
@@ -16,6 +21,7 @@ export class Pages extends React.Component {
         };
     };
     componentDidMount() {
+        // get the data about the pages
         client.post('/api/get/page-data/')
             .then(function(response) {
                 this.setState({
@@ -44,11 +50,13 @@ export class Pages extends React.Component {
                 </>
             );
         } else {
+            // return <LoadingScreen />
             return null;
         };
     };
 };
 class PageList extends React.Component {
+    // The table structure for the list of pages
     constructor(props) {
         super(props);
         this.state = {
@@ -78,6 +86,7 @@ class PageList extends React.Component {
     }
 }
 class PageListItem extends React.Component {
+    // The individual page listing
     constructor(props) {
         super(props);
 
@@ -94,7 +103,6 @@ class PageListItem extends React.Component {
         this.setState({
             checked: !this.state.checked,
         });
-        console.log("Called");
     }
     render() {
         return (
@@ -115,6 +123,7 @@ class PageListItem extends React.Component {
 }
 
 class Toolbar extends React.Component {
+    // Toolbar to edit the checked pages and filter
     constructor(props) {
         super(props);
     }

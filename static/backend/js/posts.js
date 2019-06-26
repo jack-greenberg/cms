@@ -12,6 +12,10 @@ export function pad(n, width, z) {
 }
 
 export class Posts extends React.Component {
+    /*
+        Post List component
+        path: /admin/posts/
+    */
     constructor(props) {
         super(props);
 
@@ -20,6 +24,7 @@ export class Posts extends React.Component {
         };
     };
     componentDidMount() {
+        // Get the data about the posts (array)
         client.post('/api/get/post-data/')
             .then(function(response) {
                 console.log(response.data);
@@ -75,6 +80,7 @@ export class Posts extends React.Component {
     };
 };
 class Toolbar extends React.Component {
+    // Toolbar to edit checked posts and filter
     constructor(props) {
         super(props);
     }
@@ -110,6 +116,7 @@ class Toolbar extends React.Component {
     }
 }
 class Post extends React.Component {
+    // Individual post listing
     constructor(props) {
         super(props);
         this.checkPost = this.checkPost.bind(this);

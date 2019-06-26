@@ -3,10 +3,15 @@ import { Header } from './header.js';
 import { Footer } from './footer.js';
 import { Navigation } from './nav.js';
 import { TextInput } from './components';
+import { Link } from 'react-router-dom';
 import { client } from './index.js';
 import { pad } from './posts.js';
 
 export class SinglePost extends React.Component {
+    /*
+        Page for a single post editor
+        path: /admin/posts/<postID>/
+    */
     constructor(props) {
         super(props);
 
@@ -46,6 +51,9 @@ export class SinglePost extends React.Component {
                         <div className="main-wrapper">
                             <Header />
                             <main className="main">
+                                <div className="post-link-wrapper">
+                                    <Link to="/posts/">Back to posts</Link>
+                                </div>
                                 <div className="main__menu">
                                     <button className="menu__button">General</button>
                                     <button className="menu__button">Content</button>

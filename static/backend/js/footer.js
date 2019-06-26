@@ -1,6 +1,9 @@
 import React from 'react';
 
 export class Footer extends React.Component {
+    /*
+        Footer for each page of admin
+    */
     render() {
         return (
             <footer className="footer">

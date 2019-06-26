@@ -13,6 +13,9 @@ import json
 import bcrypt
 from functools import wraps
 
+"""
+Set up the Flask instance, and set the JWT options
+"""
 app = Flask(__name__, static_folder='./static/build')
 app.config['SECRET_KEY'] = b'dev'
 app.config['JWT_SECRET_KEY'] = b'dev'
@@ -22,7 +25,7 @@ app.config['JWT_REFRESH_COOKIE_PATH'] = '/api/token-refresh/'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 jwt = JWTManager(app)
 
-
+# Sets development or production mode (uses info from ./config.py)
 @click.command()
 @click.option('--mode', '-m', default='development', help='Production mode (production, development)', required=True)
 def run(mode):
@@ -33,8 +36,13 @@ def run(mode):
     else:
         click.echo("Please use either development or production mode.")
         sys.exit()
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0') # accessible to other devices on the network
 
+"""
+A login-required decorator that protects the backend by requiring the user to login
+
+Basically, if there is no username in the session, send the user back to the login page.
+"""
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -47,6 +55,7 @@ def login_required(f):
             return f(*args, **kwargs)
     return decorated_function
 
+# Before each request, check to see if there is a user logged in. This bit might not be necessary, in which case it will be removed in the future
 @app.before_request
 def start_session():
     try:
@@ -80,20 +89,20 @@ def subpage(page):
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     try:
-        assert session['username']
+        assert session['username'] # if the user is already logged in, send them to the admin page
         return redirect(url_for('admin_root'))
     except (AssertionError, KeyError):
         pass
     if request.method == 'POST':
-        requestData = json.loads(request.get_data(as_text=True))
-        username = requestData['username']
-        password = requestData['password']
+        # requestData = json.loads(request.get_data(as_text=True))
+        username = request.form['username']
+        password = request.form['password']
         try:
-            permanent_session = requestData['remember']
+            permanent_session = request.form['remember'] # check to see if the user wants to stay logged in for 30 days
         except:
             permanent_session = False
 
-        request_path = requestData['redirect']
+        request_path = request.form['redirect'] # Get the redirect path
         if request_path == 'None':
             request_path = 'admin'
 
@@ -103,15 +112,17 @@ def login():
             storedHash = None
 
         if not storedHash:
+            # If there is no storedHash, there is no user by that name
             return jsonify("No user found"), 400
 
-        if (bcrypt.checkpw(password.encode(), storedHash.encode())):
+        if (bcrypt.checkpw(password.encode(), storedHash.encode())): # check the submitted password against the stored hash
             session.clear()
             if (permanent_session):
                 session['username'] = username
             else:
                 session.pop('username', None)
 
+            # Create access_ and refresh_ tokens for the authenticated user
             access_token = create_access_token(identity=username, fresh=True)
             refresh_token = create_refresh_token(identity=username)
 
@@ -130,43 +141,46 @@ def logout():
     response = jsonify({'success': 'true'})
     return response, 200
 
-@app.route('/admin/')
+@app.route('/admin/') # admin main (<Home />)
 @login_required
 def admin_root():
     return render_template('admin/admin.j2')
 
-@app.route('/admin/<page>/')
+@app.route('/admin/<page>/') # admin subpage (<Pages /> | <Posts /> | <Settings />)
 @login_required
 def admin_sub(page=None):
     return render_template('admin/admin.j2')
 
-@app.route('/admin/pages/<page>/')
+@app.route('/admin/pages/<page>/') # admin singular page (<SinglePage />)
 @login_required
 def admin_pages_sub(page=None):
     return render_template('admin/admin.j2')
 
-@app.route('/admin/posts/<post_id>/')
+@app.route('/admin/posts/<post_id>/') # admin single post (<SinglePost />)
 @login_required
 def admin_posts_sub(post_id=None):
     return render_template('admin/admin.j2')
 
-@app.route('/admin/posts/private/<post_id>/')
+@app.route('/admin/posts/private/<post_id>/') # admin _private_ post link (needs login)
 @login_required
 def private_post(post_id=None):
     # get post data from db
     post_data = db.posts.find_one({'postID': int(post_id)}, {"_id": 0})
     return render_template('post.j2', post_data=post_data)
 
-@app.route('/api/token-refresh/', methods=['POST'])
-@jwt_refresh_token_required
+@app.route('/api/token-refresh/', methods=['POST']) # refresh the token
+@jwt_refresh_token_required # refresh token is needed to do this
 def refresh():
-    new_token = create_access_token(identity=get_jwt_identity(), fresh=True) # True or False?
+    new_token = create_access_token(identity=get_jwt_identity(), fresh=True)
     response = jsonify({'access_token': new_token})
     return response
 
 
-# API
-@app.route('/api/<action>/<endpoint>/', methods=['POST'])
+""" API
+get, update, upload (files)
+siteData, page-data, post-data, backend-data
+"""
+@app.route('/api/<action>/<endpoint>/', methods=['POST']) # THE API
 @fresh_jwt_required
 def response(action, endpoint):
     if (endpoint == 'siteData'):
@@ -211,6 +225,13 @@ def response(action, endpoint):
         site_data["seo"]["data"]["robots"] = robot_text.decode()
         return jsonify(site_data)
     elif (endpoint == 'page-data'):
+        try:
+            requestData = json.loads(request.get_data(as_text=True))
+            if (requestData['pageName']):
+                post_data = db.pages.find_one({'name': requestData['pageName']}, {"_id": 0})
+                return jsonify(json.loads(json_util.dumps(post_data)))
+        except:
+            pass
         page_data = []
 
         for doc in db.pages.find():

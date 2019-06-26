@@ -1,6 +1,9 @@
 import React from 'react';
 
 export class ErrorBoundary extends React.Component {
+    /*
+        Error catcher to prevent White Screen of Death (from reactjs.org)
+    */
     constructor(props) {
         super(props);
         this.state = { hasError: false };
@@ -18,7 +21,6 @@ export class ErrorBoundary extends React.Component {
 
     render() {
         if (this.state.hasError && this.state.error && this.state.info) {
-            // You can render any custom fallback UI
             return (
                 <>
                     <h2>Something went wrong :(</h2>
@@ -31,7 +33,6 @@ export class ErrorBoundary extends React.Component {
                 </>
             );
         }
-
         return this.props.children;
     }
 }

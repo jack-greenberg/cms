@@ -3,6 +3,13 @@ import { BackendDataContext } from './index.js';
 import { pad } from './posts.js';
 
 export class Header extends React.Component {
+    /*
+        header for each page of admin
+
+            props: siteTitle (title of the site from the db)
+
+        includes <h1 /> of breadcrumbs, mostly for structure hierarchy
+    */
     constructor(props) {
         super(props);
 
@@ -29,6 +36,7 @@ export class Header extends React.Component {
         //     }
         // }
 
+        // Renders the title of the site from the BackendDataContext Provider
         return (
             <BackendDataContext.Consumer>
                 {context => (

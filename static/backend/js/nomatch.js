@@ -1,6 +1,9 @@
 import React from 'react';
 
 export class NoMatch extends React.Component {
+    /*
+        404 component (renders an animation of a confused periscope, and a link to /admin/)
+    */
     render() {
         return (
             <>

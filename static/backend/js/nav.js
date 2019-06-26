@@ -4,6 +4,9 @@ import { Route, NavLink } from "react-router-dom";
 import { client } from './index.js';
 
 export class Navigation extends React.Component {
+    /*
+        <Navigation /> component
+    */
     constructor(props) {
         super(props);
         this.triggerNavigation = this.triggerNavigation.bind(this);
@@ -15,6 +18,7 @@ export class Navigation extends React.Component {
         }
     }
     triggerNavigation() {
+        // Trigger opening the nav menu (for mobile only)
         this.setState({
             isOpen: !this.state.isOpen,
         });
@@ -23,15 +27,13 @@ export class Navigation extends React.Component {
     hideNav() {
         $('body').removeClass('show-navigation');
     }
-    componentDidMount() {
-        this.setState({
-            isOpen: false,
-        })
-        // if (this.state.isOpen) {
-        //     $('body').toggleClass("show-navigation");
-        // }
-    }
+    // componentDidMount() {
+    //     this.setState({
+    //         isOpen: false,
+    //     })
+    // }
     logout() {
+        // button to log out the user by calling /logout/ in the backend and redirecting the user to the home page
         client.post('/logout/')
         .then(response => {
             window.location.href = '/';
@@ -72,7 +74,7 @@ export class Navigation extends React.Component {
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to="/pages/" className="navlink" activeClassName="active" exact onClick={this.hideNav}>
+                                <NavLink to="/pages/" className="navlink" activeClassName="active" onClick={this.hideNav}>
                                     <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                         <path d="M4 6H6V8H4zM4 11H6V13H4zM4 16H6V18H4zM20 8L20 6 18.8 6 9.2 6 8.023 6 8.023 8 9.2 8 18.8 8zM8 11H20V13H8zM8 16H20V18H8z"/>
                                     </svg>
@@ -80,7 +82,7 @@ export class Navigation extends React.Component {
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to="/posts/" className="navlink" activeClassName="active" exact onClick={this.hideNav}>
+                                <NavLink to="/posts/" className="navlink" activeClassName="active" onClick={this.hideNav}>
                                     <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                         <path d="M20,3H4C2.897,3,2,3.897,2,5v14c0,1.103,0.897,2,2,2h16c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z M4,19V5h16 l0.002,14H4z"/>
                                         <path d="M6 7H18V9H6zM6 11H14V13H6zM6 15H10V17H6z"/>

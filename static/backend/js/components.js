@@ -11,6 +11,9 @@ import { client } from './index.js';
 */
 
 export class TextInput extends React.Component {
+    /*
+        props: fullWidth (sets width 100%), important (bold text), storedValue (default value from db), name (db key), form (db collection), label
+    */
     constructor(props) {
         super(props);
         this.handleTextEdit = this.handleTextEdit.bind(this);
@@ -29,12 +32,13 @@ export class TextInput extends React.Component {
     }
     handleTextEdit(e) {
         if (this.props.multiline) {
-            autosize($('#form-' + this.props.form + "--" + this.props.name));
+            autosize($('#form-' + this.props.form + "--" + this.props.name)); // autosizes the multiline inputs so there is no scrolling
         };
 
         let storedValue = this.state.storedValue;
         let currentValue = e.target.value;
         if (currentValue !== storedValue) {
+            // set state.edited if the input has been changed
             this.setState({
                 edited: true,
             });
@@ -45,6 +49,7 @@ export class TextInput extends React.Component {
         };
     };
     handleFinalizeEdit() {
+        // triggered by the finalize edit box, when a user confirms changes
         console.log(this.props.form, this.props.name, this.inputRef.current.value);
         client.post('/api/update/siteData/', {
             dbForm: this.props.form,
@@ -56,11 +61,13 @@ export class TextInput extends React.Component {
         });
 
         this.setState({
+            // set the stored value to the new data
             edited: false,
             storedValue: this.inputRef.current.value,
         });
     }
     handleCancelEdit() {
+        // reset the value of the input to the initial value
         this.inputRef.current.value = this.state.storedValue;
         this.setState({
             edited: false,
@@ -68,6 +75,8 @@ export class TextInput extends React.Component {
     }
     render() {
         let inputClassList = "input--text";
+
+        // sets the style of the input based on props
         if (this.props.fullWidth || this.props.multiline) {
             inputClassList += "  input--text--full-width";
         } else {
@@ -103,6 +112,9 @@ export class TextInput extends React.Component {
     }
 };
 export class FileInput extends React.Component {
+    /*
+        props: name, label, form, storedValue
+    */
     constructor(props) {
         super(props);
         this.handleFileChange = this.handleFileChange.bind(this);
@@ -115,17 +127,17 @@ export class FileInput extends React.Component {
         this.state = {
             edited: false,
             storedValue: this.props.storedValue,
-            tempValue: this.props.storedValue,
+            tempValue: this.props.storedValue, // when the input is changed, store the new value as a temp, in case the user cancels
         };
     };
     handleFinalizeEdit() {
-        let formData = new FormData();
+        let formData = new FormData(); // create form data to send to api
         formData.append('dbForm', this.props.form)
         formData.append('dbName', this.props.name)
         formData.append('dbData', $('#form-' + this.props.form + '--' + this.props.name).prop('files')[0])
 
         client.post('/api/upload/siteData/', formData, {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'multipart/form-data', // required by Flask
         })
         .then(function(response) {
             console.log(response.data);
@@ -133,7 +145,7 @@ export class FileInput extends React.Component {
 
         this.setState({
             edited: false,
-            storedValue: this.inputRef.current.value.split('\\').pop(),
+            storedValue: this.inputRef.current.value.split('\\').pop(), // remove `fakepath:\\`
         });
     }
     handleCancelEdit() {
@@ -144,6 +156,7 @@ export class FileInput extends React.Component {
         });
     }
     removeFile(e) {
+        // remove the file
         e.preventDefault(); // prevent the browser from opening up a file selection
         let confirmation = window.confirm("Are you sure you want to delete this file?");
         if (confirmation) {
@@ -157,6 +170,7 @@ export class FileInput extends React.Component {
         };
     }
     handleFileChange(e) {
+        // temporary edit handler
         let storedValue = this.state.storedValue;
         let fileName = e.target.value.split('\\').pop();
 
@@ -187,6 +201,9 @@ export class FileInput extends React.Component {
     }
 };
 class FinalizeEditBox extends React.Component {
+    /*
+        Buttons to confirm and cancel edits
+    */
     render() {
         return (
             <div className="finalize-edits">
@@ -202,6 +219,9 @@ class FinalizeEditBox extends React.Component {
 }
 
 export class ToggleSwitch extends React.Component {
+    /*
+        props: isChecked (determines the default state)
+    */
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);

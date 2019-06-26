@@ -7,6 +7,10 @@ import { browserHistory } from 'react-router';
 import { client } from './index.js';
 
 export class Home extends React.Component {
+    /*
+        <Home /> page (main page of admin)
+        path: /admin/
+    */
     constructor(props) {
         super(props);
 
@@ -15,6 +19,7 @@ export class Home extends React.Component {
         };
     };
     componentDidMount() {
+        // Get data about the site (i.e. title, SEO stuff, author, etc.)
         client.post('/api/get/siteData/')
             .then(function(response) {
                 this.setState({
@@ -105,6 +110,14 @@ class SEO extends React.Component {
                     </fieldset>
                 </div>
             </section>
+        )
+    }
+}
+
+class SocialProfile extends React.Component {
+    render() {
+        return (
+            null;
         )
     }
 }
