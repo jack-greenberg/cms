@@ -1,14 +1,8 @@
 .post-list {
     display: grid;
     width: 100%;
-    // max-width: 34em;
     font-size: .9em;
 
-    // GRID BREAKPOINTS:
-    // $grid1: ;
-    // $grid2: ;
-    // $grid3: ;
-    // $grid4: ;
     @media only screen and (min-width: $small) {
         font-size: 1em;
     }
@@ -26,7 +20,7 @@
         @media only screen and (min-width: $x-large) {
             display: grid;
             grid-gap: .25rem;
-            grid-template-columns: 2rem 4rem 9rem 2fr 2fr 2fr 3fr;
+            grid-template-columns: 2rem 3.5rem 10rem 2fr 2fr 2fr 3fr .5fr;
         }
     }
     &__body {
@@ -48,7 +42,7 @@
                 [row2-start] "checkbox title tag-title" auto [row2-end]
                 [row3-start] "checkbox published tags" auto [row3-end]
                 [row4-start] "checkbox last-edited tags" auto [row4-end]
-                / 3em 5fr 2fr
+                / 0em 5fr 2fr
             ;
             @media only screen and (min-width: $medium) {
                 grid-template:
@@ -57,13 +51,13 @@
                     [row3-start] "checkbox title title . . ." auto [row3-end]
                     [row4-start] ". published published last-edited last-edited ." auto [row4-end]
                     [row5-start] ". tags tags tags tags tags" auto [row5-end]
-                    / 2rem 1fr 1fr 1fr 1fr 1fr
+                    / 0rem 1fr 1fr 1fr 1fr 1fr
                 ;
             }
             @media only screen and (min-width: $x-large) {
                 grid-template:
-                    [row1-start] "checkbox id title status published last-edited tags" auto [row1-end]
-                    / 2rem 3.5rem 9rem 2fr 2fr 2fr 3fr
+                    [row1-start] "checkbox id title status published last-edited tags details" auto [row1-end]
+                    / 2rem 3.5rem 10rem 2fr 2fr 2fr 3fr .5fr
                 ;
             }
             &--checked {
@@ -73,7 +67,11 @@
                 grid-area: checkbox;
                 justify-self: center;
                 align-self: center;
+                display: none;
 
+                @media only screen and (min-width: $x-large) {
+                    display: block;
+                }
                 input {
                     width: 1.2em;
                     height: 1.2em;
@@ -87,6 +85,10 @@
                     margin: 0;
                     display: block;
 
+                    @media only screen and (min-width: $x-large) {
+                        width: 1em;
+                        height: 1em;
+                    }
                     &:checked {
                         background-color: $primary;
                         box-shadow: 0 0 0 1px $primary;
@@ -113,6 +115,9 @@
 
                 @media only screen and (min-width: $medium) {
                     font-size: .8em;
+                }
+                @media only screen and (min-width: $x-large) {
+                    font-size: .9em;
                 }
                 .draft-prefix {
                     color: $gray;
@@ -141,6 +146,7 @@
                 }
             }
             &__status {
+                font-size: .9em;
                 font-family: $sans;
                 display: inline;
                 grid-area: status;
@@ -260,6 +266,20 @@
                     padding: 0 .25em;
                     box-shadow: 0 0 0 1px $gray--lighter;
                     margin: .25em;
+                }
+            }
+            &__details {
+                display: none;
+
+                @media only screen and (min-width: $xxx-large) {
+                    display: block;
+                    display: flex;
+                    align-items: center;
+                    grid-area: details;
+
+                    svg {
+                        display: block;
+                    }
                 }
             }
         }
