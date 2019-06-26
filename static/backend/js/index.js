@@ -7,6 +7,7 @@ import { Pages } from './pages.js';
 import { Posts } from './posts.js';
 import { Header } from './header.js';
 import { Settings } from './settings.js';
+import { SinglePost } from './singlepost.js';
 import { NoMatch } from './nomatch.js';
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import axios from 'axios';
@@ -115,7 +116,8 @@ class App extends React.Component {
                                 <Route exact path="/" render={(props) => <Home {...props} />} />
                                 <Route exact path="/pages/" render={(props) => <Pages {...props} />} />
                                 <Route path="/pages/:page/" render={(props) => <NoMatch {...props} />} />
-                                <Route path="/posts/" render={(props) => <Posts {...props} />} />
+                                <Route exact path="/posts/" render={(props) => <Posts {...props} />} />
+                                <Route path="/posts/:postid/" render={(props) => <SinglePost {...props} />} />
                                 <Route path="/settings/" render={(props) => <Settings {...props} />} />
                                 <Route component={NoMatch} /> {/* 404 */}
                             </Switch>
