@@ -25,7 +25,7 @@ export class TextInput extends React.Component {
         }
     }
     componentDidMount() {
-        autosize($('#form-' + this.props.form + "--" + this.props.name));
+        // autosize($('#form-' + this.props.form + "--" + this.props.name));
     }
     handleTextEdit(e) {
         if (this.props.multiline) {
