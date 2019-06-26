@@ -4,7 +4,7 @@ import { Footer } from './footer.js';
 import { Navigation } from './nav.js';
 import { client } from './index.js';
 
-function pad(n, width, z) {
+export function pad(n, width, z) {
     // Helper function to turn 1 into 0001
     z = z || '0';
     n = n + '';
@@ -22,19 +22,23 @@ export class Posts extends React.Component {
     componentDidMount() {
         client.post('/api/get/post-data/')
             .then(function(response) {
+                console.log(response.data);
                 this.setState({
                     postData: response.data,
+                    isPostDraft: response.data.status == "draft" ? true : false,
                 });
             }.bind(this))
+            .catch(error => {
+                throw new Error(error);
+            })
     }
-
     render() {
         if (this.state.postData) {
             return (
                 <>
                     <Navigation />
                         <div className="main-wrapper">
-                            <Header />
+                            <Header draft={this.state.isPostDraft} />
                             {/*<ToolBar />*/}
                             <main className="main">
                                 <section className="post-list">
@@ -158,9 +162,13 @@ class Post extends React.Component {
                         )
                     })}
                 </div>
-                {/*<div className="post__details" role="cell">
-                    <button>...</button>
-                </div>*/}
+                <div className="post__details" role="cell">
+                    <button>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2S13.1 10 12 10zM12 4c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2S13.1 4 12 4zM12 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2S13.1 16 12 16z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         )
     }
