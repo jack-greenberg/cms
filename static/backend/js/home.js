@@ -116,8 +116,6 @@ class SEO extends React.Component {
 
 class SocialProfile extends React.Component {
     render() {
-        return (
-            null;
-        )
+        return null;
     }
 }

@@ -136,7 +136,7 @@ body {
 }
 .main {
     background-color: $canvas;
-    padding: 1em 1em 0;
+    padding: 1em 1em 2em;
 
     @media only screen and (min-width: $xx-large) {
         .flex-wrapper {
@@ -160,6 +160,9 @@ body {
     border: 1px solid $gray--lighter;
     box-shadow: $shadow;
 
+    // &:last-child {
+    //     margin-bottom: 3em;
+    // }
     &__heading {
         font-size: 1.5em;
         font-family: $sans;
@@ -197,12 +200,14 @@ fieldset {
         }
     }
     &--text {
-        font-size: 1em;
+        font-size: .9em;
         font-family: $sans;
         color: $white;
-        padding: .2em .35em;
+        background-color: $primary;
+        padding: .4em 1em;
         border: none;
-        border-radius: .25em;
+        border-radius: 99em;
+        text-transform: uppercase;
         text-decoration: none;
 
         &--red {
@@ -562,4 +567,9 @@ fieldset {
             }
         }
     }
+}
+.link {
+    font-family: $sans;
+    color: inherit;
+    text-decoration: underline;
 }

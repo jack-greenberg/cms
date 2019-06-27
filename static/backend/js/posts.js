@@ -18,9 +18,11 @@ export class Posts extends React.Component {
     */
     constructor(props) {
         super(props);
+        this.checkAll = this.checkAll.bind(this);
 
         this.state = {
             postData: [],
+            allChecked: false,
         };
     };
     componentDidMount() {
@@ -36,6 +38,11 @@ export class Posts extends React.Component {
             .catch(error => {
                 throw new Error(error);
             })
+    };
+    checkAll() {
+        this.setState({
+            allChecked: true,
+        })
     }
     render() {
         if (this.state.postData) {
@@ -44,8 +51,8 @@ export class Posts extends React.Component {
                     <Navigation />
                         <div className="main-wrapper">
                             <Header draft={this.state.isPostDraft} />
-                            {/*<ToolBar />*/}
                             <main className="main">
+                                <Toolbar checkAll={this.checkAll} />
                                 <section className="post-list">
                                     <div className="post-list__head">
                                         <div role="cell">{/* Empty div to align the checkbox */}</div>
@@ -60,7 +67,7 @@ export class Posts extends React.Component {
                                     <div className="post-list__body">
                                         {this.state.postData.map((postData, index) => {
                                             return (
-                                                <Post data={postData} key={index} />
+                                                <Post data={postData} key={index} allChecked={this.state.allChecked} />
                                             )
                                         }).sort((a,b) => {
                                             // sort by id
@@ -87,12 +94,14 @@ class Toolbar extends React.Component {
     render() {
         return (
             <div className="toolbar">
-                <button className="btn  btn--icon" data-tip data-for="checkAll">
+                <button className="btn  btn--icon" data-tip data-for="checkAll" onClick={this.props.checkAll}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2.394 13.742L7.137 17.362 14.753 8.658 13.247 7.342 6.863 14.638 3.606 12.152zM21.753 8.658L20.247 7.342 13.878 14.621 13.125 14.019 11.875 15.581 14.122 17.379z"/></svg>
                 </button>
                 <button className="btn  btn--icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <path d="M15,2H9C7.897,2,7,2.897,7,4v2H3v2h2v12c0,1.103,0.897,2,2,2h10c1.103,0,2-0.897,2-2V8h2V6h-4V4C17,2.897,16.103,2,15,2z M9,4h6v2H9V4z M17,20H7V8h1h8h1V20z"/>
+                        <path d="M14 10L10 10 10 13 7 13 12 18 17 13 14 13z" />
+                        <path d="M21.8,6.4l-3-4C18.611,2.148,18.314,2,18,2H6C5.686,2,5.389,2.148,5.2,2.4l-3,4l0.014,0.01C2.088,6.577,2,6.774,2,7v12 c0,1.103,0.897,2,2,2h16c1.103,0,2-0.897,2-2V7c0-0.226-0.088-0.423-0.214-0.59L21.8,6.4z M6.5,4h11L19,6H5L6.5,4z M4,19V8h16 l0.002,11H4z"
+                        />
                     </svg>
                 </button>
                 <button className="btn  btn--icon">
@@ -123,7 +132,7 @@ class Post extends React.Component {
 
         this.state = {
             data: this.props.data,
-            checked: false,
+            checked: this.props.allChecked,
             status: this.props.data.status,
         }
     }
@@ -138,7 +147,7 @@ class Post extends React.Component {
 
         return (
             <div className={!this.state.checked ? "post" : "post  post--checked"}>
-                <div className="post__checkbox" role="cell"><input type="checkbox" onClick={this.checkPost}/></div>
+                <div className="post__checkbox" role="cell"><input type="checkbox" onClick={this.checkPost} defaultChecked={this.state.checked ? true : false} /></div>
                 <div className="post__id" role="cell">
                     {this.state.status == 'draft' ? <span className="draft-prefix">d-</span> : null}{pad(this.state.data.postID, 4)}
                 </div>
