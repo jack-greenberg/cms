@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+var WebpackNotifierPlugin = require('webpack-notifier');
 
 module.exports =  {
     mode: 'development',
@@ -26,7 +27,8 @@ module.exports =  {
     plugins: [
         new MiniCssExtractPlugin({
             filename: "[name].css"
-        })
+        }),
+        new WebpackNotifierPlugin(),
     ],
     module: {
         rules: [

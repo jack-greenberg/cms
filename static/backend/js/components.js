@@ -3,6 +3,7 @@ import * as Icon from 'react-feather';
 var autosize = require('autosize');
 // import axios from 'axios';
 import { client } from './index.js';
+var $ = require('jquery');
 
 /*
     <TextInput [fullWidth, important, multiline] storedValue={} name={""} form={""} label={""} handleUpdate={this.handleTextUpdate} />
@@ -28,7 +29,7 @@ export class TextInput extends React.Component {
         }
     }
     componentDidMount() {
-        // autosize($('#form-' + this.props.form + "--" + this.props.name));
+        autosize($('#form-' + this.props.form + "--" + this.props.name));
     }
     handleTextEdit(e) {
         if (this.props.multiline) {

@@ -2,6 +2,7 @@
     Login form for the login page, to send the form data to the api for validation
 */
 import axios from 'axios';
+var $ = require('jquery');
 
 $('.js-submit').on('click', function(e) {
     e.preventDefault(); // Stop the button from doing what it wants to do

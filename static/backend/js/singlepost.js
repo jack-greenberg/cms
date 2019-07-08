@@ -6,7 +6,7 @@ import { TextInput } from './components';
 import { Link } from 'react-router-dom';
 import { client } from './index.js';
 import { pad } from './posts.js';
-var $ = require('./jquery.min.js');
+var $ = require('jquery');
 
 function arrayRemove(arr, value) {
     // Helper function to remove element from array
