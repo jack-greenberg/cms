@@ -20,7 +20,7 @@ export class Home extends React.Component {
     };
     componentDidMount() {
         // Get data about the site (i.e. title, SEO stuff, author, etc.)
-        client.post('/api/get/siteData/')
+        client.get('/api/v1/siteData/')
             .then(function(response) {
                 this.setState({
                     backendData: response.data,
@@ -44,6 +44,7 @@ export class Home extends React.Component {
                             <div className="flex-wrapper">
                                 <General inputData={this.state.backendData['general']['data']} />
                                 <SEO inputData={this.state.backendData['seo']['data']} />
+                                <Social inputData={this.state.backendData['social']['data']}/>
                             </div>
                         </main>
                         <Footer />
@@ -114,8 +115,29 @@ class SEO extends React.Component {
     }
 }
 
-class SocialProfile extends React.Component {
+class Social extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            inputData: this.props.inputData,
+        }
+    }
     render() {
-        return null;
+        return (
+            <section className="section">
+                <div className="section__heading">
+                    <h2>Social</h2>
+                </div>
+                <div className="section__body">
+                    <fieldset className="form-container">
+                        <TextInput storedValue={this.state.inputData['facebook']} form="social" name="facebook" label="Facebook" />
+                        <TextInput storedValue={this.state.inputData['instagram']} form="social" name="instagram" label="Instagram" />
+                        <TextInput storedValue={this.state.inputData['linkedin']} form="social" name="linkedin" label="LinkedIn" />
+                        <TextInput storedValue={this.state.inputData['email']} form="social" name="email" label="Email" />
+                    </fieldset>
+                </div>
+            </section>
+        )
     }
 }

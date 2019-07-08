@@ -52,13 +52,12 @@ export class TextInput extends React.Component {
     handleFinalizeEdit() {
         // triggered by the finalize edit box, when a user confirms changes
         console.log(this.props.form, this.props.name, this.inputRef.current.value);
-        client.post('/api/update/siteData/', {
-            dbForm: this.props.form,
-            dbName: this.props.name,
-            dbData: this.inputRef.current.value,
+        client.put('/api/v1/siteData/' + this.props.form, {
+            name: this.props.name,
+            data: this.inputRef.current.value,
         })
         .then(function(response) {
-            console.log(response.data);
+            console.log(response);
         });
 
         this.setState({
@@ -133,15 +132,14 @@ export class FileInput extends React.Component {
     };
     handleFinalizeEdit() {
         let formData = new FormData(); // create form data to send to api
-        formData.append('dbForm', this.props.form)
-        formData.append('dbName', this.props.name)
-        formData.append('dbData', $('#form-' + this.props.form + '--' + this.props.name).prop('files')[0])
+        formData.append('name', this.props.name)
+        formData.append('data', $('#form-' + this.props.form + '--' + this.props.name).prop('files')[0])
 
-        client.post('/api/upload/siteData/', formData, {
+        client.post('/api/v1/siteData/' + this.props.form, formData, {
             'Content-Type': 'multipart/form-data', // required by Flask
         })
         .then(function(response) {
-            console.log(response.data);
+            console.log(response);
         });
 
         this.setState({

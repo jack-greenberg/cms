@@ -20,10 +20,10 @@ export class SinglePage extends React.Component {
     }
     componentDidMount() {
         let pathPage = window.location.href.slice(1,-1).split('/').pop() || window.location.href.slice(1,-1).split('/').pop();
-        client.post('/api/get/page-data/', {
-            pageName: pathPage.charAt(0).toUpperCase() + pathPage.slice(1),
-        })
+        console.log(pathPage);
+        client.get('/api/v1/pages/' + pathPage)
         .then(response => {
+            console.log(response);
             this.setState({
                 pageData: response.data,
             });
@@ -46,7 +46,7 @@ export class SinglePage extends React.Component {
                                 </div>
                                 <article className="main__general">
                                     <section className="main__general__basic">
-                                        <TextInput important storedValue={this.state.pageData['name']} form="basic" name="title" label="Title" />
+                                        <TextInput important storedValue={this.state.pageData['displayName']} form="basic" name="title" label="Title" />
                                         <TextInput storedValue={this.state.pageData['path']} form="basic" title="path" label="Path" />
                                         <div className="flex-wrapper">
                                             <ToggleSwitch isChecked={this.state.pageData['live']} />

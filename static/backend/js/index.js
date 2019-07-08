@@ -109,9 +109,9 @@ class App extends React.Component {
     };
 
     componentDidMount() {
-        client.post('/api/get/backend-data/')
+        client.get('/api/v1/siteData/')
             .then(function (response) {
-                if (response.status == 200) {
+                if (response.status < 400) {
                     this.setState({
                         backendData: response.data,
                         isLoaded: true,

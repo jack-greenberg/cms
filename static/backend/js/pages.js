@@ -22,12 +22,12 @@ export class Pages extends React.Component {
     };
     componentDidMount() {
         // get the data about the pages
-        client.post('/api/get/page-data/')
+        client.get('/api/v1/pages/')
             .then(function(response) {
+                console.log(response);
                 this.setState({
                     pageData: response.data,
                 });
-                console.log(response.data);
             }.bind(this))
             .catch(function(error) {
                 console.log(error);
@@ -95,7 +95,7 @@ class PageListItem extends React.Component {
         this.state = {
             checked: false,
             status: this.props.data['live'] ? true : false,
-            pageName: this.props.data['name'],
+            pageName: this.props.data['displayName'],
             lastUpdated: new Date(this.props.data['lastUpdated']['$date']).toLocaleDateString(),
         }
     }

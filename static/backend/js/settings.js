@@ -17,7 +17,7 @@ export class Settings extends React.Component {
         };
     };
     componentDidMount() {
-        client.post('/api/get/siteData/')
+        client.get('/api/v1/siteData/')
             .then(function(response) {
                 this.setState({
                     backendData: response.data,

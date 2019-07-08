@@ -27,9 +27,9 @@ export class Posts extends React.Component {
     };
     componentDidMount() {
         // Get the data about the posts (array)
-        client.post('/api/get/post-data/')
+        client.get('/api/v1/posts/')
             .then(function(response) {
-                console.log(response.data);
+                console.log(response);
                 this.setState({
                     postData: response.data,
                     isPostDraft: response.data.status == "draft" ? true : false,

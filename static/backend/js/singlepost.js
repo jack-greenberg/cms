@@ -26,13 +26,11 @@ export class SinglePost extends React.Component {
 
         this.state = {
             postData: null,
-            view: 'general',
+            view: window.location.hash ? window.location.hash.slice(1) : "general",
         }
     }
     componentDidMount() {
-        client.post('/api/get/post-data/', {
-            postID: window.location.href.slice(1,-1).split('/').pop() || window.location.href.slice(1,-1).split('/').pop(),
-        })
+        client.get('/api/v1/posts/' + window.location.href.split("/")[5])
         .then(response => {
             this.setState({
                 postData: response.data,
@@ -44,6 +42,7 @@ export class SinglePost extends React.Component {
         this.setState({
             view: e.target.value,
         });
+        window.location.hash = e.target.value;
     };
     render() {
         if (this.state.postData) {
@@ -212,7 +211,13 @@ class Content extends React.Component {
     render() {
         return (
             <article className="main__content">
-                <h2>Content</h2>
+                <section className="section  section--full-width">
+                    <div className="flex-wrapper flex-wrapper--between">
+                        <h2 className="section__heading">Content</h2>
+                        <button className="content__save">Save</button>
+                    </div>
+                    {/* Content editor here */}
+                </section>
             </article>
         )
     }

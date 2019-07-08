@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for, jsonify, redirect, request, session, flash
+from flask.views import MethodView
 from flask_jwt_extended import JWTManager, fresh_jwt_required, jwt_required, create_access_token, get_jwt_identity, jwt_refresh_token_required, create_refresh_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 from werkzeug.security import check_password_hash, generate_password_hash, safe_str_cmp
 from werkzeug.utils import secure_filename
@@ -12,6 +13,7 @@ from bson import json_util
 import json
 import bcrypt
 from functools import wraps
+from modules.api import *
 
 """
 Set up the Flask instance, and set the JWT options
@@ -25,6 +27,25 @@ app.config['JWT_REFRESH_COOKIE_PATH'] = '/api/token-refresh/'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 jwt = JWTManager(app)
 
+
+"""
+Register API from modules/api.py
+
+From http://flask.pocoo.org/docs/1.0/views/#method-views-for-apis
+"""
+def register_api(view, endpoint, url, pk='id', pk_type='int'):
+    view_func = view.as_view(endpoint)
+    app.add_url_rule(url, defaults={pk: None},
+                     view_func=view_func, methods=['GET',])
+    app.add_url_rule(url, view_func=view_func, methods=['POST',])
+    app.add_url_rule('%s<%s:%s>' % (url, pk_type, pk), view_func=view_func,
+                     methods=['POST', 'GET', 'PUT', 'DELETE'])
+
+register_api(SiteAPI, 'site_api', '/api/v1/siteData/', pk='type', pk_type='string')
+register_api(PostAPI, 'post_api', '/api/v1/posts/', pk='post_id')
+register_api(PageAPI, 'page_api', '/api/v1/pages/', pk='page_name', pk_type='string')
+
+
 # Sets development or production mode (uses info from ./config.py)
 @click.command()
 @click.option('--mode', '-m', default='development', help='Production mode (production, development)', required=True)
@@ -37,6 +58,7 @@ def run(mode):
         click.echo("Please use either development or production mode.")
         sys.exit()
     app.run(host='0.0.0.0') # accessible to other devices on the network
+
 
 """
 A login-required decorator that protects the backend by requiring the user to login
@@ -55,15 +77,15 @@ def login_required(f):
             return f(*args, **kwargs)
     return decorated_function
 
-# Before each request, check to see if there is a user logged in. This bit might not be necessary, in which case it will be removed in the future
+
 @app.before_request
 def start_session():
+    # Before each request, check to see if there is a user logged in. This bit might not be necessary, in which case it will be removed in the future
     try:
         assert session['username']
     except (AssertionError, KeyError):
         session['username'] = ""
-        # return redirect(url_for('index'))
-    # session.permanent = True
+        return redirect(url_for('index'))
 
 @app.route('/')
 def index():
@@ -94,15 +116,15 @@ def login():
     except (AssertionError, KeyError):
         pass
     if request.method == 'POST':
-        # requestData = json.loads(request.get_data(as_text=True))
-        username = request.form['username']
-        password = request.form['password']
+        requestData = json.loads(request.get_data(as_text=True))
+        username = requestData['username']
+        password = requestData['password']
         try:
-            permanent_session = request.form['remember'] # check to see if the user wants to stay logged in for 30 days
+            permanent_session = requestData['remember'] # check to see if the user wants to stay logged in for 30 days
         except:
             permanent_session = False
 
-        request_path = request.form['redirect'] # Get the redirect path
+        request_path = requestData['redirect'] # Get the redirect path
         if request_path == 'None':
             request_path = 'admin'
 
@@ -176,96 +198,98 @@ def refresh():
     return response
 
 
-""" API
-get, update, upload (files)
-siteData, page-data, post-data, backend-data
-"""
-@app.route('/api/<action>/<endpoint>/', methods=['POST']) # THE API
-@fresh_jwt_required
-def response(action, endpoint):
-    if (endpoint == 'siteData'):
-        site_data = {}
 
-        if (action == 'update'):
-            requestData = json.loads(request.get_data(as_text=True))
-            _form = requestData['dbForm']
-            _name = requestData['dbName']
-            _data = requestData['dbData']
-            db.siteData.update_one(
-                {'name': _form},
-                {
-                    "$set": {
-                        "data." + _name: _data,
-                    }
-                }
-            )
-        elif (action == 'upload'):
-            _form = request.form['dbForm']
-            _name = request.form['dbName']
 
-            f = request.files['dbData']
-            f.save(os.getcwd() + '/tmp/' + secure_filename(f.filename))
 
-            db.siteData.update_one(
-                {'name': _form},
-                {
-                    "$set": {
-                        "data." + _name: secure_filename(f.filename),
-                    }
-                }
-            )
 
-        for doc in db.siteData.find():
-            site_data[doc["name"]] = json.loads(json_util.dumps(doc))
 
-        robot_text = ""
-        with app.open_resource('robots.txt') as f:
-            robot_text = f.read()
 
-        site_data["seo"]["data"]["robots"] = robot_text.decode()
-        return jsonify(site_data)
-    elif (endpoint == 'page-data'):
-        try:
-            requestData = json.loads(request.get_data(as_text=True))
-            if (requestData['pageName']):
-                post_data = db.pages.find_one({'name': requestData['pageName']}, {"_id": 0})
-                return jsonify(json.loads(json_util.dumps(post_data)))
-        except:
-            pass
-        page_data = []
-
-        for doc in db.pages.find():
-            page_data.append(json.loads(json_util.dumps(doc)))
-        return jsonify(page_data)
-    elif (endpoint == 'backend-data'):
-        backend_data = {}
-
-        for doc in db.siteData.find():
-            backend_data[doc["name"]] = json.loads(json_util.dumps(doc))
-
-        return jsonify(backend_data)
-    elif (endpoint == 'robots'):
-        response = ""
-        robots = f.open('robots.txt')
-        for line in robots:
-            response += line + '\n'
-        return jsonify(response)
-    elif (endpoint == 'post-data'):
-        try:
-            requestData = json.loads(request.get_data(as_text=True))
-            if (requestData['postID']):
-                post_data = db.posts.find_one({'postID': int(requestData['postID'])}, {"_id": 0})
-                return jsonify(json.loads(json_util.dumps(post_data)))
-        except json.decoder.JSONDecodeError:
-            pass
-
-        post_data = []
-
-        for doc in db.posts.find():
-            post_data.append(json.loads(json_util.dumps(doc)))
-        return jsonify(post_data)
-    else:
-        return jsonify("No endpoint requested")
+# @app.route('/api/<action>/<endpoint>/', methods=['POST']) # THE API
+# @fresh_jwt_required
+# def response(action, endpoint):
+#     if (endpoint == 'siteData'):
+#         site_data = {}
+#
+#         if (action == 'update'):
+#             requestData = json.loads(request.get_data(as_text=True))
+#             _form = requestData['dbForm']
+#             _name = requestData['dbName']
+#             _data = requestData['dbData']
+#             db.siteData.update_one(
+#                 {'name': _form},
+#                 {
+#                     "$set": {
+#                         "data." + _name: _data,
+#                     }
+#                 }
+#             )
+#         elif (action == 'upload'):
+#             _form = request.form['dbForm']
+#             _name = request.form['dbName']
+#
+#             f = request.files['dbData']
+#             f.save(os.getcwd() + '/tmp/' + secure_filename(f.filename))
+#
+#             db.siteData.update_one(
+#                 {'name': _form},
+#                 {
+#                     "$set": {
+#                         "data." + _name: secure_filename(f.filename),
+#                     }
+#                 }
+#             )
+#
+#         for doc in db.siteData.find():
+#             site_data[doc["name"]] = json.loads(json_util.dumps(doc))
+#
+#         robot_text = ""
+#         with app.open_resource('robots.txt') as f:
+#             robot_text = f.read()
+#
+#         site_data["seo"]["data"]["robots"] = robot_text.decode()
+#         return jsonify(site_data)
+#     elif (endpoint == 'page-data'):
+#         try:
+#             requestData = json.loads(request.get_data(as_text=True))
+#             if (requestData['pageName']):
+#                 post_data = db.pages.find_one({'name': requestData['pageName']}, {"_id": 0})
+#                 return jsonify(json.loads(json_util.dumps(post_data)))
+#         except:
+#             pass
+#         page_data = []
+#
+#         for doc in db.pages.find():
+#             page_data.append(json.loads(json_util.dumps(doc)))
+#         return jsonify(page_data)
+#     elif (endpoint == 'backend-data'):
+#         backend_data = {}
+#
+#         for doc in db.siteData.find():
+#             backend_data[doc["name"]] = json.loads(json_util.dumps(doc))
+#
+#         return jsonify(backend_data)
+#     elif (endpoint == 'robots'):
+#         response = ""
+#         robots = f.open('robots.txt')
+#         for line in robots:
+#             response += line + '\n'
+#         return jsonify(response)
+#     elif (endpoint == 'post-data'):
+#         try:
+#             requestData = json.loads(request.get_data(as_text=True))
+#             if (requestData['postID']):
+#                 post_data = db.posts.find_one({'postID': int(requestData['postID'])}, {"_id": 0})
+#                 return jsonify(json.loads(json_util.dumps(post_data)))
+#         except json.decoder.JSONDecodeError:
+#             pass
+#
+#         post_data = []
+#
+#         for doc in db.posts.find():
+#             post_data.append(json.loads(json_util.dumps(doc)))
+#         return jsonify(post_data)
+#     else:
+#         return jsonify("No endpoint requested")
 
 if __name__ == '__main__':
     run()
