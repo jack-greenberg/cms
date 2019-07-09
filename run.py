@@ -2,7 +2,6 @@ from flask import Flask, render_template, url_for, jsonify, redirect, request, s
 from flask.views import MethodView
 from flask_jwt_extended import JWTManager, fresh_jwt_required, jwt_required, create_access_token, get_jwt_identity, jwt_refresh_token_required, create_refresh_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 from werkzeug.security import check_password_hash, generate_password_hash, safe_str_cmp
-from werkzeug.utils import secure_filename
 import click
 import functools
 import sys, os
@@ -85,7 +84,6 @@ def start_session():
         assert session['username']
     except (AssertionError, KeyError):
         session['username'] = ""
-        return redirect(url_for('index'))
 
 @app.route('/')
 def index():
@@ -196,100 +194,6 @@ def refresh():
     new_token = create_access_token(identity=get_jwt_identity(), fresh=True)
     response = jsonify({'access_token': new_token})
     return response
-
-
-
-
-
-
-
-
-# @app.route('/api/<action>/<endpoint>/', methods=['POST']) # THE API
-# @fresh_jwt_required
-# def response(action, endpoint):
-#     if (endpoint == 'siteData'):
-#         site_data = {}
-#
-#         if (action == 'update'):
-#             requestData = json.loads(request.get_data(as_text=True))
-#             _form = requestData['dbForm']
-#             _name = requestData['dbName']
-#             _data = requestData['dbData']
-#             db.siteData.update_one(
-#                 {'name': _form},
-#                 {
-#                     "$set": {
-#                         "data." + _name: _data,
-#                     }
-#                 }
-#             )
-#         elif (action == 'upload'):
-#             _form = request.form['dbForm']
-#             _name = request.form['dbName']
-#
-#             f = request.files['dbData']
-#             f.save(os.getcwd() + '/tmp/' + secure_filename(f.filename))
-#
-#             db.siteData.update_one(
-#                 {'name': _form},
-#                 {
-#                     "$set": {
-#                         "data." + _name: secure_filename(f.filename),
-#                     }
-#                 }
-#             )
-#
-#         for doc in db.siteData.find():
-#             site_data[doc["name"]] = json.loads(json_util.dumps(doc))
-#
-#         robot_text = ""
-#         with app.open_resource('robots.txt') as f:
-#             robot_text = f.read()
-#
-#         site_data["seo"]["data"]["robots"] = robot_text.decode()
-#         return jsonify(site_data)
-#     elif (endpoint == 'page-data'):
-#         try:
-#             requestData = json.loads(request.get_data(as_text=True))
-#             if (requestData['pageName']):
-#                 post_data = db.pages.find_one({'name': requestData['pageName']}, {"_id": 0})
-#                 return jsonify(json.loads(json_util.dumps(post_data)))
-#         except:
-#             pass
-#         page_data = []
-#
-#         for doc in db.pages.find():
-#             page_data.append(json.loads(json_util.dumps(doc)))
-#         return jsonify(page_data)
-#     elif (endpoint == 'backend-data'):
-#         backend_data = {}
-#
-#         for doc in db.siteData.find():
-#             backend_data[doc["name"]] = json.loads(json_util.dumps(doc))
-#
-#         return jsonify(backend_data)
-#     elif (endpoint == 'robots'):
-#         response = ""
-#         robots = f.open('robots.txt')
-#         for line in robots:
-#             response += line + '\n'
-#         return jsonify(response)
-#     elif (endpoint == 'post-data'):
-#         try:
-#             requestData = json.loads(request.get_data(as_text=True))
-#             if (requestData['postID']):
-#                 post_data = db.posts.find_one({'postID': int(requestData['postID'])}, {"_id": 0})
-#                 return jsonify(json.loads(json_util.dumps(post_data)))
-#         except json.decoder.JSONDecodeError:
-#             pass
-#
-#         post_data = []
-#
-#         for doc in db.posts.find():
-#             post_data.append(json.loads(json_util.dumps(doc)))
-#         return jsonify(post_data)
-#     else:
-#         return jsonify("No endpoint requested")
 
 if __name__ == '__main__':
     run()

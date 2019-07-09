@@ -1,20 +1,18 @@
 from flask import jsonify, request
 import json
 from bson import json_util
+from werkzeug.utils import secure_filename
 from flask.views import MethodView
 from flask_jwt_extended import fresh_jwt_required
 from modules.database import db
 
 """ API
-
  URL (/api/v1/...)  | METHOD| DESCRIPTION
 ----------------------------------------------------
  /siteData/         | GET   | Return all the bits
                     |       | of site data
 ----------------------------------------------------
-
 """
-
 class SiteAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, type):
@@ -60,7 +58,6 @@ class SiteAPI(MethodView):
             }
         )
         return (jsonify("Updated"), 201)
-
 class PostAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, post_id):
@@ -87,12 +84,16 @@ class PostAPI(MethodView):
     def put(self, post_id):
         # update a single post
         ### get new Data from data in body
+        requestData = json.loads(request.get_data(as_text=True))
+        print("----------------------")
+        print(requestData)
+        print("----------------------")
         db.posts.update_one({'postID': post_id}, {
             "$set": {
-                # Set the new data in the db, maybe check if it already exists, and ignore if it doesn't
+                list(requestData.keys())[0]: requestData[list(requestData.keys())[0]]
             }
         })
-        pass
+        return jsonify("Updated"), 201
 class PageAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, page_name):

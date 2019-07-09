@@ -35,7 +35,7 @@ export class SinglePost extends React.Component {
             this.setState({
                 postData: response.data,
             });
-            console.log(response.data);
+            console.log(response);
         })
     }
     changeView(e) {
@@ -120,7 +120,7 @@ class General extends React.Component {
                         <a href={"/admin/posts/private/" + this.props.postData.postID + "/"} className="link">Private link</a>
                     </div>
                 </section>
-                <Tags tags={this.props.postData['tags']} />
+                <Tags tags={this.props.postData['tags']} postID={this.props.postData['postID']} />
             </article>
         )
     }
@@ -139,17 +139,11 @@ class Tags extends React.Component {
     }
     handleTagKeyUp(e) {
         if (e.keyCode == 13 && e.target.value == "") {
-            // user clicks enter, but nothing is in the field
+            // user presses enter, but nothing is in the field
             return;
         };
         if (e.keyCode == 13) {
-            // axios call to add tag
-            var tagList = this.state.tags;
-            tagList.push(e.target.value);
-            this.setState({
-                tags: tagList,
-            });
-            e.target.value = "";
+            this.addTag();
         } else {
             return;
         }
@@ -161,7 +155,14 @@ class Tags extends React.Component {
         var tagList = this.state.tags;
         tagList.push($('.js-add-tag__input').val());
         this.setState({
-            tags: tagList,
+            tags: tagList.filter((v, i, a) => a.indexOf(v) === i),
+        }, function() {
+            client.put('/api/v1/posts/' + this.props.postID, {
+                tags: this.state.tags,
+            })
+            .then(response => {
+                console.log(response);
+            })
         });
         $('.js-add-tag__input').val("");
         $('.js-add-tag__input').focus();
@@ -173,6 +174,13 @@ class Tags extends React.Component {
         var newTagList = arrayRemove(tagList, tagToRemove);
         this.setState({
             tags: newTagList,
+        }, function() {
+            client.put('/api/v1/posts/' + this.props.postID, {
+                tags: this.state.tags,
+            })
+            .then(response => {
+                console.log(response);
+            })
         })
     }
     render() {
