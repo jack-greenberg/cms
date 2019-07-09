@@ -13,7 +13,7 @@ var $ = require('jquery');
 
 export class TextInput extends React.Component {
     /*
-        props: fullWidth (sets width 100%), important (bold text), storedValue (default value from db), name (db key), form (db collection), label
+        props: fullWidth (sets width 100%), important (bold text), storedValue (default value from db), name (db key), label, pk, endpoint
     */
     constructor(props) {
         super(props);
@@ -52,10 +52,9 @@ export class TextInput extends React.Component {
     handleFinalizeEdit() {
         // triggered by the finalize edit box, when a user confirms changes
         console.log(this.props.form, this.props.name, this.inputRef.current.value);
-        client.put('/api/v1/siteData/' + this.props.form, {
-            name: this.props.name,
-            data: this.inputRef.current.value,
-        })
+        let dataObject = {}
+        dataObject[this.props.name] = this.inputRef.current.value
+        client.put('/api/v1/' + this.props.endpoint + '/' + this.props.pk, dataObject)
         .then(function(response) {
             console.log(response);
         });

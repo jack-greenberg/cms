@@ -90,13 +90,59 @@ class General extends React.Component {
     constructor(props) {
         super(props);
         this.changeStatus = this.changeStatus.bind(this);
+
+        this.state = {
+            status: this.props.postData.status,
+        }
     }
     changeStatus(e) {
-
+        if (this.state.status == 'draft') {
+            if (!window.confirm("Are you sure you want to publish this draft?")) {
+                return;
+            }
+            this.setState({
+                status: 'live',
+            }, () => {
+                client.put('/api/v1/posts/' + this.props.postData.postID, {
+                    status: this.state.status,
+                })
+                .then(response => {
+                    console.log(response);
+                })
+            })
+        } else if (this.state.status == 'live') {
+            if (!window.confirm("Are you sure you want to archive this post?")) {
+                return;
+            }
+            this.setState({
+                status: 'archived',
+            }, () => {
+                client.put('/api/v1/posts/' + this.props.postData.postID, {
+                    status: this.state.status,
+                })
+                .then(response => {
+                    console.log(response);
+                })
+            })
+        } else if (this.state.status == 'archived') {
+            if (!window.confirm("Are you sure you want to unarchive this post?")) {
+                return;
+            }
+            this.setState({
+                status: 'live',
+            }, () => {
+                client.put('/api/v1/posts/' + this.props.postData.postID, {
+                    status: this.state.status,
+                })
+                .then(response => {
+                    console.log(response);
+                })
+            })
+        }
     }
     render() {
         var buttonText;
-        switch(this.props.postData.status) {
+        switch(this.state.status) {
             case "live":
                 buttonText = "Archive";
                 break;
@@ -111,8 +157,8 @@ class General extends React.Component {
             <article className="main__general  flex-wrapper">
                 <section className="section  main__general__basic">
                     <h2 className="section__heading">{pad(this.props.postData.postID, 4)}</h2>
-                    <TextInput important storedValue={this.props.postData['title']} form="post" name="title" label="Title" />
-                    <TextInput storedValue={this.props.postData['author']} form="post" title="author" label="Author" />
+                    <TextInput important storedValue={this.props.postData['title']} form="post" endpoint="posts" pk={this.props.postData.postID} name="title" label="Title" />
+                    <TextInput storedValue={this.props.postData.author} form="post" endpoint="posts" pk={this.props.postData.postID} title="author" label="Author" />
                     <div className="flex-wrapper  flex-wrapper--between">
                         <button onClick={this.changeStatus} className="btn  btn--text">
                             {buttonText}

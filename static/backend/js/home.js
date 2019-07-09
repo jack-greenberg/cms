@@ -75,10 +75,10 @@ class General extends React.Component {
 
                 <div className="section__body">
                     <fieldset className="form-container">
-                        <TextInput important storedValue={this.state.inputData['site-title']} form="general" name="site-title" label="Site Title"/>
-                        <TextInput storedValue={this.state.inputData['author']} form="general" name="author" label="Author / Organization"/>
-                        <TextInput storedValue={this.state.inputData['url']} form="general" name="url" label="URL"/>
-                        <TextInput storedValue={this.state.inputData['google-analytics']} form="general" name="google-analytics" label="Google Analytics Tracking Code"/>
+                        <TextInput important storedValue={this.state.inputData['site-title']} endpoint="siteData" pk="general" name="site-title" label="Site Title"/>
+                        <TextInput storedValue={this.state.inputData['author']} endpoint="siteData" pk="general" name="author" label="Author / Organization"/>
+                        <TextInput storedValue={this.state.inputData['url']} endpoint="siteData" pk="general" name="url" label="URL"/>
+                        <TextInput storedValue={this.state.inputData['google-analytics']} endpoint="siteData" pk="general" name="google-analytics" label="Google Analytics Tracking Code"/>
                     </fieldset>
                 </div>
             </section>
@@ -103,11 +103,11 @@ class SEO extends React.Component {
 
                 <div className="section__body">
                     <fieldset className="form-container">
-                        <TextInput multiline storedValue={this.state.inputData['meta-description']} form="seo" name="meta-description" label="Meta Description"/>
-                        <FileInput storedValue={this.state.inputData['favicon']} form="seo" name="favicon" label="Favicon" accept=".ico,.png,.jpg"/>
-                        <FileInput storedValue={this.state.inputData['meta-image']} form="seo" name="meta-image" label="Meta Image" accept=".jpg,.png"/>
-                        <TextInput multiline code storedValue={this.state.inputData['robots']} form="seo" name="robots" label="robots.txt"/>
-                        <FileInput storedValue={this.state.inputData['sitemap']} form="seo" name="sitemap" label="Sitemap" accept=".xml"/>
+                        <TextInput multiline storedValue={this.state.inputData['meta-description']} endpoint="siteData" pk="seo" name="meta-description" label="Meta Description"/>
+                        <FileInput storedValue={this.state.inputData['favicon']} endpoint="siteData" pk="seo" name="favicon" label="Favicon" accept=".ico,.png,.jpg"/>
+                        <FileInput storedValue={this.state.inputData['meta-image']} endpoint="siteData" pk="seo" name="meta-image" label="Meta Image" accept=".jpg,.png"/>
+                        <TextInput multiline code storedValue={this.state.inputData['robots']} endpoint="siteData" pk="seo" name="robots" label="robots.txt"/>
+                        <FileInput storedValue={this.state.inputData['sitemap']} endpoint="siteData" pk="seo" name="sitemap" label="Sitemap" accept=".xml"/>
                     </fieldset>
                 </div>
             </section>
@@ -131,10 +131,10 @@ class Social extends React.Component {
                 </div>
                 <div className="section__body">
                     <fieldset className="form-container">
-                        <TextInput storedValue={this.state.inputData['facebook']} form="social" name="facebook" label="Facebook" />
-                        <TextInput storedValue={this.state.inputData['instagram']} form="social" name="instagram" label="Instagram" />
-                        <TextInput storedValue={this.state.inputData['linkedin']} form="social" name="linkedin" label="LinkedIn" />
-                        <TextInput storedValue={this.state.inputData['email']} form="social" name="email" label="Email" />
+                        <TextInput storedValue={this.state.inputData['facebook']} endpoint="siteData" pk="social" name="facebook" label="Facebook" />
+                        <TextInput storedValue={this.state.inputData['instagram']} endpoint="siteData" pk="social" name="instagram" label="Instagram" />
+                        <TextInput storedValue={this.state.inputData['linkedin']} endpoint="siteData" pk="social" name="linkedin" label="LinkedIn" />
+                        <TextInput storedValue={this.state.inputData['email']} endpoint="siteData" pk="social" name="email" label="Email" />
                     </fieldset>
                 </div>
             </section>
