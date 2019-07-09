@@ -100,15 +100,15 @@ class General extends React.Component {
             if (!window.confirm("Are you sure you want to publish this draft?")) {
                 return;
             }
+            client.put('/api/v1/posts/' + this.props.postData.postID, {
+                status: 'live',
+                published: (new Date()).toUTCString(),
+            })
+            .then(response => {
+                console.log(response);
+            })
             this.setState({
                 status: 'live',
-            }, () => {
-                client.put('/api/v1/posts/' + this.props.postData.postID, {
-                    status: this.state.status,
-                })
-                .then(response => {
-                    console.log(response);
-                })
             })
         } else if (this.state.status == 'live') {
             if (!window.confirm("Are you sure you want to archive this post?")) {

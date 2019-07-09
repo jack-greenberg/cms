@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from flask.views import MethodView
 from flask_jwt_extended import fresh_jwt_required
 from modules.database import db
-import datetime
+from datetime import datetime
 
 """ API
  URL (/api/v1/...)  | METHOD| DESCRIPTION
@@ -85,11 +85,11 @@ class PostAPI(MethodView):
     def put(self, post_id):
         # update a single post
         requestData = json.loads(request.get_data(as_text=True))
+        if requestData['status'] == 'live':
+            requestData['published'] = datetime.strptime(requestData['published'], "%a, %d %b %Y %H:%M:%S %Z")
+        requestData['lastEdited'] = datetime.now()
         db.posts.update_one({'postID': post_id}, {
-            "$set": {
-                list(requestData.keys())[0]: requestData[list(requestData.keys())[0]],
-                'lastEdited': datetime.datetime.now()
-            }
+            "$set": requestData,
         })
         return jsonify("Updated"), 201
 class PageAPI(MethodView):
