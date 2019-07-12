@@ -13,6 +13,7 @@ import { NoMatch } from './nomatch.js';
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import styles from '../css/index.scss';
 
 export const PageContext = React.createContext({}); // Context for page data (includes list of pages for nav)
 export const BackendDataContext = React.createContext({}); // Context for data about the backend, like site title, author, etc. Also user settings and preferences

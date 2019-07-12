@@ -6,11 +6,9 @@ module.exports =  {
     mode: 'development',
     entry: {
         bundle: [
-            './css/index.scss',
-            './js/index.js'
+            './js/index.js',
         ],
         backend: [
-            './backend/css/index.scss',
             './backend/js/index.js',
             'babel-polyfill',
         ],
@@ -21,7 +19,7 @@ module.exports =  {
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'build')
+        path: path.resolve(__dirname, 'build'),
     },
     watch: true,
     plugins: [
@@ -34,7 +32,12 @@ module.exports =  {
         rules: [
             {
                 test: /\.(s*)css$/,
-                use: [MiniCssExtractPlugin.loader,'css-loader', 'postcss-loader', 'sass-loader']
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'postcss-loader',
+                    'sass-loader',
+                ]
             },
             {
                 test: /\.js$/,
@@ -42,7 +45,19 @@ module.exports =  {
                 use: {
                     loader: "babel-loader"
                 }
-            }
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name].[ext]',
+                        limit: 50000,
+                        outputPath: 'fonts/',
+                    }
+                },
+
+            },
         ]
     },
 };

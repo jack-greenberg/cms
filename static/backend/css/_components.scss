@@ -1,10 +1,9 @@
+@import "fonts";
 // Variables
 
 // Fonts
-@import url('https://rsms.me/inter/inter.css');
-@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+$mono: 'Fira Code', monospace;
 $sans: 'Inter', Helvetica, sans-serif;
-$mono: 'Roboto Mono', monospace;
 
 // Colors
 $black: #000;
