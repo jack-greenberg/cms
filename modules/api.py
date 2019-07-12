@@ -85,8 +85,11 @@ class PostAPI(MethodView):
     def put(self, post_id):
         # update a single post
         requestData = json.loads(request.get_data(as_text=True))
-        if requestData['status'] == 'live':
-            requestData['published'] = datetime.strptime(requestData['published'], "%a, %d %b %Y %H:%M:%S %Z")
+        try:
+            if requestData['status'] == 'live':
+                requestData['published'] = datetime.strptime(requestData['published'], "%a, %d %b %Y %H:%M:%S %Z")
+        except KeyError:
+            pass
         requestData['lastEdited'] = datetime.now()
         db.posts.update_one({'postID': post_id}, {
             "$set": requestData,
