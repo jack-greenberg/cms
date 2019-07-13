@@ -90,11 +90,20 @@ class Toolbar extends React.Component {
     // Toolbar to edit checked posts and filter
     constructor(props) {
         super(props);
+
+        this.newPost = this.newPost.bind(this);
+    }
+    newPost() {
+        client.post('/api/v1/posts/')
+        .then(response => {
+            console.log(response);
+            window.href = "/admin/posts/" + response.data.postID;
+        })
     }
     render() {
         return (
             <div className="toolbar">
-                <button className="btn  btn--icon" data-tip data-for="checkAll" onClick={this.props.checkAll}>
+                {/*<button className="btn  btn--icon" data-tip data-for="checkAll" onClick={this.props.checkAll}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2.394 13.742L7.137 17.362 14.753 8.658 13.247 7.342 6.863 14.638 3.606 12.152zM21.753 8.658L20.247 7.342 13.878 14.621 13.125 14.019 11.875 15.581 14.122 17.379z"/></svg>
                 </button>
                 <button className="btn  btn--icon">
@@ -119,7 +128,10 @@ class Toolbar extends React.Component {
                         </svg>
                     </label>
                     <input type="text" className="filter" id="filter" placeholder="Filter"/>
-                </div>
+                </div>*/}
+                <button className="btn  btn--text" onClick={this.newPost}>
+                    New Post
+                </button>
             </div>
         )
     }
@@ -142,8 +154,12 @@ class Post extends React.Component {
         })
     }
     render() {
-        var published = this.state.data.published["$date"] ? new Date(this.state.data.published["$date"]).toLocaleDateString() : '-';
-        var lastEdited = new Date(this.state.data.lastEdited["$date"]).toLocaleDateString();
+        try {
+            var published = this.state.data.published["$date"] ? new Date(this.state.data.published["$date"]).toLocaleDateString() : '-';
+            var lastEdited = new Date(this.state.data.lastEdited["$date"]).toLocaleDateString();
+        } catch {
+            var published = undefined;
+        }
 
         return (
             <div className={!this.state.checked ? "post" : "post  post--checked"}>

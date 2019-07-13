@@ -75,8 +75,21 @@ class PostAPI(MethodView):
             return jsonify(ret)
 
     def post(self):
-        # create a new post
-        pass
+        lastID = db.posts.find_one({}, {'postID': 1}, sort=[("postID", -1)])
+        print("----------------")
+        print(lastID)
+        emptyPost = {
+            "postID": lastID + 1,
+            "title": "",
+            "author": "",
+            "status": "draft",
+            "lastEdited": datetime.now(),
+            "published": None,
+            "tags": [],
+            "content": {},
+        }
+        db.posts.insert_one(emptyPost)
+        return jsonify(emptyPost)
 
     def delete(self, post_id):
         # delete a single post
