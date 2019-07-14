@@ -5,8 +5,8 @@ var WebpackNotifierPlugin = require('webpack-notifier');
 module.exports =  {
     mode: 'development',
     entry: {
-        bundle: [
-            './js/index.js',
+        theme: [
+            './theme/js/index.js',
         ],
         backend: [
             './backend/js/index.js',

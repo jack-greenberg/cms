@@ -3,3 +3,4 @@
 // import AppRouter from './routes.js';
 //
 // ReactDOM.render(<AppRouter />, document.getElementById("content"));
+import '../css/index.scss';
