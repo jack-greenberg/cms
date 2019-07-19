@@ -3,6 +3,7 @@ import { Header } from './header.js';
 import { Footer } from './footer.js';
 import { Navigation } from './nav.js';
 import { TextInput } from './components';
+import { PostTextEditor, PostImageEditor, PostVideoEditor } from './components';
 import { Link } from 'react-router-dom';
 import { client } from './index.js';
 import { pad } from './posts.js';
@@ -262,17 +263,133 @@ class Tags extends React.Component {
     }
 }
 class Content extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.toggleSectionAdder = this.toggleSectionAdder.bind(this);
+        this.addSection = this.addSection.bind(this);
+
+        this.state = {
+            contentArray: this.props.postData.content, // array
+            showSectionAdder: false,
+        }
+    }
+    toggleSectionAdder() {
+        this.setState({
+            showSectionAdder: !this.state.showSectionAdder,
+        });
+    }
+    addSection(type) {
+        console.log(type);
+        let emptyContentObject = {};
+        switch(type) {
+            case 'text':
+                emptyContentObject = {
+                    name: "text",
+                    hash: (Math.random()*0xFFFFFF<<0).toString(16),
+                    content: "",
+                }
+                break;
+            case 'image':
+                emptyContentObject = {
+                    name: "image",
+                    hash: (Math.random()*0xFFFFFF<<0).toString(16),
+                    content: "",
+                }
+                break;
+            case 'video':
+                emptyContentObject = {
+                    name: "video",
+                    hash: (Math.random()*0xFFFFFF<<0).toString(16),
+                    content: "",
+                }
+            default:
+                console.error("ERROR");
+                break;
+        }
+
+        client.put('/api/v1/posts/' + this.props.postData.postID, {
+            content: [...this.state.contentArray, emptyContentObject]
+        })
+        .then(response => {
+            console.log(response);
+            let newContentArray = this.state.contentArray.push(emptyContentObject);
+            this.setState({
+                contentArray: newContentArray,
+                showSectionAdder: false,
+            })
+        })
+    }
     render() {
+        var contentEditor = [];
+        for (let i=0;i < this.state.contentArray.length; i++) {
+            let type = this.state.contentArray[i].name;
+            let hash = this.state.contentArray[i].hash;
+
+            switch(type) {
+                case 'text':
+                    contentEditor.push(
+                        <PostTextEditor
+                            key={i}
+                            hash={hash}
+                            content={this.state.contentArray[i].content}
+                            postID={this.props.postData.postID}
+                        />
+                    );
+                    break;
+                case 'image':
+                    contentEditor.push(
+                        <PostImageEditor
+                            key={i}
+                            hash={hash}
+                            content={this.state.contentArray[i].content}
+                            postID={this.props.postData.postID}
+                        />
+                    )
+                    break;
+                default:
+                    contentEditor.push(
+                        <h1>ERROR: NO MODULE</h1>
+                    )
+                    break;
+            }
+        }
+
         return (
             <article className="main__content">
-                <section className="section  section--full-width">
-                    <div className="flex-wrapper flex-wrapper--between">
-                        <h2 className="section__heading">Content</h2>
-                        <button className="content__save">Save</button>
-                    </div>
-                    {/* Content editor here */}
-                </section>
+                { contentEditor }
+                <button className="btn btn--text" onClick={this.toggleSectionAdder}>
+                    {!this.state.showSectionAdder ? "New Section" : "Cancel"}
+                </button>
+                {this.state.showSectionAdder ? <PostSectionAdder addSection={this.addSection}/> : null}
             </article>
+        )
+    }
+}
+class PostSectionAdder extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.addText = this.addText.bind(this);
+        this.addImage = this.addImage.bind(this);
+        this.addVideo = this.addVideo.bind(this);
+    }
+    addText() {
+        this.props.addSection("text");
+    }
+    addImage() {
+        this.props.addSection("image");
+    }
+    addVideo() {
+        this.props.addSection("video");
+    }
+    render() {
+        return (
+            <div className="post-section-adder">
+                <button className="btn btn--text" onClick={this.addText}>Text (Markdown)</button>
+                <button className="btn btn--text" onClick={this.addImage}>Image</button>
+                <button className="btn btn--text" onClick={this.addVideo}>Video</button>
+            </div>
         )
     }
 }
