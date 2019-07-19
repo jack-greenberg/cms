@@ -148,7 +148,7 @@ def login():
 
             # response = redirect(request_path) if request_path else redirect(url_for('admin_root'))
 
-            return jsonify(access_token=access_token, refresh_token=refresh_token), 200
+            return jsonify(access_token=access_token, refresh_token=refresh_token, redirect=request_path), 200
         else:
             return jsonify("Wrong password"), 400
 

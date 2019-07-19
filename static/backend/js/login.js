@@ -23,7 +23,7 @@ $('.js-submit').on('click', function(e) {
         // set access_ and refresh_ tokens
         localStorage.setItem('access_token', response.data['access_token'])
         localStorage.setItem('refresh_token', response.data['refresh_token'])
-        window.location.href = '/admin/'; // send the user to the admin page
+        window.location.href = response.data['redirect']; // send the user to the admin page
     })
     .catch(error => {
         if (error.response.status != 200) {
