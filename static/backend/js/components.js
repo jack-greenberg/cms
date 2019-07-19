@@ -367,7 +367,7 @@ export class PostTextEditor extends React.Component {
 
                     <div
                         contentEditable={!this.state.preview}
-                        className={"input--text  input--text--full-width  input--text--multiline  input--text--markdown  markdown-body" + (this.state.preview ? "  preview" : "")}
+                        className={"input--text  input--text--markdown  markdown-body" + (this.state.preview ? "  preview" : "")}
                         id={this.inputID}
                         defaultValue={this.state.content}
                         onInput={this.handleInput}
