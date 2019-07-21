@@ -13,6 +13,7 @@ import json
 import bcrypt
 from functools import wraps
 from modules.api import *
+import jinja2, markdown
 
 """
 Set up the Flask instance, and set the JWT options
@@ -24,8 +25,20 @@ app.config['JWT_TOKEN_LOCATION'] = ['headers']
 app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 app.config['JWT_REFRESH_COOKIE_PATH'] = '/api/token-refresh/'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 jwt = JWTManager(app)
 
+
+@app.template_filter()
+def safe_markdown(text):
+    return jinja2.Markup(markdown.markdown(text))
+
+@app.template_filter()
+def make_date(date):
+    return date.strftime("%m/%d/%y")
+
+env = jinja2.Environment(autoescape=True)
+env.filters['safe_markdown'] = safe_markdown
 
 """
 Register API from modules/api.py
@@ -186,7 +199,7 @@ def admin_posts_sub(post_id=None):
 def private_post(post_id=None):
     # get post data from db
     post_data = db.posts.find_one({'postID': int(post_id)}, {"_id": 0})
-    return render_template('post.j2', post_data=post_data)
+    return render_template('post.j2', post_data=post_data, private=True)
 
 @app.route('/api/token-refresh/', methods=['POST']) # refresh the token
 @jwt_refresh_token_required # refresh token is needed to do this

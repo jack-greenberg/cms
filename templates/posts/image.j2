@@ -1,0 +1,14 @@
+<section class="post-image">
+    <figure>
+        <img
+            src="/static/images/{{ postID }}/{{ content.content[0] }}"
+            srcset="{% for i in range(content.content|length) %}
+                /static/images/{{ postID }}/{{ content.content[i] }} {{ content.content[i].split('.')[2] }}w,
+            {% endfor %}"
+            alt="{{ content['alt-text'] }}"
+        >
+        <figcaption>
+            {{ content.caption }}
+        </figcaption>
+    </figure>
+</section>

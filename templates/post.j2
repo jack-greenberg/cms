@@ -2,7 +2,37 @@
 {% block title %}Post{% endblock %}
 
 {% block content %}
+    {% if private %}
+        <a href="{{ '/admin/posts/' + post_data['postID']|string }}">Back to Backend</a>
+    {% endif %}
 
-    {{ post_data }}
+
+    <article class="post">
+        <h1 class="post__title"><a href="{{ '/posts/' + post_data['postID']|string }}">{{ post_data['title'] }}</a></h1>
+        <p class="post__metadata">{{ post_data['published']|make_date }} | {{ post_data['author'] }}</p>
+
+        {% for i in range(post_data['content']|length) %}
+
+            {% set module_name = post_data['content'][i]['name'] %}
+
+            {% with content = post_data["content"][i] %}
+            {% with postID = post_data["postID"] %}
+
+                {% include "posts/%s.j2" % module_name %}
+
+            {% endwith %}
+            {% endwith %}
+
+        {% endfor %}
+
+        <div class="post__tags">
+            <span class="post__tags__header">Tags:</span>
+            <ul class="post__tags__list">
+            {% for i in range(post_data['tags']|length) %}
+                    <li class="tag"><a href="{{ '/tags/' + post_data['tags'][i]|urlencode }}">{{ post_data['tags'][i] }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+    </article>
 
 {% endblock %}
