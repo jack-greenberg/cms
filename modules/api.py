@@ -6,6 +6,8 @@ from flask.views import MethodView
 from flask_jwt_extended import fresh_jwt_required
 from modules.database import db
 from datetime import datetime
+from modules.image_processor import process_image
+import os
 
 """ API
  URL (/api/v1/...)  | METHOD| DESCRIPTION
@@ -75,9 +77,32 @@ class PostAPI(MethodView):
             return jsonify(ret)
 
     def post(self):
+        if (request.files['image']):
+            # For uploading a file for a post
+            image = request.files['image']
+            post_id = request.form['postID']
+            hash = request.form['hash']
+
+            print('-------')
+            print('Filename: %s' % image.filename)
+            print('Filetype: %s' % image.mimetype)
+            print('Post ID: %s' % post_id)
+            print('Hash: %s' % hash)
+            print('-------')
+
+            if image.mimetype not in ['image/png', 'image/jpeg', 'image/jpg']:
+                return (jsonify("Wrong filetype!", 400))
+
+            file_extension = image.mimetype.split('/')[-1]
+
+            filename = '%s.%s.%s' % (post_id, hash, file_extension)
+            image.save(os.getcwd() + '/tmp/' + secure_filename(filename))
+            process_image(filename)
+
+            return (jsonify("Image uploaded"), 201)
+
+        # This is for when the POST request is empty, so it just creates a blank blog post
         lastID = db.posts.find_one({}, {'postID': 1}, sort=[("postID", -1)])
-        print("----------------")
-        print(lastID)
         emptyPost = {
             "postID": lastID + 1,
             "title": "",

@@ -343,6 +343,8 @@ class Content extends React.Component {
                             key={i}
                             hash={hash}
                             content={this.state.contentArray[i].content}
+                            caption={this.state.contentArray[i].caption}
+                            altText={this.state.contentArray[i]['alt-text']}
                             postID={this.props.postData.postID}
                         />
                     )

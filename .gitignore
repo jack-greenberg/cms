@@ -17,3 +17,5 @@ build/
 
 /tmp
 /admin/
+
+static/images/

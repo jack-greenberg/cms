@@ -5,6 +5,8 @@ var autosize = require('autosize');
 import { client } from './index.js';
 var $ = require('jquery');
 import showdown from 'showdown';
+import {useDropzone} from 'react-dropzone';
+
 
 /*
     <TextInput [fullWidth, important, multiline] storedValue={} name={""} form={""} label={""} handleUpdate={this.handleTextUpdate} />
@@ -383,15 +385,161 @@ export class PostTextEditor extends React.Component {
         )
     }
 };
+
+function Dropzone(props) {
+    // Taken from https://react-dropzone.js.org
+    const {acceptedFiles, rejectedFiles, getRootProps, getInputProps, rootRef, inputRef} = useDropzone({
+        accept: 'image/jpeg, image/png, image/heic',
+        onDrop: acceptedFiles => {
+            props.handleFileChange(acceptedFiles, inputRef.current.value);
+        }
+    });
+    const files = acceptedFiles.map(file => (
+        <li key={file.path}>
+            {file.path} - {file.size} bytes
+        </li>
+    ));
+
+    return (
+        <div {...getRootProps({className: 'dropzone'})}>
+            <input {...getInputProps()} id={"file-" + props.hash} />
+            <p>Drag the image here, or click to select from files<br/>
+            (Must be JPEG or PNG)
+            </p>
+        </div>
+  );
+}
 export class PostImageEditor extends React.Component {
     constructor(props) {
         super(props);
-    }
 
+        this.handleFileChange = this.handleFileChange.bind(this);
+        this.handleTextChange = this.handleTextChange.bind(this);
+        this.save = this.save.bind(this);
+
+        this.state = {
+            content: this.props.content,
+            caption: this.props.caption,
+            altText: this.props.altText,
+            temp: {
+                content: this.props.content,
+                caption: this.props.caption,
+                altText: this.props.altText,
+            },
+            edited: false,
+        }
+    }
+    save() {
+        client.get('/api/v1/posts/' + this.props.postID)
+        .then(response => {
+            let postContent = response.data.content;
+            console.log(response.data.content); // [{...}, {...}, {...}...]
+
+            let formData = new FormData();
+            formData.append('image', $('#file-' + this.props.hash).prop('files')[0])
+            formData.append('hash', this.props.hash)
+            formData.append('postID', this.props.postID)
+
+            client.post('/api/v1/posts/', formData, {
+                'Content-Type': 'multipart/form-data', // required by Flask
+            })
+            .then(response => {
+                console.log(response);
+            });
+
+            // let toUpdate = postContent.filter(obj => {
+            //     return obj.hash === this.props.hash;
+            // })[0] // {content: ..., hash: ...}
+            //
+            // let index = postContent.indexOf(toUpdate);
+            //
+            // toUpdate.content = this.state.tempContent;
+            //
+            // postContent[index] = toUpdate;
+            //
+            // client.put('/api/v1/posts/' + this.props.postID, {
+            //     content: postContent,
+            // })
+            // .then(response => {
+            //     console.log(response);
+            //     this.setState({
+            //         content: this.state.tempContent,
+            //         edited: false,
+            //     })
+            // })
+        })
+    }
+    handleTextChange(e) {
+        if (this.state[e.target.name.split('-').pop()] !== e.target.value) {
+            var temp = this.state.temp;
+            temp[e.target.name.split('-').pop()] = e.target.value;
+            this.setState({
+                temp,
+                edited: true,
+            })
+        } else {
+            this.setState({
+                edited: false,
+            })
+        }
+    }
+    handleFileChange(e, f) {
+        console.log($('#file-' + this.props.hash).prop('files')[0])
+
+        var reader = new FileReader();
+
+        reader.addEventListener("load", (e) => {
+            $('.js-image-preview__image').attr("src", e.target.result);
+            $('.js-image-preview__image').css('display', 'block');
+        }, false)
+
+        if (document.getElementById("file-" + this.props.hash).files[0]) {
+            reader.readAsDataURL(document.getElementById("file-" + this.props.hash).files[0]);
+            this.setState({
+                edited: true,
+            });
+        }
+    }
     render() {
         return (
             <section className="section  section--full-width">
-                <h2>Image Stuff</h2>
+                <div className="flex-wrapper  file-upload-container">
+                    <div className={"image-preview" + (this.state.edited ? "  image-preview--edited" : "")}>
+                        <img
+                            src={this.props.content ?
+                                "/static/images/" + this.props.postID + "/" + this.props.hash + "." + "960.jpg"
+                            :
+                                ""
+                            }
+                            alt={this.props.content ?
+                                this.props.altText
+                            :
+                                "Image preview"
+                            }
+                            className="image-preview__image  js-image-preview__image"
+                        />
+                    </div>
+                    <Dropzone handleFileChange={this.handleFileChange} hash={this.props.hash} />
+                </div>
+                <div>
+                    <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
+                        <label htmlFor={"post-" + this.props.postID + "-" + this.props.hash + "-caption"} className="input__label">Caption</label>
+                        <div className="finalize-edit-container">
+                            <input type="text" name={"post-" + this.props.postID + "-" + this.props.hash + "-caption"} className="input--text  input--text--full-width" id={"post-" + this.props.postID + "-" + this.props.hash + "-caption"} defaultValue={this.state.caption} autoComplete="off" onKeyUp={this.handleTextChange} />
+                        </div>
+                    </div>
+                    <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
+                        <label htmlFor={"post-" + this.props.postID + "-" + this.props.hash + "-altText"} className="input__label">Alt-text</label>
+                        <div className="finalize-edit-container">
+                            <input type="text" name={"post-" + this.props.postID + "-" + this.props.hash + "-altText"} className="input--text  input--text--full-width" id={"post-" + this.props.postID + "-" + this.props.hash + "-altText"} defaultValue={this.state.altText} autoComplete="off" onKeyUp={this.handleTextChange} />
+                        </div>
+                    </div>
+                </div>
+                <div className="toolbar  toolbar--bottom">
+                    <button onClick={this.save}>Save</button>
+                    <button>Revert</button>
+                    <button>Hide</button>
+                </div>
             </section>
         )
     }

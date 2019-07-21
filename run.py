@@ -17,7 +17,7 @@ from modules.api import *
 """
 Set up the Flask instance, and set the JWT options
 """
-app = Flask(__name__, static_folder='./static/build')
+app = Flask(__name__, static_folder='./static')
 app.config['SECRET_KEY'] = b'dev'
 app.config['JWT_SECRET_KEY'] = b'dev'
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
