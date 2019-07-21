@@ -35,7 +35,7 @@ def safe_markdown(text):
 
 @app.template_filter()
 def make_date(date):
-    return date.strftime("%m/%d/%y")
+    return date.strftime("%b %d, %Y")
 
 env = jinja2.Environment(autoescape=True)
 env.filters['safe_markdown'] = safe_markdown
