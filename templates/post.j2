@@ -6,7 +6,6 @@
         <a href="{{ '/admin/posts/' + post_data['postID']|string }}">Back to Backend</a>
     {% endif %}
 
-
     <article class="post">
         <h1 class="post__title"><a href="{{ '/posts/' + post_data['postID']|string }}">{{ post_data['title'] }}</a></h1>
         <p class="post__metadata">{{ post_data['published']|make_date }} | {{ post_data['author'] }}</p>
@@ -29,7 +28,7 @@
             <span class="post__tags__header">Tags:</span>
             <ul class="post__tags__list">
             {% for i in range(post_data['tags']|length) %}
-                    <li class="tag"><a href="{{ '/tags/' + post_data['tags'][i]|urlencode }}">{{ post_data['tags'][i] }}</a></li>
+                <li class="tag"><a href="{{ '/tags/' + post_data['tags'][i]|urlencode }}">{{ post_data['tags'][i] }}</a></li>
             {% endfor %}
             </ul>
         </div>

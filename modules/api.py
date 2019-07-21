@@ -61,6 +61,7 @@ class SiteAPI(MethodView):
             }
         )
         return (jsonify("Updated"), 201)
+        
 class PostAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, post_id):
