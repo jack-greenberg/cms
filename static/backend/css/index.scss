@@ -78,6 +78,13 @@
         &--small {
             max-width: 15em;
         }
+        &--edited {
+            box-shadow: 0 0 0 1px $yellow;
+
+            &:focus, &:focus {
+                box-shadow: 0 0 0 2px $yellow !important;
+            }
+        }
         &--multiline {
             width: 100%;
             resize: vertical;
