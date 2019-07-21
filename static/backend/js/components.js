@@ -618,11 +618,83 @@ export class PostImageEditor extends React.Component {
 export class PostVideoEditor extends React.Component {
     constructor(props) {
         super(props);
+
+        this.handleInput = this.handleInput.bind(this);
+        this.save = this.save.bind(this);
+
+        this.inputID = "post-" + this.props.postID + '--' + this.props.hash;
+        this.inputRef = React.createRef();
+
+        this.state = {
+            content: this.props.content,
+            tempContent: this.props.content,
+        }
+    }
+    handleInput(e) {
+        this.setState({
+            tempContent: e.target.value,
+        }, () => {
+            if (this.state.content != this.state.tempContent) {
+                this.setState({
+                    edited: true,
+                })
+            } else {
+                this.setState({
+                    edited: false,
+                })
+            }
+        });
     }
 
+    save() {
+        client.get('/api/v1/posts/' + this.props.postID)
+        .then(response => {
+            let postContent = response.data.content;
+            console.log(response.data.content); // [{...}, {...}, {...}...]
+
+            let toUpdate = postContent.filter(obj => {
+                return obj.hash === this.props.hash;
+            })[0] // {content: ..., hash: ...}
+
+            let index = postContent.indexOf(toUpdate);
+
+            toUpdate.content = this.state.tempContent;
+
+            postContent[index] = toUpdate;
+
+            client.put('/api/v1/posts/' + this.props.postID, {
+                content: postContent,
+            })
+            .then(response => {
+                console.log(response);
+                this.setState({
+                    content: this.state.tempContent,
+                    edited: false,
+                })
+            })
+        })
+    }
     render() {
         return (
-            <h2>Video Stuff</h2>
+            <section className="section  section--full-width">
+                <div className="input-container">
+                    <label htmlFor={this.inputID} className="input__label">YouTube Video ID</label>
+
+                    <input
+                        type="text"
+                        className={"input--text" + (this.state.edited ? "  input-container--edited" : "")}
+                        id={this.inputID}
+                        defaultValue={this.state.content}
+                        onKeyUp={this.handleInput}
+                        ref={this.inputRef}
+                    />
+                </div>
+                <div className="toolbar  toolbar--bottom">
+                    <button onClick={this.save}>Save</button>
+                    <button>Revert</button>
+                    <button>Hide</button>
+                </div>
+            </section>
         )
     }
 }

@@ -350,6 +350,16 @@ class Content extends React.Component {
                         />
                     )
                     break;
+                case 'video':
+                    contentEditor.push(
+                        <PostVideoEditor
+                            key={i}
+                            hash={hash}
+                            content={this.state.contentArray[i].content}
+                            postID={this.props.postData.postID}
+                        />
+                    )
+                    break;
                 default:
                     contentEditor.push(
                         <h1>ERROR: NO MODULE</h1>
