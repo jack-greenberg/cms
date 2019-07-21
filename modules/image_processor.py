@@ -26,6 +26,7 @@ def process_image(img_name):
     (postID, hash, fileExt) = img_name.split('.')
 
     img = Image.open(join(dirname(__file__), "../tmp/%s" % img_name))
+    img = img.convert('RGB')
     metadata = get_img_data(img)
 
     ORIENTATIONS = [None, None, None, -180, None, None, -90, None, -270]
