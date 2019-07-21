@@ -52,6 +52,9 @@
         position: fixed;
         height: 100vh;
     }
+    li {
+        list-style-type: none;
+    }
 }
 .navlink {
     font-size: 1.4em;

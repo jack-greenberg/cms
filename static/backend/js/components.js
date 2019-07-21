@@ -249,7 +249,15 @@ export class ToggleSwitch extends React.Component {
 /* * * * * * * * * * *
 POST EDITOR STUFF HERE
 * * * * * * * * * * */
-var converter = new showdown.Converter();
+var converter = new showdown.Converter({
+    simpleLineBreaks: false,
+    emoji: true,
+    openLinksInNewWindow: true,
+    strikethrough: true,
+    headerLevelStart: 2,
+    noHeaderId: true,
+});
+converter.setFlavor('github');
 export class PostTextEditor extends React.Component {
     constructor(props) {
         super(props);
@@ -272,6 +280,7 @@ export class PostTextEditor extends React.Component {
         autosize($('#' + this.inputID));
     }
     handleInput(e) {
+        console.log(e.target.innerText);
         this.setState({
             tempContent: e.target.innerText,
         }, () => {
@@ -317,6 +326,7 @@ export class PostTextEditor extends React.Component {
     }
     preview(e) {
         if (e.target.value == "preview") {
+            console.log(this.inputRef.current.innerText);
             this.setState({
                 preview: true,
             }, () => {
