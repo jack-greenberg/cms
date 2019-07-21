@@ -342,6 +342,7 @@ class Content extends React.Component {
                         <PostImageEditor
                             key={i}
                             hash={hash}
+                            imageID={this.state.contentArray[i].imageId}
                             content={this.state.contentArray[i].content}
                             caption={this.state.contentArray[i].caption}
                             altText={this.state.contentArray[i]['alt-text']}

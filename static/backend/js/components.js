@@ -398,10 +398,12 @@ export class PostTextEditor extends React.Component {
 
 function Dropzone(props) {
     // Taken from https://react-dropzone.js.org
-    const {acceptedFiles, rejectedFiles, getRootProps, getInputProps, rootRef, inputRef} = useDropzone({
-        accept: 'image/jpeg, image/png, image/heic',
+    const {acceptedFiles, rejectedFiles, getRootProps, getInputProps} = useDropzone({
+        accept: 'image/jpeg, image/png, image/jpg',
+        multiple: false,
+        noDrag: false,
         onDrop: acceptedFiles => {
-            props.handleFileChange(acceptedFiles, inputRef.current.value);
+            props.handleFileChange(acceptedFiles);
         }
     });
     const files = acceptedFiles.map(file => (
@@ -414,8 +416,7 @@ function Dropzone(props) {
         <div {...getRootProps({className: 'dropzone'})}>
             <input {...getInputProps()} id={"file-" + props.hash} />
             <p>Drag the image here, or click to select from files<br/>
-            (Must be JPEG or PNG)
-            </p>
+            (Must be JPEG or PNG)</p>
         </div>
   );
 }
@@ -424,60 +425,96 @@ export class PostImageEditor extends React.Component {
         super(props);
 
         this.handleFileChange = this.handleFileChange.bind(this);
-        this.handleTextChange = this.handleTextChange.bind(this);
+        this.handleCaptionChange = this.handleCaptionChange.bind(this);
+        this.handleAltTextChange = this.handleAltTextChange.bind(this);
         this.save = this.save.bind(this);
 
         this.state = {
-            content: this.props.content,
-            caption: this.props.caption,
             altText: this.props.altText,
-            temp: {
-                content: this.props.content,
-                caption: this.props.caption,
-                altText: this.props.altText,
-            },
-            edited: false,
+            tempAltText: this.props.altText,
+            altTextEdited: false,
+
+            caption: this.props.caption,
+            tempCaption: this.props.caption,
+            captionEdited: false,
+
+            content: this.props.content,
+            imageEdited: false,
+            tempFile: undefined,
         }
     }
     save() {
+        if (!(this.state.altTextEdited || this.state.captionEdited || this.state.imageEdited)) {
+            console.log('Nothing edited');
+            return;
+        };
+
         client.get('/api/v1/posts/' + this.props.postID)
-        .then(response => {
-            let postContent = response.data.content;
-            console.log(response.data.content); // [{...}, {...}, {...}...]
+        .then(getResponse => {
+            let postContent = getResponse.data.content;
+            console.log(getResponse.data.content); // [{...}, {...}, {...}...]
 
-            let formData = new FormData();
-            formData.append('image', $('#file-' + this.props.hash).prop('files')[0])
-            formData.append('hash', this.props.hash)
-            formData.append('postID', this.props.postID)
+            if (this.state.imageEdited) {
+                let formData = new FormData();
 
-            client.post('/api/v1/posts/', formData, {
-                'Content-Type': 'multipart/form-data', // required by Flask
-            })
-            .then(response => {
-                console.log(response);
-            });
+                let imageID = (Math.random()*0xFFFFFF<<0).toString(16)
 
-            // let toUpdate = postContent.filter(obj => {
-            //     return obj.hash === this.props.hash;
-            // })[0] // {content: ..., hash: ...}
-            //
-            // let index = postContent.indexOf(toUpdate);
-            //
-            // toUpdate.content = this.state.tempContent;
-            //
-            // postContent[index] = toUpdate;
-            //
-            // client.put('/api/v1/posts/' + this.props.postID, {
-            //     content: postContent,
-            // })
-            // .then(response => {
-            //     console.log(response);
-            //     this.setState({
-            //         content: this.state.tempContent,
-            //         edited: false,
-            //     })
-            // })
-        })
+                formData.append('image', this.state.tempFile[0])
+                formData.append('imageID', imageID)
+                formData.append('hash', this.props.hash)
+                formData.append('postID', this.props.postID)
+
+                client.post('/api/v1/posts/', formData, {
+                    'Content-Type': 'multipart/form-data', // required by Flask
+                })
+                .then(postResponse => {
+                    console.log(postResponse);
+
+                    this.setState({
+                        imageEdited: false,
+                        content: postResponse.data,
+                    }, () => {
+                        let toUpdate = postContent.filter(obj => {
+                            return obj.hash === this.props.hash;
+                        })[0] // {content: ..., hash: ...}
+
+                        let index = postContent.indexOf(toUpdate);
+
+                        toUpdate['alt-text'] = this.state.tempAltText;
+                        toUpdate['caption'] = this.state.tempCaption;
+                        toUpdate['imageId'] = imageID;
+                        toUpdate.content = this.state.content;
+
+                        postContent[index] = toUpdate;
+
+                        client.put('/api/v1/posts/' + this.props.postID, {
+                            content: postContent,
+                        })
+                        .then(response => {
+                            console.log(response);
+                        })
+                    });
+                });
+            } else /* If the image wasn't edited, just something else */ {
+                let toUpdate = postContent.filter(obj => {
+                    return obj.hash === this.props.hash;
+                })[0] // {content: ..., hash: ...}
+
+                let index = postContent.indexOf(toUpdate);
+
+                toUpdate['alt-text'] = this.state.tempAltText;
+                toUpdate['caption'] = this.state.tempCaption;
+
+                postContent[index] = toUpdate;
+
+                client.put('/api/v1/posts/' + this.props.postID, {
+                    content: postContent,
+                })
+                .then(response => {
+                    console.log(response);
+                })
+            };
+        });
     }
     handleTextChange(e) {
         if (this.state[e.target.name.split('-').pop()] !== e.target.value) {
@@ -493,33 +530,42 @@ export class PostImageEditor extends React.Component {
             })
         }
     }
-    handleFileChange(e, f) {
-        console.log($('#file-' + this.props.hash).prop('files')[0])
-
+    handleCaptionChange(e) {
+        this.setState({
+            tempCaption: e.target.value,
+            captionEdited: (this.state.caption !== e.target.value) ? true : false,
+        })
+    }
+    handleAltTextChange(e) {
+        this.setState({
+            tempAltText: e.target.value,
+            altTextEdited: (this.state.altText !== e.target.value) ? true : false,
+        })
+    }
+    handleFileChange(file) {
         var reader = new FileReader();
 
-        reader.addEventListener("load", (e) => {
-            $('.js-image-preview__image').attr("src", e.target.result);
-            $('.js-image-preview__image').css('display', 'block');
+        reader.addEventListener("load", (event) => {
+            $("#image-" + this.props.postID + '-' + this.props.hash).attr("src", event.target.result);
+            $("#image-" + this.props.postID + '-' + this.props.hash).css('display', 'block');
         }, false)
 
-        if (document.getElementById("file-" + this.props.hash).files[0]) {
-            reader.readAsDataURL(document.getElementById("file-" + this.props.hash).files[0]);
-            this.setState({
-                edited: true,
-            });
-        }
+        reader.readAsDataURL(new Blob(file));
+        this.setState({
+            imageEdited: true,
+            tempFile: file,
+        });
     }
     render() {
         return (
             <section className="section  section--full-width">
                 <div className="flex-wrapper  file-upload-container">
-                    <div className={"image-preview" + (this.state.edited ? "  image-preview--edited" : "")}>
+                    <div className={"image-preview" + (this.state.imageEdited ? "  image-preview--edited" : "")}>
                         <img
                             src={this.props.content ?
-                                "/static/images/" + this.props.postID + "/" + this.props.hash + "." + "960.jpg"
+                                "/static/images/" + this.props.postID + "/" + this.props.hash + '.' + this.props.imageID + ".jpg"
                             :
-                                ""
+                                null
                             }
                             alt={this.props.content ?
                                 this.props.altText
@@ -527,6 +573,7 @@ export class PostImageEditor extends React.Component {
                                 "Image preview"
                             }
                             className="image-preview__image  js-image-preview__image"
+                            id={"image-" + this.props.postID + '-' + this.props.hash}
                         />
                     </div>
                     <Dropzone handleFileChange={this.handleFileChange} hash={this.props.hash} />
@@ -535,13 +582,27 @@ export class PostImageEditor extends React.Component {
                     <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
                         <label htmlFor={"post-" + this.props.postID + "-" + this.props.hash + "-caption"} className="input__label">Caption</label>
                         <div className="finalize-edit-container">
-                            <input type="text" name={"post-" + this.props.postID + "-" + this.props.hash + "-caption"} className="input--text  input--text--full-width" id={"post-" + this.props.postID + "-" + this.props.hash + "-caption"} defaultValue={this.state.caption} autoComplete="off" onKeyUp={this.handleTextChange} />
+                            <input
+                                type="text"
+                                name={"post-" + this.props.postID + "-" + this.props.hash + "-caption"}
+                                className={"input--text  input--text--full-width" + (this.state.captionEdited ? "  input--text--edited" : "")}
+                                id={"post-" + this.props.postID + "-" + this.props.hash + "-caption"}
+                                defaultValue={this.state.caption}
+                                autoComplete="off"
+                                onKeyUp={this.handleCaptionChange} />
                         </div>
                     </div>
                     <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
                         <label htmlFor={"post-" + this.props.postID + "-" + this.props.hash + "-altText"} className="input__label">Alt-text</label>
                         <div className="finalize-edit-container">
-                            <input type="text" name={"post-" + this.props.postID + "-" + this.props.hash + "-altText"} className="input--text  input--text--full-width" id={"post-" + this.props.postID + "-" + this.props.hash + "-altText"} defaultValue={this.state.altText} autoComplete="off" onKeyUp={this.handleTextChange} />
+                            <input
+                                type="text"
+                                name={"post-" + this.props.postID + "-" + this.props.hash + "-altText"}
+                                className={"input--text  input--text--full-width" + (this.state.altTextEdited ? "  input--text--edited" : "")}
+                                id={"post-" + this.props.postID + "-" + this.props.hash + "-altText"}
+                                defaultValue={this.state.altText}
+                                autoComplete="off"
+                                onKeyUp={this.handleAltTextChange} />
                         </div>
                     </div>
                 </div>

@@ -1,9 +1,10 @@
 from PIL import Image
 from PIL.ExifTags import TAGS as EXIF_TAGS
 from os.path import join, basename, dirname, realpath
-import os
+import os, glob
 import sys
 import time
+from math import floor
 
 def get_img_data(img):
     try:
@@ -23,7 +24,7 @@ def process_image(img_name):
         return
 
     # Image comes in as <postID>.<hash>.jpg/png
-    (postID, hash, fileExt) = img_name.split('.')
+    (postID, hash, image_id, file_ext) = img_name.split('.')
 
     img = Image.open(join(dirname(__file__), "../tmp/%s" % img_name))
     img = img.convert('RGB')
@@ -37,7 +38,7 @@ def process_image(img_name):
     width, height = img.size
     larger_dimension = width if width > height else height
     scales = [ x / larger_dimension for x in [ 320.0, 640.0, 960.0, 1280.0 ] ]
-    new_sizes = [ (int(round(width * s)), int(round(height * s))) for s in scales ]
+    new_sizes = [ (int(floor(width * s)), int(floor(height * s))) for s in scales ]
     new_images = [ img.resize(size, Image.LANCZOS) for size in new_sizes ]
     widths = [ img.size[0] for img in new_images ]
 
@@ -46,9 +47,15 @@ def process_image(img_name):
     except OSError:
         pass
 
-    new_files = [ join(dirname(__file__), '../static/images/%s' % postID, '%s.%d.jpg' % (hash, w)) for w in widths ]
+    for file in glob.glob(join(dirname(__file__), "../static/images/%s/%s*" % (postID, hash))):
+        os.remove(file)
+
+    new_files = [ join(dirname(__file__), '../static/images/%s' % postID, '%s.%s.%d.jpg' % (hash, image_id, w)) for w in widths ]
+
+    new_images[1].save(join(dirname(__file__), '../static/images/%s' % postID, '%s.%s.jpg' % (hash, image_id)), optimize=True, progressive=True)
 
     for img, name in zip(new_images, new_files):
         img.save(name, optimize=True, progressive=True)
         img.close()
     os.remove(join(dirname(__file__), "../tmp/%s" % img_name))
+    return [ '%s.%s.%d.jpg' % (hash, image_id, w) for w in widths ]

@@ -81,12 +81,14 @@ class PostAPI(MethodView):
             # For uploading a file for a post
             image = request.files['image']
             post_id = request.form['postID']
+            image_id = request.form['imageID']
             hash = request.form['hash']
 
             print('-------')
             print('Filename: %s' % image.filename)
             print('Filetype: %s' % image.mimetype)
             print('Post ID: %s' % post_id)
+            print('Image ID: %s' % image_id)
             print('Hash: %s' % hash)
             print('-------')
 
@@ -95,11 +97,11 @@ class PostAPI(MethodView):
 
             file_extension = image.mimetype.split('/')[-1]
 
-            filename = '%s.%s.%s' % (post_id, hash, file_extension)
+            filename = '%s.%s.%s.%s' % (post_id, hash, image_id, file_extension)
             image.save(os.getcwd() + '/tmp/' + secure_filename(filename))
-            process_image(filename)
+            new_files = process_image(filename)
 
-            return (jsonify("Image uploaded"), 201)
+            return (jsonify(new_files), 201)
 
         # This is for when the POST request is empty, so it just creates a blank blog post
         lastID = db.posts.find_one({}, {'postID': 1}, sort=[("postID", -1)])
