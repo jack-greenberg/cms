@@ -54,7 +54,6 @@ export class TextInput extends React.Component {
     };
     handleFinalizeEdit() {
         // triggered by the finalize edit box, when a user confirms changes
-        console.log(this.props.form, this.props.name, this.inputRef.current.value);
         let dataObject = {}
         dataObject[this.props.name] = this.inputRef.current.value
         client.put('/api/v1/' + this.props.endpoint + '/' + this.props.pk, dataObject)
@@ -280,7 +279,6 @@ export class PostTextEditor extends React.Component {
         autosize($('#' + this.inputID));
     }
     handleInput(e) {
-        console.log(e.target.innerText);
         this.setState({
             tempContent: e.target.innerText,
         }, () => {
@@ -300,7 +298,6 @@ export class PostTextEditor extends React.Component {
         client.get('/api/v1/posts/' + this.props.postID)
         .then(response => {
             let postContent = response.data.content;
-            console.log(response.data.content); // [{...}, {...}, {...}...]
 
             let toUpdate = postContent.filter(obj => {
                 return obj.hash === this.props.hash;
@@ -326,7 +323,6 @@ export class PostTextEditor extends React.Component {
     }
     preview(e) {
         if (e.target.value == "preview") {
-            console.log(this.inputRef.current.innerText);
             this.setState({
                 preview: true,
             }, () => {
@@ -452,7 +448,6 @@ export class PostImageEditor extends React.Component {
         client.get('/api/v1/posts/' + this.props.postID)
         .then(getResponse => {
             let postContent = getResponse.data.content;
-            console.log(getResponse.data.content); // [{...}, {...}, {...}...]
 
             if (this.state.imageEdited) {
                 let formData = new FormData();
@@ -561,20 +556,16 @@ export class PostImageEditor extends React.Component {
             <section className="section  section--full-width">
                 <div className="flex-wrapper  file-upload-container">
                     <div className={"image-preview" + (this.state.imageEdited ? "  image-preview--edited" : "")}>
-                        <img
-                            src={this.props.content ?
-                                "/static/images/" + this.props.postID + "/" + this.props.hash + '.' + this.props.imageID + ".jpg"
-                            :
-                                null
-                            }
-                            alt={this.props.content ?
-                                this.props.altText
-                            :
-                                "Image preview"
-                            }
-                            className="image-preview__image  js-image-preview__image"
-                            id={"image-" + this.props.postID + '-' + this.props.hash}
-                        />
+                        {this.props.content.length > 0 ?
+                            <img
+                                src={"/static/images/" + this.props.postID + "/" + this.props.hash + '.' + this.props.imageID + ".jpg"}
+                                alt={this.props.altText}
+                                className="image-preview__image  js-image-preview__image"
+                                id={"image-" + this.props.postID + '-' + this.props.hash}
+                            />
+                        :
+                            null
+                        }
                     </div>
                     <Dropzone handleFileChange={this.handleFileChange} hash={this.props.hash} />
                 </div>
@@ -650,7 +641,6 @@ export class PostVideoEditor extends React.Component {
         client.get('/api/v1/posts/' + this.props.postID)
         .then(response => {
             let postContent = response.data.content;
-            console.log(response.data.content); // [{...}, {...}, {...}...]
 
             let toUpdate = postContent.filter(obj => {
                 return obj.hash === this.props.hash;
@@ -666,7 +656,6 @@ export class PostVideoEditor extends React.Component {
                 content: postContent,
             })
             .then(response => {
-                console.log(response);
                 this.setState({
                     content: this.state.tempContent,
                     edited: false,
