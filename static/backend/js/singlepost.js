@@ -158,8 +158,8 @@ class General extends React.Component {
             <article className="main__general  flex-wrapper">
                 <section className="section  main__general__basic">
                     <h2 className="section__heading">{pad(this.props.postData.postID, 4)}</h2>
-                    <TextInput important storedValue={this.props.postData['title']} form="post" endpoint="posts" pk={this.props.postData.postID} name="title" label="Title" />
-                    <TextInput storedValue={this.props.postData.author} form="post" endpoint="posts" pk={this.props.postData.postID} title="author" label="Author" />
+                    <TextInput important storedValue={this.props.postData['title']} endpoint="posts" pk={this.props.postData.postID} name="title" label="Title" />
+                    <TextInput storedValue={this.props.postData.author} endpoint="posts" pk={this.props.postData.postID} name="author" label="Author" />
                     <div className="flex-wrapper  flex-wrapper--between">
                         <button onClick={this.changeStatus} className="btn  btn--text">
                             {buttonText}
@@ -266,21 +266,14 @@ class Content extends React.Component {
     constructor(props) {
         super(props);
 
-        this.toggleSectionAdder = this.toggleSectionAdder.bind(this);
         this.addSection = this.addSection.bind(this);
 
         this.state = {
             contentArray: this.props.postData.content, // array
-            showSectionAdder: false,
         }
     }
-    toggleSectionAdder() {
-        this.setState({
-            showSectionAdder: !this.state.showSectionAdder,
-        });
-    }
     addSection(type) {
-        console.log(type);
+        console.log("addSection")
         let emptyContentObject = {};
         switch(type) {
             case 'text':
@@ -294,7 +287,10 @@ class Content extends React.Component {
                 emptyContentObject = {
                     name: "image",
                     hash: (Math.random()*0xFFFFFF<<0).toString(16),
-                    content: "",
+                    content: [],
+                    altText: "",
+                    caption: "",
+                    imageID: "",
                 }
                 break;
             case 'video':
@@ -303,9 +299,6 @@ class Content extends React.Component {
                     hash: (Math.random()*0xFFFFFF<<0).toString(16),
                     content: "",
                 }
-            default:
-                console.error("ERROR");
-                break;
         }
 
         client.put('/api/v1/posts/' + this.props.postData.postID, {
@@ -313,18 +306,20 @@ class Content extends React.Component {
         })
         .then(response => {
             console.log(response);
-            let newContentArray = this.state.contentArray.push(emptyContentObject);
+            var contentCopy = this.state.contentArray;
+            contentCopy.push(emptyContentObject);
             this.setState({
-                contentArray: newContentArray,
-                showSectionAdder: false,
+                contentArray: contentCopy,
             })
         })
     }
     render() {
-        var contentEditor = [];
-        for (let i=0;i < this.state.contentArray.length; i++) {
+        let contentEditor = [];
+
+        for (let i = 0;i < this.state.contentArray.length; i++) {
             let type = this.state.contentArray[i].name;
             let hash = this.state.contentArray[i].hash;
+
 
             switch(type) {
                 case 'text':
@@ -371,10 +366,7 @@ class Content extends React.Component {
         return (
             <article className="main__content">
                 { contentEditor }
-                <button className="btn btn--text" onClick={this.toggleSectionAdder}>
-                    {!this.state.showSectionAdder ? "New Section" : "Cancel"}
-                </button>
-                {this.state.showSectionAdder ? <PostSectionAdder addSection={this.addSection}/> : null}
+                <PostSectionAdder addSection={this.addSection}/>
             </article>
         )
     }
