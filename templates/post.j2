@@ -8,7 +8,12 @@
 
     <article class="post">
         <h1 class="post__title"><a href="{{ '/posts/' + post_data['postID']|string }}">{{ post_data['title'] }}</a></h1>
-        <p class="post__metadata">{{ post_data['published']|make_date }} | {{ post_data['author'] }}</p>
+        {% if post_data['published'] %}
+            <p class="post__metadata">{{ post_data['published']|make_date }} | {{ post_data['author'] }}</p>
+        {% else %}
+            <p class="post__metadata">Draft | {{ post_data['author'] }}</p>
+        {% endif %}
+
 
         {% for i in range(post_data['content']|length) %}
 
