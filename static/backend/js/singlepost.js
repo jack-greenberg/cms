@@ -1,12 +1,12 @@
 import React from 'react';
-import { Header } from './header.js';
-import { Footer } from './footer.js';
-import { Navigation } from './nav.js';
+import { Header } from './header';
+import { Footer } from './footer';
+import { Navigation } from './nav';
 import { TextInput } from './components';
-import { PostTextEditor, PostImageEditor, PostVideoEditor } from './components';
+import { PostTextEditor, PostImageEditor, PostVideoEditor } from './editors';
 import { Link } from 'react-router-dom';
-import { client } from './index.js';
-import { pad } from './posts.js';
+import { client } from './index';
+import { pad } from './posts';
 var $ = require('jquery');
 
 function arrayRemove(arr, value) {
