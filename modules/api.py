@@ -1,6 +1,6 @@
 from flask import jsonify, request
 import json
-from bson import json_util
+from bson import json_util, dbref, ObjectId
 from werkzeug.utils import secure_filename
 from flask.views import MethodView
 from flask_jwt_extended import fresh_jwt_required
@@ -61,7 +61,7 @@ class SiteAPI(MethodView):
             }
         )
         return (jsonify("Updated"), 201)
-        
+
 class PostAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, post_id):
@@ -73,7 +73,9 @@ class PostAPI(MethodView):
                 ret.append(json.loads(json_util.dumps(doc)))
             return jsonify(ret)
         else:
-            for doc in db.posts.find({'postID': post_id}):
+            for doc in db.posts.find({'_id': ObjectId(post_id)}).limit(1):
+                for i in range(len(doc['content'])):
+                    doc['content'][i] = db.content.find({'_id': doc['content'][i]}).limit(1)[0]
                 return jsonify(json.loads(json_util.dumps(doc)))
             return jsonify(ret)
 

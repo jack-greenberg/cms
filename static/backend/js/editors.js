@@ -18,6 +18,7 @@ var converter = new showdown.Converter({
     noHeaderId: true,
 });
 converter.setFlavor('github');
+
 export class PostTextEditor extends React.Component {
     constructor(props) {
         super(props);
@@ -26,7 +27,7 @@ export class PostTextEditor extends React.Component {
         this.preview = this.preview.bind(this);
         this.save = this.save.bind(this);
 
-        this.inputID = "post-" + this.props.postID + '--' + this.props.hash;
+        this.inputId = "post-" + this.props.postId + '--' + this.props.contentId;
         this.inputRef = React.createRef();
 
         this.state = {
@@ -37,7 +38,7 @@ export class PostTextEditor extends React.Component {
     }
     componentDidMount() {
         this.inputRef.current.innerText = this.state.content;
-        autosize($('#' + this.inputID));
+        autosize($('#' + this.inputId));
     }
     handleInput(e) {
         this.setState({
@@ -56,7 +57,7 @@ export class PostTextEditor extends React.Component {
     }
 
     save() {
-        client.get('/api/v1/posts/' + this.props.postID)
+        client.get('/api/v1/posts/' + this.props.postId)
         .then(response => {
             let postContent = response.data.content;
 
@@ -70,7 +71,7 @@ export class PostTextEditor extends React.Component {
 
             postContent[index] = toUpdate;
 
-            client.put('/api/v1/posts/' + this.props.postID, {
+            client.put('/api/v1/posts/' + this.props.postId, {
                 content: postContent,
             })
             .then(response => {
@@ -108,36 +109,36 @@ export class PostTextEditor extends React.Component {
                         <div className="toggle--text">
                             <input
                                 type="radio"
-                                name={"toggle--text--" + this.inputID}
-                                id={"toggle--" + this.inputID + "--markdown"}
+                                name={"toggle--text--" + this.inputId}
+                                id={"toggle--" + this.inputId + "--markdown"}
                                 defaultChecked={true}
                                 value="markdown"
                                 onClick={this.preview}
                             />
-                            <label htmlFor={"toggle--" + this.inputID + "--markdown"}>
+                            <label htmlFor={"toggle--" + this.inputId + "--markdown"}>
                                 Markdown
                             </label>
 
                             <input
                                 type="radio"
-                                name={"toggle--text--" + this.inputID}
-                                id={"toggle--" + this.inputID + "--preview"}
+                                name={"toggle--text--" + this.inputId}
+                                id={"toggle--" + this.inputId + "--preview"}
                                 value="preview"
                                 onClick={this.preview}
                             />
-                            <label htmlFor={"toggle--" + this.inputID + "--preview"}>
+                            <label htmlFor={"toggle--" + this.inputId + "--preview"}>
                                 Preview
                             </label>
                         </div>
                     </div>
                 </div>
                 <div className={"input-container" + (this.state.edited ? "  input-container--edited" : "")}>
-                    <label htmlFor={this.inputID} className="input__label">{this.props.label}</label>
+                    <label htmlFor={this.inputId} className="input__label">{this.props.label}</label>
 
                     <div
                         contentEditable={!this.state.preview}
                         className={"input--text  input--text--markdown  markdown-body" + (this.state.preview ? "  preview" : "")}
-                        id={this.inputID}
+                        id={this.inputId}
                         defaultValue={this.state.content}
                         onInput={this.handleInput}
                         ref={this.inputRef}
@@ -163,15 +164,15 @@ function Dropzone(props) {
             props.handleFileChange(acceptedFiles);
         }
     });
-    const files = acceptedFiles.map(file => (
-        <li key={file.path}>
-            {file.path} - {file.size} bytes
-        </li>
-    ));
+    // const files = acceptedFiles.map(file => (
+    //     <li key={file.path}>
+    //         {file.path} - {file.size} bytes
+    //     </li>
+    // ));
 
     return (
         <div {...getRootProps({className: 'dropzone'})}>
-            <input {...getInputProps()} id={"file-" + props.hash} />
+            <input {...getInputProps()} id={"file-" + props.contentId} />
             <p>Drag the image here, or click to select from files<br/>
             (Must be JPEG or PNG)</p>
         </div>
@@ -187,15 +188,22 @@ export class PostImageEditor extends React.Component {
         this.save = this.save.bind(this);
 
         this.state = {
-            altText: this.props.altText,
+            src: this.props.content.src,
+            srcset: this.props.content.srcset,
+            caption: this.props.content.caption,
+            altText: this.props.content.altText,
+            imageId: this.props.content.imageId,
+
+
+            // altText: this.props.altText,
             tempAltText: this.props.altText,
             altTextEdited: false,
 
-            caption: this.props.caption,
+            // caption: this.props.caption,
             tempCaption: this.props.caption,
             captionEdited: false,
 
-            content: this.props.content,
+            // content: this.props.content,
             imageEdited: false,
             tempFile: undefined,
         }
@@ -206,7 +214,7 @@ export class PostImageEditor extends React.Component {
             return;
         };
 
-        client.get('/api/v1/posts/' + this.props.postID)
+        client.get('/api/v1/posts/' + this.props.postId)
         .then(getResponse => {
             let postContent = getResponse.data.content;
 
@@ -302,8 +310,8 @@ export class PostImageEditor extends React.Component {
         var reader = new FileReader();
 
         reader.addEventListener("load", (event) => {
-            $("#image-" + this.props.postID + '-' + this.props.hash).attr("src", event.target.result);
-            $("#image-" + this.props.postID + '-' + this.props.hash).css('display', 'block');
+            $("#image-" + this.props.contentId).attr("src", event.target.result);
+            $("#image-" + this.props.contentId).css('display', 'block');
         }, false)
 
         reader.readAsDataURL(new Blob(file));
@@ -317,41 +325,41 @@ export class PostImageEditor extends React.Component {
             <section className="section  section--full-width">
                 <div className="flex-wrapper  file-upload-container">
                     <div className={"image-preview" + (this.state.imageEdited ? "  image-preview--edited" : "")}>
-                        {this.props.content.length > 0 ?
+                        {this.state.src ?
                             <img
-                                src={"/static/images/" + this.props.postID + "/" + this.props.hash + '.' + this.props.imageID + ".jpg"}
-                                alt={this.props.altText}
+                                src={"/static/images/" + this.props.postId + "/" + this.state.src}
+                                alt={this.state.altText}
                                 className="image-preview__image  js-image-preview__image"
-                                id={"image-" + this.props.postID + '-' + this.props.hash}
+                                id={"image-" + this.props.contentId}
                             />
                         :
                             null
                         }
                     </div>
-                    <Dropzone handleFileChange={this.handleFileChange} hash={this.props.hash} />
+                    <Dropzone handleFileChange={this.handleFileChange} contentId={this.props.contentId} />
                 </div>
                 <div>
                     <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
-                        <label htmlFor={"post-" + this.props.postID + "-" + this.props.hash + "-caption"} className="input__label">Caption</label>
+                        <label htmlFor={"caption-" + this.state.contentId} className="input__label">Caption</label>
                         <div className="finalize-edit-container">
                             <input
                                 type="text"
-                                name={"post-" + this.props.postID + "-" + this.props.hash + "-caption"}
+                                name={"caption-" + this.state.contentId}
                                 className={"input--text  input--text--full-width" + (this.state.captionEdited ? "  input--text--edited" : "")}
-                                id={"post-" + this.props.postID + "-" + this.props.hash + "-caption"}
+                                id={"caption-" + this.state.contentId}
                                 defaultValue={this.state.caption}
                                 autoComplete="off"
                                 onKeyUp={this.handleCaptionChange} />
                         </div>
                     </div>
                     <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
-                        <label htmlFor={"post-" + this.props.postID + "-" + this.props.hash + "-altText"} className="input__label">Alt-text</label>
+                        <label htmlFor={"altText-" + this.props.contentId} className="input__label">Alt-text</label>
                         <div className="finalize-edit-container">
                             <input
                                 type="text"
-                                name={"post-" + this.props.postID + "-" + this.props.hash + "-altText"}
+                                name={"altText-" + this.props.contentId}
                                 className={"input--text  input--text--full-width" + (this.state.altTextEdited ? "  input--text--edited" : "")}
-                                id={"post-" + this.props.postID + "-" + this.props.hash + "-altText"}
+                                id={"altText-" + this.props.contentId}
                                 defaultValue={this.state.altText}
                                 autoComplete="off"
                                 onKeyUp={this.handleAltTextChange} />
@@ -374,7 +382,7 @@ export class PostVideoEditor extends React.Component {
         this.handleInput = this.handleInput.bind(this);
         this.save = this.save.bind(this);
 
-        this.inputID = "post-" + this.props.postID + '--' + this.props.hash;
+        this.inputId = "video-" + this.props.contentId;
         this.inputRef = React.createRef();
 
         this.state = {
@@ -399,7 +407,7 @@ export class PostVideoEditor extends React.Component {
     }
 
     save() {
-        client.get('/api/v1/posts/' + this.props.postID)
+        client.get('/api/v1/posts/' + this.props.postId)
         .then(response => {
             let postContent = response.data.content;
 
@@ -413,7 +421,7 @@ export class PostVideoEditor extends React.Component {
 
             postContent[index] = toUpdate;
 
-            client.put('/api/v1/posts/' + this.props.postID, {
+            client.put('/api/v1/posts/' + this.props.postId, {
                 content: postContent,
             })
             .then(response => {
@@ -428,12 +436,12 @@ export class PostVideoEditor extends React.Component {
         return (
             <section className="section  section--full-width">
                 <div className="input-container">
-                    <label htmlFor={this.inputID} className="input__label">YouTube Video ID</label>
+                    <label htmlFor={this.inputID} className="input__label">YouTube Video Id</label>
 
                     <input
                         type="text"
                         className={"input--text" + (this.state.edited ? "  input-container--edited" : "")}
-                        id={this.inputID}
+                        id={this.inputId}
                         defaultValue={this.state.content}
                         onKeyUp={this.handleInput}
                         ref={this.inputRef}

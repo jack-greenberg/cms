@@ -38,6 +38,9 @@ export class SinglePost extends React.Component {
             });
             console.log(response);
         })
+        .catch(err => {
+            console.log(err.config);
+        })
     }
     changeView(e) {
         this.setState({
@@ -157,17 +160,17 @@ class General extends React.Component {
         return (
             <article className="main__general  flex-wrapper">
                 <section className="section  main__general__basic">
-                    <h2 className="section__heading">{pad(this.props.postData.postID, 4)}</h2>
-                    <TextInput important storedValue={this.props.postData['title']} endpoint="posts" pk={this.props.postData.postID} name="title" label="Title" />
-                    <TextInput storedValue={this.props.postData.author} endpoint="posts" pk={this.props.postData.postID} name="author" label="Author" />
+                    {/*<h2 className="section__heading">{pad(this.props.postData['_id']['$oid'], 4)}</h2>*/}
+                    <TextInput important storedValue={this.props.postData['title']} endpoint="posts" pk={this.props.postData['_id']['$oid']} name="title" label="Title" />
+                    <TextInput storedValue={this.props.postData.author} endpoint="posts" pk={this.props.postData['_id']['$oid']} name="author" label="Author" />
                     <div className="flex-wrapper  flex-wrapper--between">
                         <button onClick={this.changeStatus} className="btn  btn--text">
                             {buttonText}
                         </button>
-                        <a href={"/admin/posts/private/" + this.props.postData.postID + "/"} className="link">Private link</a>
+                        <a href={"/admin/posts/private/" + this.props.postData['_id']['$oid'] + "/"} className="link">Private link</a>
                     </div>
                 </section>
-                <Tags tags={this.props.postData['tags']} postID={this.props.postData['postID']} />
+                <Tags tags={this.props.postData['tags']} postId={this.props.postData['_id']['$oid']} />
             </article>
         )
     }
@@ -204,7 +207,7 @@ class Tags extends React.Component {
         this.setState({
             tags: tagList.filter((v, i, a) => a.indexOf(v) === i),
         }, function() {
-            client.put('/api/v1/posts/' + this.props.postID, {
+            client.put('/api/v1/posts/' + this.props.postId, {
                 tags: this.state.tags,
             })
             .then(response => {
@@ -222,7 +225,7 @@ class Tags extends React.Component {
         this.setState({
             tags: newTagList,
         }, function() {
-            client.put('/api/v1/posts/' + this.props.postID, {
+            client.put('/api/v1/posts/' + this.props.postId, {
                 tags: this.state.tags,
             })
             .then(response => {
@@ -266,69 +269,64 @@ class Content extends React.Component {
     constructor(props) {
         super(props);
 
-        this.addSection = this.addSection.bind(this);
+        // this.addSection = this.addSection.bind(this);
 
         this.state = {
-            contentArray: this.props.postData.content, // array
+            contentArray: this.props.postData['content'], // array
         }
     }
-    addSection(type) {
-        console.log("addSection")
-        let emptyContentObject = {};
-        switch(type) {
-            case 'text':
-                emptyContentObject = {
-                    name: "text",
-                    hash: (Math.random()*0xFFFFFF<<0).toString(16),
-                    content: "",
-                }
-                break;
-            case 'image':
-                emptyContentObject = {
-                    name: "image",
-                    hash: (Math.random()*0xFFFFFF<<0).toString(16),
-                    content: [],
-                    altText: "",
-                    caption: "",
-                    imageID: "",
-                }
-                break;
-            case 'video':
-                emptyContentObject = {
-                    name: "video",
-                    hash: (Math.random()*0xFFFFFF<<0).toString(16),
-                    content: "",
-                }
-        }
-
-        client.put('/api/v1/posts/' + this.props.postData.postID, {
-            content: [...this.state.contentArray, emptyContentObject]
-        })
-        .then(response => {
-            console.log(response);
-            var contentCopy = this.state.contentArray;
-            contentCopy.push(emptyContentObject);
-            this.setState({
-                contentArray: contentCopy,
-            })
-        })
-    }
+    // addSection(type) {
+    //     console.log("addSection")
+    //     let emptyContentObject = {};
+    //     switch(type) {
+    //         case 'text':
+    //             emptyContentObject = {
+    //                 name: "text",
+    //                 content: "",
+    //             }
+    //             break;
+    //         case 'image':
+    //             emptyContentObject = {
+    //                 name: "image",
+    //                 value: {},
+    //                 imageID: "",
+    //             }
+    //             break;
+    //         case 'video':
+    //             emptyContentObject = {
+    //                 name: "video",
+    //                 content: "",
+    //             }
+    //     }
+    //
+    //     client.put('/api/v1/content/' + this.props.postData['_id']['$oid'], {
+    //         content: [...this.state.contentArray, emptyContentObject]
+    //     })
+    //     .then(response => {
+    //         console.log(response);
+    //         var contentCopy = this.state.contentArray;
+    //         contentCopy.push(emptyContentObject);
+    //         this.setState({
+    //             contentArray: contentCopy,
+    //         })
+    //     })
+    // }
     render() {
         let contentEditor = [];
 
         for (let i = 0;i < this.state.contentArray.length; i++) {
-            let type = this.state.contentArray[i].name;
-            let hash = this.state.contentArray[i].hash;
-
+            let type = this.state.contentArray[i]['type'];
+            let contentId = this.state.contentArray[i]['_id']['$oid'];
+            let postId = this.props.postData['_id']['$oid']
 
             switch(type) {
                 case 'text':
                     contentEditor.push(
                         <PostTextEditor
                             key={i}
-                            hash={hash}
-                            content={this.state.contentArray[i].content}
-                            postID={this.props.postData.postID}
+                            contentId={contentId}
+                            content={this.state.contentArray[i].value}
+                            postId={postId}
                         />
                     );
                     break;
@@ -336,12 +334,9 @@ class Content extends React.Component {
                     contentEditor.push(
                         <PostImageEditor
                             key={i}
-                            hash={hash}
-                            imageID={this.state.contentArray[i].imageId}
-                            content={this.state.contentArray[i].content}
-                            caption={this.state.contentArray[i].caption}
-                            altText={this.state.contentArray[i]['alt-text']}
-                            postID={this.props.postData.postID}
+                            contentId={contentId}
+                            content={this.state.contentArray[i].value}
+                            postId={postId}
                         />
                     )
                     break;
@@ -349,16 +344,14 @@ class Content extends React.Component {
                     contentEditor.push(
                         <PostVideoEditor
                             key={i}
-                            hash={hash}
-                            content={this.state.contentArray[i].content}
-                            postID={this.props.postData.postID}
+                            contentId={contentId}
+                            content={this.state.contentArray[i].value}
+                            postId={postId}
                         />
                     )
                     break;
                 default:
-                    contentEditor.push(
-                        <h1>ERROR: NO MODULE</h1>
-                    )
+                    contentEditor.push(<h1>ERROR: NO MODULE</h1>)
                     break;
             }
         }
