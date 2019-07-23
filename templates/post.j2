@@ -3,11 +3,11 @@
 
 {% block content %}
     {% if private %}
-        <a href="{{ '/admin/posts/' + post_data['postID']|string }}">Back to Backend</a>
+        <a href="{{ '/admin/posts/' + post_data['_id']|string }}">Back to Backend</a>
     {% endif %}
 
     <article class="post">
-        <h1 class="post__title"><a href="{{ '/posts/' + post_data['postID']|string }}">{{ post_data['title'] }}</a></h1>
+        <h1 class="post__title"><a href="{{ '/posts/' + post_data['_id']|string }}">{{ post_data['title'] }}</a></h1>
         {% if post_data['published'] %}
             <p class="post__metadata">{{ post_data['published']|make_date }} | {{ post_data['author'] }}</p>
         {% else %}
@@ -17,12 +17,12 @@
 
         {% for i in range(post_data['content']|length) %}
 
-            {% set module_name = post_data['content'][i]['name'] %}
+            {% set module_data = post_data['content'][i]|retrieve_content %}
 
-            {% with content = post_data["content"][i] %}
-            {% with postID = post_data["postID"] %}
+            {% with postId = post_data["_id"]|string %}
+            {% with content = module_data %}
 
-                {% include "posts/%s.j2" % module_name %}
+                {% include "posts/%s.j2" % module_data['type'] %}
 
             {% endwith %}
             {% endwith %}

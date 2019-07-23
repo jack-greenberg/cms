@@ -37,6 +37,11 @@ def safe_markdown(text):
 def make_date(date):
     return date.strftime("%b %d, %Y")
 
+@app.template_filter()
+def retrieve_content(contentId):
+    print(db.content.find_one({'_id': contentId}))
+    return db.content.find_one({'_id': contentId})
+
 env = jinja2.Environment(autoescape=True)
 env.filters['safe_markdown'] = safe_markdown
 
