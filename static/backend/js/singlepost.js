@@ -269,6 +269,7 @@ class Content extends React.Component {
         super(props);
 
         this.addSection = this.addSection.bind(this);
+        this.deleteContent = this.deleteContent.bind(this);
 
         this.state = {
             contentArray: this.props.postData['content'], // array
@@ -291,6 +292,20 @@ class Content extends React.Component {
             })
         })
     }
+    deleteContent(contentId) {
+        client.delete('/api/v1/content/' + contentId)
+        .then(response => {
+            console.log(response)
+            let index = this.state.contentArray.findIndex(obj => obj['_id']['$oid'] === contentId);
+            let newContentArray = [
+                ...this.state.contentArray.slice(0, index),
+                ...this.state.contentArray.slice(index + 1)
+            ]
+            this.setState({
+                contentArray: newContentArray,
+            })
+        })
+    }
     render() {
         let contentEditor = [];
 
@@ -307,6 +322,7 @@ class Content extends React.Component {
                             contentId={contentId}
                             content={this.state.contentArray[i].value}
                             postId={postId}
+                            deleteContent={this.deleteContent}
                         />
                     );
                     break;
@@ -321,6 +337,7 @@ class Content extends React.Component {
                             altText={this.state.contentArray[i].altText}
                             imageId={this.state.contentArray[i].imageId}
                             postId={postId}
+                            deleteContent={this.deleteContent}
                         />
                     )
                     break;
@@ -331,6 +348,7 @@ class Content extends React.Component {
                             contentId={contentId}
                             youtubeId={this.state.contentArray[i].youtubeId}
                             postId={postId}
+                            deleteContent={this.deleteContent}
                         />
                     )
                     break;

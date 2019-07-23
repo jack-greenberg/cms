@@ -44,7 +44,7 @@ class SiteAPI(MethodView):
                 }
             }
         )
-        return (jsonify("Uploaded"), 201)
+        return jsonify("Uploaded"), 201
 
     def put(self, type):
         if type is None:
@@ -132,23 +132,26 @@ class ContentAPI(MethodView):
             return jsonify(json.loads(json_util.dumps(result))), 200
 
     def post(self, content_id=None):
-        if (request.files['image']):
-            # For uploading a file for a post
-            image = request.files['image']
-            postId = request.form['postId']
-            imageId = request.form['imageId']
-            contentId = request.form['contentId']
+        try:
+            if (request.files['image']):
+                # For uploading a file for a post
+                image = request.files['image']
+                postId = request.form['postId']
+                imageId = request.form['imageId']
+                contentId = request.form['contentId']
 
-            if image.mimetype not in ['image/png', 'image/jpeg', 'image/jpg']:
-                return jsonify("Wrong filetype!", 400)
+                if image.mimetype not in ['image/png', 'image/jpeg', 'image/jpg']:
+                    return jsonify("Wrong filetype!", 400)
 
-            file_extension = image.mimetype.split('/')[-1]
+                file_extension = image.mimetype.split('/')[-1]
 
-            filename = '%s.%s.%s.%s' % (postId, contentId, imageId, file_extension)
-            image.save(os.getcwd() + '/tmp/' + secure_filename(filename))
-            new_files = process_image(filename)
+                filename = '%s.%s.%s.%s' % (postId, contentId, imageId, file_extension)
+                image.save(os.getcwd() + '/tmp/' + secure_filename(filename))
+                new_files = process_image(filename)
 
-            return jsonify(new_files), 201
+                return jsonify(new_files), 201
+        except KeyError:
+            pass
 
         requestData = json.loads(request.get_data(as_text=True))
         type = requestData['type']
@@ -197,6 +200,11 @@ class ContentAPI(MethodView):
             "$set": requestData,
         }, return_document=ReturnDocument.AFTER)
         return jsonify(json.loads(json_util.dumps(new_doc))), 201
+    def delete(self, content_id):
+        if content_id is None:
+            return jsonify("No contentId specified"), 400
+        db.content.delete_one({'_id': ObjectId(content_id)})
+        return jsonify("ObjectId(" + content_id + ") deleted."), 200
 
 class PageAPI(MethodView):
     decorators = [fresh_jwt_required]

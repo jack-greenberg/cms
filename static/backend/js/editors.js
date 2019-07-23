@@ -27,6 +27,7 @@ export class PostTextEditor extends React.Component {
         this.handleInput = this.handleInput.bind(this);
         this.preview = this.preview.bind(this);
         this.save = this.save.bind(this);
+        this.delete = this.delete.bind(this);
 
         this.inputId = "post-" + this.props.postId + '--' + this.props.contentId;
         this.inputRef = React.createRef();
@@ -44,19 +45,9 @@ export class PostTextEditor extends React.Component {
     handleInput(e) {
         this.setState({
             tempContent: e.target.innerText,
-        }, () => {
-            if (this.state.content != this.state.tempContent) {
-                this.setState({
-                    edited: true,
-                })
-            } else {
-                this.setState({
-                    edited: false,
-                })
-            }
+            edited: this.state.content == this.state.tempContent
         });
     }
-
     save() {
         client.put('/api/v1/content/' + this.props.contentId, {
             value: this.state.tempContent,
@@ -68,32 +59,8 @@ export class PostTextEditor extends React.Component {
                 edited: false,
             })
         })
-        // client.get('/api/v1/content/' + this.props.contentId)
-        // .then(response => {
-        //     let postContent = response.data;
-        //
-        //     let toUpdate = postContent.filter(obj => {
-        //         return obj.hash === this.props.hash;
-        //     })[0] // {content: ..., hash: ...}
-        //
-        //     let index = postContent.indexOf(toUpdate);
-        //
-        //     toUpdate.content = this.state.tempContent;
-        //
-        //     postContent[index] = toUpdate;
-        //
-        //     client.put('/api/v1/posts/' + this.props.postId, {
-        //         content: postContent,
-        //     })
-        //     .then(response => {
-        //         console.log(response);
-        //         this.setState({
-        //             content: this.state.tempContent,
-        //             edited: false,
-        //         })
-        //     })
-        // })
     }
+    delete() {this.props.deleteContent(this.props.contentId)}
     preview(e) {
         if (e.target.value == "preview") {
             this.setState({
@@ -157,8 +124,7 @@ export class PostTextEditor extends React.Component {
                 </div>
                 <div className="toolbar  toolbar--bottom">
                     <button onClick={this.save}>Save</button>
-                    <button>Revert</button>
-                    <button>Hide</button>
+                    <button onClick={this.delete}>Delete</button>
                 </div>
             </section>
         )
@@ -195,6 +161,7 @@ export class PostImageEditor extends React.Component {
 
         this.handleFileChange = this.handleFileChange.bind(this);
         this.save = this.save.bind(this);
+        this.delete = this.delete.bind(this);
 
         this.state = {
             src: this.props.src,
@@ -226,77 +193,8 @@ export class PostImageEditor extends React.Component {
                 tempFile: undefined,
             });
         })
-        // if (!(this.state.altTextEdited || this.state.captionEdited || this.state.imageEdited)) {
-        //     console.log('Nothing edited');
-        //     return;
-        // };
-        //
-        // client.get('/api/v1/posts/' + this.props.postId)
-        // .then(getResponse => {
-        //     let postContent = getResponse.data.content;
-        //
-        //     if (this.state.imageEdited) {
-        //         let formData = new FormData();
-        //
-        //         let imageID = (Math.random()*0xFFFFFF<<0).toString(16)
-        //
-        //         formData.append('image', this.state.tempFile[0])
-        //         formData.append('imageID', imageID)
-        //         formData.append('hash', this.props.hash)
-        //         formData.append('postID', this.props.postID)
-        //
-        //         client.post('/api/v1/posts/', formData, {
-        //             'Content-Type': 'multipart/form-data', // required by Flask
-        //         })
-        //         .then(postResponse => {
-        //             console.log(postResponse);
-        //
-        //             this.setState({
-        //                 imageEdited: false,
-        //                 content: postResponse.data,
-        //             }, () => {
-        //                 let toUpdate = postContent.filter(obj => {
-        //                     return obj.hash === this.props.hash;
-        //                 })[0] // {content: ..., hash: ...}
-        //
-        //                 let index = postContent.indexOf(toUpdate);
-        //
-        //                 toUpdate['alt-text'] = this.state.tempAltText;
-        //                 toUpdate['caption'] = this.state.tempCaption;
-        //                 toUpdate['imageId'] = imageID;
-        //                 toUpdate.content = this.state.content;
-        //
-        //                 postContent[index] = toUpdate;
-        //
-        //                 client.put('/api/v1/posts/' + this.props.postID, {
-        //                     content: postContent,
-        //                 })
-        //                 .then(response => {
-        //                     console.log(response);
-        //                 })
-        //             });
-        //         });
-        //     } else /* If the image wasn't edited, just something else */ {
-        //         let toUpdate = postContent.filter(obj => {
-        //             return obj.hash === this.props.hash;
-        //         })[0] // {content: ..., hash: ...}
-        //
-        //         let index = postContent.indexOf(toUpdate);
-        //
-        //         toUpdate['alt-text'] = this.state.tempAltText;
-        //         toUpdate['caption'] = this.state.tempCaption;
-        //
-        //         postContent[index] = toUpdate;
-        //
-        //         client.put('/api/v1/posts/' + this.props.postID, {
-        //             content: postContent,
-        //         })
-        //         .then(response => {
-        //             console.log(response);
-        //         })
-        //     };
-        // });
     }
+    delete() {this.props.deleteContent(this.props.contentId)}
     handleFileChange(file) {
         var reader = new FileReader();
 
@@ -349,8 +247,7 @@ export class PostImageEditor extends React.Component {
                 </div>
                 <div className="toolbar  toolbar--bottom">
                     <button onClick={this.save}>Save</button>
-                    <button>Revert</button>
-                    <button>Hide</button>
+                    <button onClick={this.delete}>Delete</button>
                 </div>
             </section>
         )
@@ -362,6 +259,7 @@ export class PostVideoEditor extends React.Component {
 
         this.handleInput = this.handleInput.bind(this);
         this.save = this.save.bind(this);
+        this.delete = this.delete.bind(this);
 
         this.inputId = "video-" + this.props.contentId;
         this.inputRef = React.createRef();
@@ -377,7 +275,7 @@ export class PostVideoEditor extends React.Component {
             edited: (this.state.content === this.state.tempContent)
         });
     }
-
+    delete() {this.props.deleteContent(this.props.contentId)}
     save() {
         client.put('/api/v1/content/' + this.props.contentId, {
             youtubeId: this.state.tempContent,
@@ -403,8 +301,7 @@ export class PostVideoEditor extends React.Component {
                 />
                 <div className="toolbar  toolbar--bottom">
                     <button onClick={this.save}>Save</button>
-                    <button>Revert</button>
-                    <button>Hide</button>
+                    <button onClick={this.delete}>Delete</button>
                 </div>
             </section>
         )
