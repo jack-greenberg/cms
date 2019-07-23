@@ -315,7 +315,11 @@ class Content extends React.Component {
                         <PostImageEditor
                             key={i}
                             contentId={contentId}
-                            content={this.state.contentArray[i].value}
+                            src={this.state.contentArray[i].src}
+                            srcset={this.state.contentArray[i].srcset}
+                            caption={this.state.contentArray[i].caption}
+                            altText={this.state.contentArray[i].altText}
+                            imageId={this.state.contentArray[i].imageId}
                             postId={postId}
                         />
                     )
@@ -325,7 +329,7 @@ class Content extends React.Component {
                         <PostVideoEditor
                             key={i}
                             contentId={contentId}
-                            content={this.state.contentArray[i].value}
+                            youtubeId={this.state.contentArray[i].youtubeId}
                             postId={postId}
                         />
                     )

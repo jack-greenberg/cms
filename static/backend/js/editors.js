@@ -1,6 +1,7 @@
 import React from 'react';
 var autosize = require('autosize');
 import { client } from './index';
+import { TextInput } from './components';
 var $ = require('jquery');
 import showdown from 'showdown';
 import {useDropzone} from 'react-dropzone';
@@ -57,31 +58,41 @@ export class PostTextEditor extends React.Component {
     }
 
     save() {
-        client.get('/api/v1/posts/' + this.props.postId)
+        client.put('/api/v1/content/' + this.props.contentId, {
+            value: this.state.tempContent,
+        })
         .then(response => {
-            let postContent = response.data.content;
-
-            let toUpdate = postContent.filter(obj => {
-                return obj.hash === this.props.hash;
-            })[0] // {content: ..., hash: ...}
-
-            let index = postContent.indexOf(toUpdate);
-
-            toUpdate.content = this.state.tempContent;
-
-            postContent[index] = toUpdate;
-
-            client.put('/api/v1/posts/' + this.props.postId, {
-                content: postContent,
-            })
-            .then(response => {
-                console.log(response);
-                this.setState({
-                    content: this.state.tempContent,
-                    edited: false,
-                })
+            console.log(response);
+            this.setState({
+                content: this.state.tempContent,
+                edited: false,
             })
         })
+        // client.get('/api/v1/content/' + this.props.contentId)
+        // .then(response => {
+        //     let postContent = response.data;
+        //
+        //     let toUpdate = postContent.filter(obj => {
+        //         return obj.hash === this.props.hash;
+        //     })[0] // {content: ..., hash: ...}
+        //
+        //     let index = postContent.indexOf(toUpdate);
+        //
+        //     toUpdate.content = this.state.tempContent;
+        //
+        //     postContent[index] = toUpdate;
+        //
+        //     client.put('/api/v1/posts/' + this.props.postId, {
+        //         content: postContent,
+        //     })
+        //     .then(response => {
+        //         console.log(response);
+        //         this.setState({
+        //             content: this.state.tempContent,
+        //             edited: false,
+        //         })
+        //     })
+        // })
     }
     preview(e) {
         if (e.target.value == "preview") {
@@ -183,128 +194,108 @@ export class PostImageEditor extends React.Component {
         super(props);
 
         this.handleFileChange = this.handleFileChange.bind(this);
-        this.handleCaptionChange = this.handleCaptionChange.bind(this);
-        this.handleAltTextChange = this.handleAltTextChange.bind(this);
         this.save = this.save.bind(this);
 
         this.state = {
-            src: this.props.content.src,
-            srcset: this.props.content.srcset,
-            caption: this.props.content.caption,
-            altText: this.props.content.altText,
-            imageId: this.props.content.imageId,
-
-
-            // altText: this.props.altText,
-            tempAltText: this.props.altText,
-            altTextEdited: false,
-
-            // caption: this.props.caption,
-            tempCaption: this.props.caption,
-            captionEdited: false,
-
-            // content: this.props.content,
+            src: this.props.src,
+            srcset: this.props.srcset,
+            imageId: this.props.imageId,
             imageEdited: false,
             tempFile: undefined,
         }
     }
     save() {
-        if (!(this.state.altTextEdited || this.state.captionEdited || this.state.imageEdited)) {
-            console.log('Nothing edited');
-            return;
-        };
+        let formData = new FormData();
+        let imageId = (Math.random()*0xFFFFFF<<0).toString(16)
 
-        client.get('/api/v1/posts/' + this.props.postId)
-        .then(getResponse => {
-            let postContent = getResponse.data.content;
+        formData.append('image', this.state.tempFile[0])
+        formData.append('imageId', imageId)
+        formData.append('contentId', this.props.contentId)
+        formData.append('postId', this.props.postId)
 
-            if (this.state.imageEdited) {
-                let formData = new FormData();
-
-                let imageID = (Math.random()*0xFFFFFF<<0).toString(16)
-
-                formData.append('image', this.state.tempFile[0])
-                formData.append('imageID', imageID)
-                formData.append('hash', this.props.hash)
-                formData.append('postID', this.props.postID)
-
-                client.post('/api/v1/posts/', formData, {
-                    'Content-Type': 'multipart/form-data', // required by Flask
-                })
-                .then(postResponse => {
-                    console.log(postResponse);
-
-                    this.setState({
-                        imageEdited: false,
-                        content: postResponse.data,
-                    }, () => {
-                        let toUpdate = postContent.filter(obj => {
-                            return obj.hash === this.props.hash;
-                        })[0] // {content: ..., hash: ...}
-
-                        let index = postContent.indexOf(toUpdate);
-
-                        toUpdate['alt-text'] = this.state.tempAltText;
-                        toUpdate['caption'] = this.state.tempCaption;
-                        toUpdate['imageId'] = imageID;
-                        toUpdate.content = this.state.content;
-
-                        postContent[index] = toUpdate;
-
-                        client.put('/api/v1/posts/' + this.props.postID, {
-                            content: postContent,
-                        })
-                        .then(response => {
-                            console.log(response);
-                        })
-                    });
-                });
-            } else /* If the image wasn't edited, just something else */ {
-                let toUpdate = postContent.filter(obj => {
-                    return obj.hash === this.props.hash;
-                })[0] // {content: ..., hash: ...}
-
-                let index = postContent.indexOf(toUpdate);
-
-                toUpdate['alt-text'] = this.state.tempAltText;
-                toUpdate['caption'] = this.state.tempCaption;
-
-                postContent[index] = toUpdate;
-
-                client.put('/api/v1/posts/' + this.props.postID, {
-                    content: postContent,
-                })
-                .then(response => {
-                    console.log(response);
-                })
-            };
-        });
-    }
-    handleTextChange(e) {
-        if (this.state[e.target.name.split('-').pop()] !== e.target.value) {
-            var temp = this.state.temp;
-            temp[e.target.name.split('-').pop()] = e.target.value;
-            this.setState({
-                temp,
-                edited: true,
-            })
-        } else {
-            this.setState({
-                edited: false,
-            })
-        }
-    }
-    handleCaptionChange(e) {
-        this.setState({
-            tempCaption: e.target.value,
-            captionEdited: (this.state.caption !== e.target.value) ? true : false,
+        client.post('/api/v1/content/' + this.props.contentId, formData, {
+            'Content-Type': 'multipart/form-data', // required by Flask
         })
-    }
-    handleAltTextChange(e) {
-        this.setState({
-            tempAltText: e.target.value,
-            altTextEdited: (this.state.altText !== e.target.value) ? true : false,
+        .then(response => {
+            console.log(response);
+            this.setState({
+                imageEdited: false,
+                src: response.data.src,
+                srcset: response.data.srcset,
+                imageId: imageId,
+                tempFile: undefined,
+            });
         })
+        // if (!(this.state.altTextEdited || this.state.captionEdited || this.state.imageEdited)) {
+        //     console.log('Nothing edited');
+        //     return;
+        // };
+        //
+        // client.get('/api/v1/posts/' + this.props.postId)
+        // .then(getResponse => {
+        //     let postContent = getResponse.data.content;
+        //
+        //     if (this.state.imageEdited) {
+        //         let formData = new FormData();
+        //
+        //         let imageID = (Math.random()*0xFFFFFF<<0).toString(16)
+        //
+        //         formData.append('image', this.state.tempFile[0])
+        //         formData.append('imageID', imageID)
+        //         formData.append('hash', this.props.hash)
+        //         formData.append('postID', this.props.postID)
+        //
+        //         client.post('/api/v1/posts/', formData, {
+        //             'Content-Type': 'multipart/form-data', // required by Flask
+        //         })
+        //         .then(postResponse => {
+        //             console.log(postResponse);
+        //
+        //             this.setState({
+        //                 imageEdited: false,
+        //                 content: postResponse.data,
+        //             }, () => {
+        //                 let toUpdate = postContent.filter(obj => {
+        //                     return obj.hash === this.props.hash;
+        //                 })[0] // {content: ..., hash: ...}
+        //
+        //                 let index = postContent.indexOf(toUpdate);
+        //
+        //                 toUpdate['alt-text'] = this.state.tempAltText;
+        //                 toUpdate['caption'] = this.state.tempCaption;
+        //                 toUpdate['imageId'] = imageID;
+        //                 toUpdate.content = this.state.content;
+        //
+        //                 postContent[index] = toUpdate;
+        //
+        //                 client.put('/api/v1/posts/' + this.props.postID, {
+        //                     content: postContent,
+        //                 })
+        //                 .then(response => {
+        //                     console.log(response);
+        //                 })
+        //             });
+        //         });
+        //     } else /* If the image wasn't edited, just something else */ {
+        //         let toUpdate = postContent.filter(obj => {
+        //             return obj.hash === this.props.hash;
+        //         })[0] // {content: ..., hash: ...}
+        //
+        //         let index = postContent.indexOf(toUpdate);
+        //
+        //         toUpdate['alt-text'] = this.state.tempAltText;
+        //         toUpdate['caption'] = this.state.tempCaption;
+        //
+        //         postContent[index] = toUpdate;
+        //
+        //         client.put('/api/v1/posts/' + this.props.postID, {
+        //             content: postContent,
+        //         })
+        //         .then(response => {
+        //             console.log(response);
+        //         })
+        //     };
+        // });
     }
     handleFileChange(file) {
         var reader = new FileReader();
@@ -339,32 +330,22 @@ export class PostImageEditor extends React.Component {
                     <Dropzone handleFileChange={this.handleFileChange} contentId={this.props.contentId} />
                 </div>
                 <div>
-                    <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
-                        <label htmlFor={"caption-" + this.state.contentId} className="input__label">Caption</label>
-                        <div className="finalize-edit-container">
-                            <input
-                                type="text"
-                                name={"caption-" + this.state.contentId}
-                                className={"input--text  input--text--full-width" + (this.state.captionEdited ? "  input--text--edited" : "")}
-                                id={"caption-" + this.state.contentId}
-                                defaultValue={this.state.caption}
-                                autoComplete="off"
-                                onKeyUp={this.handleCaptionChange} />
-                        </div>
-                    </div>
-                    <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
-                        <label htmlFor={"altText-" + this.props.contentId} className="input__label">Alt-text</label>
-                        <div className="finalize-edit-container">
-                            <input
-                                type="text"
-                                name={"altText-" + this.props.contentId}
-                                className={"input--text  input--text--full-width" + (this.state.altTextEdited ? "  input--text--edited" : "")}
-                                id={"altText-" + this.props.contentId}
-                                defaultValue={this.state.altText}
-                                autoComplete="off"
-                                onKeyUp={this.handleAltTextChange} />
-                        </div>
-                    </div>
+                    <TextInput
+                        fullWidth
+                        endpoint="content"
+                        name="altText"
+                        pk={this.props.contentId}
+                        storedValue={this.props.altText}
+                        label="Alt text"
+                    />
+                    <TextInput
+                        fullWidth
+                        endpoint="content"
+                        name="caption"
+                        pk={this.props.contentId}
+                        storedValue={this.props.caption}
+                        label="Caption"
+                    />
                 </div>
                 <div className="toolbar  toolbar--bottom">
                     <button onClick={this.save}>Save</button>
@@ -393,60 +374,33 @@ export class PostVideoEditor extends React.Component {
     handleInput(e) {
         this.setState({
             tempContent: e.target.value,
-        }, () => {
-            if (this.state.content != this.state.tempContent) {
-                this.setState({
-                    edited: true,
-                })
-            } else {
-                this.setState({
-                    edited: false,
-                })
-            }
+            edited: (this.state.content === this.state.tempContent)
         });
     }
 
     save() {
-        client.get('/api/v1/posts/' + this.props.postId)
+        client.put('/api/v1/content/' + this.props.contentId, {
+            youtubeId: this.state.tempContent,
+        })
         .then(response => {
-            let postContent = response.data.content;
-
-            let toUpdate = postContent.filter(obj => {
-                return obj.hash === this.props.hash;
-            })[0] // {content: ..., hash: ...}
-
-            let index = postContent.indexOf(toUpdate);
-
-            toUpdate.content = this.state.tempContent;
-
-            postContent[index] = toUpdate;
-
-            client.put('/api/v1/posts/' + this.props.postId, {
-                content: postContent,
-            })
-            .then(response => {
-                this.setState({
-                    content: this.state.tempContent,
-                    edited: false,
-                })
+            console.log(response);
+            this.setState({
+                content: this.state.tempContent,
+                edited: false,
             })
         })
     }
     render() {
         return (
             <section className="section  section--full-width">
-                <div className="input-container">
-                    <label htmlFor={this.inputID} className="input__label">YouTube Video Id</label>
-
-                    <input
-                        type="text"
-                        className={"input--text" + (this.state.edited ? "  input-container--edited" : "")}
-                        id={this.inputId}
-                        defaultValue={this.state.content}
-                        onKeyUp={this.handleInput}
-                        ref={this.inputRef}
-                    />
-                </div>
+                <TextInput
+                    fullWidth
+                    endpoint="content"
+                    name="youtubeId"
+                    pk={this.props.contentId}
+                    storedValue={this.props.youtubeId}
+                    label="Youtube Video Id"
+                />
                 <div className="toolbar  toolbar--bottom">
                     <button onClick={this.save}>Save</button>
                     <button>Revert</button>

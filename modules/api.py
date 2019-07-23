@@ -1,6 +1,6 @@
 from flask import jsonify, request
 import json
-from bson import json_util, dbref, ObjectId
+from bson import json_util, ObjectId
 from werkzeug.utils import secure_filename
 from flask.views import MethodView
 from flask_jwt_extended import fresh_jwt_required
@@ -89,32 +89,6 @@ class PostAPI(MethodView):
             return jsonify(json.loads(json_util.dumps(post_data)))
 
     def post(self):
-        if (request.files['image']):
-            # For uploading a file for a post
-            image = request.files['image']
-            post_id = request.form['postID']
-            image_id = request.form['imageID']
-            hash = request.form['hash']
-
-            print('-------')
-            print('Filename: %s' % image.filename)
-            print('Filetype: %s' % image.mimetype)
-            print('Post ID: %s' % post_id)
-            print('Image ID: %s' % image_id)
-            print('Hash: %s' % hash)
-            print('-------')
-
-            if image.mimetype not in ['image/png', 'image/jpeg', 'image/jpg']:
-                return (jsonify("Wrong filetype!", 400))
-
-            file_extension = image.mimetype.split('/')[-1]
-
-            filename = '%s.%s.%s.%s' % (post_id, hash, image_id, file_extension)
-            image.save(os.getcwd() + '/tmp/' + secure_filename(filename))
-            new_files = process_image(filename)
-
-            return (jsonify(new_files), 201)
-
         # This is for when the POST request is empty, so it just creates a blank blog post
         lastID = db.posts.find_one({}, {'postID': 1}, sort=[("postID", -1)])
         emptyPost = {
@@ -152,10 +126,30 @@ class ContentAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, content_id):
         if post_id is None:
-            return
+            return jsonify("No contentId specified"), 400
         else:
-            return jsonify("Test"), 200
-    def post(self):
+            result = db.content.find_one({'_id': ObjectId(content_id)})
+            return jsonify(json.loads(json_util.dumps(result))), 200
+
+    def post(self, content_id=None):
+        if (request.files['image']):
+            # For uploading a file for a post
+            image = request.files['image']
+            postId = request.form['postId']
+            imageId = request.form['imageId']
+            contentId = request.form['contentId']
+
+            if image.mimetype not in ['image/png', 'image/jpeg', 'image/jpg']:
+                return jsonify("Wrong filetype!", 400)
+
+            file_extension = image.mimetype.split('/')[-1]
+
+            filename = '%s.%s.%s.%s' % (postId, contentId, imageId, file_extension)
+            image.save(os.getcwd() + '/tmp/' + secure_filename(filename))
+            new_files = process_image(filename)
+
+            return jsonify(new_files), 201
+
         requestData = json.loads(request.get_data(as_text=True))
         type = requestData['type']
         postId = requestData['postId']
@@ -196,13 +190,13 @@ class ContentAPI(MethodView):
         })
 
         return jsonify(json.loads(json_util.dumps(new_doc))), 201
+
     def put(self, content_id):
         requestData = json.loads(request.get_data(as_text=True))
-        newdoc = db.content.find_one_and_update({'_id': ObjectId(content_id)}, {
+        new_doc = db.content.find_one_and_update({'_id': ObjectId(content_id)}, {
             "$set": requestData,
         }, return_document=ReturnDocument.AFTER)
         return jsonify(json.loads(json_util.dumps(new_doc))), 201
-
 
 class PageAPI(MethodView):
     decorators = [fresh_jwt_required]

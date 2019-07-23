@@ -5,6 +5,8 @@ import os, glob
 import sys
 import time
 from math import floor
+from modules.database import db
+from bson import ObjectId
 
 def get_img_data(img):
     try:
@@ -23,8 +25,8 @@ def process_image(img_name):
         print("ERROR: File DNE")
         return
 
-    # Image comes in as <postID>.<hash>.jpg/png
-    (postID, hash, image_id, file_ext) = img_name.split('.')
+    # Image comes in as <postID>.<contentId>.<imageId>.jpg/png
+    (postId, contentId, imageId, file_extension) = img_name.split('.')
 
     img = Image.open(join(dirname(__file__), "../tmp/%s" % img_name))
     img = img.convert('RGB')
@@ -43,19 +45,30 @@ def process_image(img_name):
     widths = [ img.size[0] for img in new_images ]
 
     try:
-        os.mkdir(join(dirname(__file__), "../static/images/%s" % postID))
-    except OSError:
+        os.mkdir(join(dirname(__file__), "../static/images/%s" % postId))
+    except OSError: # if the directory already exists
         pass
 
-    for file in glob.glob(join(dirname(__file__), "../static/images/%s/%s*" % (postID, hash))):
+    for file in glob.glob(join(dirname(__file__), "../static/images/%s/%s*" % (postId, contentId))):
         os.remove(file)
 
-    new_files = [ join(dirname(__file__), '../static/images/%s' % postID, '%s.%s.%d.jpg' % (hash, image_id, w)) for w in widths ]
+    new_files = [ join(dirname(__file__), '../static/images/%s' % postId, '%s.%s.%d.jpg' % (contentId, imageId, w)) for w in widths ]
 
-    new_images[1].save(join(dirname(__file__), '../static/images/%s' % postID, '%s.%s.jpg' % (hash, image_id)), optimize=True, progressive=True)
+    new_images[1].save(join(dirname(__file__), '../static/images/%s' % postId, '%s.%s.jpg' % (contentId, imageId)), optimize=True, progressive=True)
 
     for img, name in zip(new_images, new_files):
         img.save(name, optimize=True, progressive=True)
         img.close()
     os.remove(join(dirname(__file__), "../tmp/%s" % img_name))
-    return [ '%s.%s.%d.jpg' % (hash, image_id, w) for w in widths ]
+    file_list = [ '%s.%s.%d.jpg' % (contentId, imageId, w) for w in widths ]
+    src = '%s.%s.jpg' % (contentId, imageId)
+
+    db.content.update_one({'_id': ObjectId(contentId)}, {
+        "$set": {
+            "src": src,
+            "srcset": file_list,
+            "imageId": imageId,
+        }
+    })
+
+    return {'src': src, 'srcset': file_list}

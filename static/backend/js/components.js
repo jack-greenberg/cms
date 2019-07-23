@@ -28,11 +28,11 @@ export class TextInput extends React.Component {
         }
     }
     componentDidMount() {
-        autosize($('#form-' + this.props.form + "--" + this.props.name));
+        autosize($('#' + this.props.name + '-' + this.props.pk));
     }
     handleTextEdit(e) {
         if (this.props.multiline) {
-            autosize($('#form-' + this.props.form + "--" + this.props.name)); // autosizes the multiline inputs so there is no scrolling
+            autosize($('#' + this.props.name + '-' + this.props.pk)); // autosizes the multiline inputs so there is no scrolling
         };
 
         let storedValue = this.state.storedValue;
@@ -89,7 +89,7 @@ export class TextInput extends React.Component {
             inputClassList += "  input--text--multiline";
             return (
                 <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
-                    <label htmlFor={"form-" + this.props.form + '--' + this.props.name} className="input__label">{this.props.label}</label>
+                    <label htmlFor={this.props.name + '-' + this.props.pk} className="input__label">{this.props.label}</label>
                     <textarea name={this.props.name} className={inputClassList} id={"form-" + this.props.form + "--" + this.props.name} defaultValue={this.props.storedValue} onKeyUp={this.handleTextEdit} ref={this.inputRef} />
 
                     {this.state.edited ? <FinalizeEditBox handleFinalizeEdit={this.handleFinalizeEdit} handleCancelEdit={this.handleCancelEdit} /> : null}
@@ -98,9 +98,9 @@ export class TextInput extends React.Component {
         }
         return (
             <div className={this.state.edited ? "input-container  input-container--edited" : "input-container"}>
-                <label htmlFor={"form-" + this.props.form + '--' + this.props.name} className="input__label">{this.props.label}</label>
+                <label htmlFor={this.props.name + '-' + this.props.pk} className="input__label">{this.props.label}</label>
                 <div className="finalize-edit-container">
-                    <input type="text" name={this.props.name} className={inputClassList} id={"form-" + this.props.form + '--' + this.props.name} defaultValue={this.state.storedValue} onKeyUp={this.handleTextEdit} ref={this.inputRef} autoComplete="off" />
+                    <input type="text" name={this.props.name} className={inputClassList} id={this.props.name + '-' + this.props.pk} defaultValue={this.state.storedValue} onKeyUp={this.handleTextEdit} ref={this.inputRef} autoComplete="off" />
 
                     {this.state.edited ? <FinalizeEditBox handleFinalizeEdit={this.handleFinalizeEdit} handleCancelEdit={this.handleCancelEdit} /> : null}
                 </div>
