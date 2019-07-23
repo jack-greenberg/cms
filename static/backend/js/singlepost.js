@@ -104,7 +104,7 @@ class General extends React.Component {
             if (!window.confirm("Are you sure you want to publish this draft?")) {
                 return;
             }
-            client.put('/api/v1/posts/' + this.props.postData.postID, {
+            client.put('/api/v1/posts/' + this.props.postData['_id']['$oid'], {
                 status: 'live',
                 published: (new Date()).toUTCString(),
             })
@@ -121,7 +121,7 @@ class General extends React.Component {
             this.setState({
                 status: 'archived',
             }, () => {
-                client.put('/api/v1/posts/' + this.props.postData.postID, {
+                client.put('/api/v1/posts/' + this.props.postData['_id']['$oid'], {
                     status: this.state.status,
                 })
                 .then(response => {
@@ -135,7 +135,7 @@ class General extends React.Component {
             this.setState({
                 status: 'live',
             }, () => {
-                client.put('/api/v1/posts/' + this.props.postData.postID, {
+                client.put('/api/v1/posts/' + this.props.postData['_id']['$oid'], {
                     status: this.state.status,
                 })
                 .then(response => {
@@ -220,7 +220,6 @@ class Tags extends React.Component {
     removeTag(e) {
         var tagList = this.state.tags;
         var tagToRemove = $(e.target).closest('button').attr("value");
-        console.log(tagToRemove);
         var newTagList = arrayRemove(tagList, tagToRemove);
         this.setState({
             tags: newTagList,
@@ -269,48 +268,29 @@ class Content extends React.Component {
     constructor(props) {
         super(props);
 
-        // this.addSection = this.addSection.bind(this);
+        this.addSection = this.addSection.bind(this);
 
         this.state = {
             contentArray: this.props.postData['content'], // array
         }
     }
-    // addSection(type) {
-    //     console.log("addSection")
-    //     let emptyContentObject = {};
-    //     switch(type) {
-    //         case 'text':
-    //             emptyContentObject = {
-    //                 name: "text",
-    //                 content: "",
-    //             }
-    //             break;
-    //         case 'image':
-    //             emptyContentObject = {
-    //                 name: "image",
-    //                 value: {},
-    //                 imageID: "",
-    //             }
-    //             break;
-    //         case 'video':
-    //             emptyContentObject = {
-    //                 name: "video",
-    //                 content: "",
-    //             }
-    //     }
-    //
-    //     client.put('/api/v1/content/' + this.props.postData['_id']['$oid'], {
-    //         content: [...this.state.contentArray, emptyContentObject]
-    //     })
-    //     .then(response => {
-    //         console.log(response);
-    //         var contentCopy = this.state.contentArray;
-    //         contentCopy.push(emptyContentObject);
-    //         this.setState({
-    //             contentArray: contentCopy,
-    //         })
-    //     })
-    // }
+    addSection(type) {
+        console.log(type, this.props.postData['_id']['$oid'])
+        client.post('/api/v1/content/', {
+            type: type,
+            postId: this.props.postData['_id']['$oid'],
+        })
+        .then(response => {
+            console.log(response);
+
+            var contentCopy = this.state.contentArray;
+            contentCopy.push(response.data);
+
+            this.setState({
+                contentArray: contentCopy,
+            })
+        })
+    }
     render() {
         let contentEditor = [];
 

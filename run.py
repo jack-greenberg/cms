@@ -54,6 +54,7 @@ def register_api(view, endpoint, url, pk='id', pk_type='string'):
 
 register_api(SiteAPI, 'site_api', '/api/v1/siteData/', pk='type', pk_type='string')
 register_api(PostAPI, 'post_api', '/api/v1/posts/', pk='post_id', pk_type='string')
+register_api(ContentAPI, 'content_api', '/api/v1/content/', pk='content_id', pk_type='string')
 register_api(PageAPI, 'page_api', '/api/v1/pages/', pk='page_name', pk_type='string')
 
 

@@ -8,6 +8,7 @@ from modules.database import db
 from datetime import datetime
 from modules.image_processor import process_image
 import os
+from pymongo import ReturnDocument
 
 """ API
  URL (/api/v1/...)  | METHOD| DESCRIPTION
@@ -116,7 +117,7 @@ class PostAPI(MethodView):
             "lastEdited": datetime.now(),
             "published": None,
             "tags": [],
-            "content": {},
+            "content": [],
         }
         db.posts.insert_one(emptyPost)
         return jsonify(emptyPost)
@@ -136,8 +137,63 @@ class PostAPI(MethodView):
         requestData['lastEdited'] = datetime.now()
         db.posts.update_one({'postID': post_id}, {
             "$set": requestData,
+
+class ContentAPI(MethodView):
+    decorators = [fresh_jwt_required]
+    def get(self, content_id):
+        if post_id is None:
+            return
+        else:
+            return jsonify("Test"), 200
+    def post(self):
+        requestData = json.loads(request.get_data(as_text=True))
+        type = requestData['type']
+        postId = requestData['postId']
+
+        if type == 'text':
+            new_doc = {
+                '_id': ObjectId(),
+                'type': type,
+                'postId': ObjectId(postId),
+                'value': ''
+            }
+        elif type == 'image':
+            new_doc = {
+                '_id': ObjectId(),
+                'type': type,
+                'postId': ObjectId(postId),
+                'value': {
+                    'src': '',
+                    'srcset': [],
+                    'altText': '',
+                    'caption': '',
+                    'imageId': '',
+                }
+            }
+        elif type == 'video':
+            new_doc = {
+                '_id': ObjectId(),
+                'type': type,
+                'postId': ObjectId(postId),
+                'value': ''
+            }
+        else:
+            return jsonify("Wrong type"), 400
+        new_id = db.content.insert_one(new_doc).inserted_id
+
+        db.posts.update({'_id': ObjectId(postId)}, {
+            '$push': {'content': new_id}
         })
-        return jsonify("Updated"), 201
+
+        return jsonify(json.loads(json_util.dumps(new_doc))), 201
+    def put(self, content_id):
+        requestData = json.loads(request.get_data(as_text=True))
+        newdoc = db.content.find_one_and_update({'_id': ObjectId(content_id)}, {
+            "$set": requestData,
+        }, return_document=ReturnDocument.AFTER)
+        return jsonify(json.loads(json_util.dumps(new_doc))), 201
+
+
 class PageAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, page_name):
