@@ -74,11 +74,19 @@ class PostAPI(MethodView):
                 ret.append(json.loads(json_util.dumps(doc)))
             return jsonify(ret)
         else:
-            for doc in db.posts.find({'_id': ObjectId(post_id)}).limit(1):
-                for i in range(len(doc['content'])):
-                    doc['content'][i] = db.content.find({'_id': doc['content'][i]}).limit(1)[0]
-                return jsonify(json.loads(json_util.dumps(doc)))
-            return jsonify(ret)
+            post_data = db.posts.find_one({'_id': ObjectId(post_id)})
+            for i in range(len(post_data['content'])): # for each ObjectId in the content array
+                content_id = post_data['content'][i]
+                content_result = db.content.find_one({'_id': content_id})
+
+                post_data['content'][i] = content_result
+
+                if content_result is None:
+                    db.posts.update({}, {
+                        "$pull": {'content': content_id}
+                    })
+            post_data['content'] = [ i for i in post_data['content'] if i != None ]
+            return jsonify(json.loads(json_util.dumps(post_data)))
 
     def post(self):
         if (request.files['image']):
@@ -135,8 +143,10 @@ class PostAPI(MethodView):
         except KeyError:
             pass
         requestData['lastEdited'] = datetime.now()
-        db.posts.update_one({'postID': post_id}, {
+        new_doc = db.posts.find_one_and_update({'_id': ObjectId(post_id)}, {
             "$set": requestData,
+        }, return_document=ReturnDocument.AFTER)
+        return jsonify(json.loads(json_util.dumps(new_doc))), 201
 
 class ContentAPI(MethodView):
     decorators = [fresh_jwt_required]
