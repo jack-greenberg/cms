@@ -90,10 +90,9 @@ class PostAPI(MethodView):
 
     def post(self):
         # This is for when the POST request is empty, so it just creates a blank blog post
-        lastID = db.posts.find_one({}, {'postID': 1}, sort=[("postID", -1)])
         emptyPost = {
-            "postID": lastID + 1,
-            "title": "",
+            "_id": ObjectId(),
+            "title": "New Post",
             "author": "",
             "status": "draft",
             "lastEdited": datetime.now(),
@@ -102,7 +101,7 @@ class PostAPI(MethodView):
             "content": [],
         }
         db.posts.insert_one(emptyPost)
-        return jsonify(emptyPost)
+        return jsonify(json.loads(json_util.dumps(emptyPost))), 200
 
     def delete(self, post_id):
         # delete a single post

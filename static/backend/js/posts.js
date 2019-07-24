@@ -19,6 +19,8 @@ export class Posts extends React.Component {
     constructor(props) {
         super(props);
 
+        this.newPost = this.newPost.bind(this);
+
         this.state = {
             postData: [],
         };
@@ -33,6 +35,17 @@ export class Posts extends React.Component {
             });
         })
     };
+    newPost() {
+        client.post('/api/v1/posts/')
+        .then(response => {
+            console.log(response);
+            let postDataCopy = this.state.postData;
+            postDataCopy.push(response.data);
+            this.setState({
+                postData: postDataCopy,
+            });
+        })
+    }
     render() {
         if (this.state.postData) {
             return (
@@ -65,7 +78,7 @@ export class Posts extends React.Component {
                                         })}
                                     </div>
                                 </section>
-
+                                <button className="btn  btn--text" onClick={this.newPost}>New Post</button>
                             </main>
                             <Footer />
                         </div>
