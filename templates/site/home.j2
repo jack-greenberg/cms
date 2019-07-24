@@ -1,22 +1,16 @@
 {% extends 'base.j2' %}
-{% block title %}{{ page_title }}{% endblock %}
+{% block title %}Home{% endblock %}
 {% block content %}
-    {#
-        Cycle through the modules and include them & send data to them
-    #}
-    {% for module_index in range(module_data["modules"]|length) %}
+<main>
+    <header class="header">
+        <h1 class="header__title  title  title-1">Hi! I'm Jack</h1>
+        <img class="header__image" src="{{url_for('static', filename='images/me.png')}}" alt="Illustration of me." />
+        <p class="header__subtitle  text  text--small">I have shorter hair now.</p>
+        <p class="header__subtitle  text  text--small">And here is a collection of stories.</p>
+    </header>
 
-        {% set module_name = (module_data["modules"][module_index]|list)[0] %}
+    <div id="app"></div>
+</main>
 
-            {% with data = module_data["modules"][module_index][module_name] %}
-
-                {% include "site/modules/%s.j2" % module_name %}
-
-            {% endwith %}
-
-    {% endfor %}
-
-    {# <script>
-            console.log({{ pages|tojson }});
-        </script> #}
+<script src="{{url_for('static', filename='build/theme.js')}}" charset="utf-8"></script>
 {% endblock %}

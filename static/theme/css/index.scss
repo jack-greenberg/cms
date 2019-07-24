@@ -1,4 +1,93 @@
 @import 'components';
 @import 'reset';
-@import 'github-markdown';
+// @import 'github-markdown';
 @import 'post';
+
+.title {
+    font-family: $titlefont;
+
+    &-1 { font-size: 2em; }
+    &-2 { font-size: 1.75em; }
+    &-3 { font-size: 1.5em; }
+}
+.text {
+    font-family: $mono;
+}
+
+.header {
+    padding: 4em 1em 1em;
+    background-color: $pink;
+    text-align: center;
+
+    &__title {
+        color: $blue;
+        margin-bottom: 2em;
+    }
+    &__image {
+        width: 90%;
+        display: block;
+        margin: 0 auto 3em;
+        max-width: 10em;
+    }
+    &__subtitle {
+        color: $blue;
+        margin-bottom: 3em;
+    }
+}
+
+.timeline {
+    background-color: $pink;
+    color: $blue;
+    padding-bottom: 2em;
+
+    .card {
+        font-family: $mono;
+        width: 15em;
+        z-index: 999;
+        padding: 1em;
+        margin: 0 auto;
+        background-color: $white;
+        text-align: center;
+        border-radius: 5px;
+        border: 1px solid $black;
+        box-shadow: 3px 3px 0px $black;
+        position: relative;
+
+        button {
+            width: 50%;
+            height: 100%;
+            display: block;
+            position: absolute;
+            top: 0;
+
+            &.swipe-prev {
+                left: 0;
+            }
+            &.swipe-next {
+                right: 0;
+            }
+        }
+    }
+}
+.story {
+    background-color: $blue;
+    color: $pink;
+}
+
+
+
+.swipe {
+    overflow: hidden;
+    visibility: hidden;
+    position: relative;
+}
+.swipe-wrap {
+    overflow: hidden;
+    position: relative;
+}
+.swipe-wrap > div {
+    float: left;
+    width: 80%;
+    position: relative;
+    overflow: hidden;
+}

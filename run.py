@@ -105,23 +105,41 @@ def start_session():
 
 @app.route('/')
 def index():
-    return "coming soon"
-    # return render_template('jacksite/home.j2', page_title="Home", module_data=page_data['Home'])
+    page_data = db.pages.find_one({'name': 'home'})
+    return render_template('site/home.j2')
+
+@app.route('/api/v1/public/posts/')
+def public_post():
+    ret = []
+    post_data = db.posts.find()
+    for post_data in post_data:
+        for i in range(len(post_data['content'])): # for each ObjectId in the content array
+            content_id = post_data['content'][i]
+            content_result = db.content.find_one({'_id': content_id})
+
+            post_data['content'][i] = content_result
+
+            if content_result is None:
+                db.posts.update({}, {
+                    "$pull": {'content': content_id}
+                })
+        post_data['content'] = [ i for i in post_data['content'] if i != None ]
+        ret.append(json.loads(json_util.dumps(post_data)))
+    return jsonify(ret), 200
 
 @app.route('/<page>/')
 def subpage(page):
-    return "coming soon"
-    # page_list = []
-    # for page in db.pages.find():
-    #     page_list.append(page["name"])
-    #
-    # if page in page_list:
-    #     if page == 'home':
-    #         return redirect(url_for('index'))
-    #     else:
-    #         return render_template('site/home.j2', page_title=page, module_data=page_list[page])
-    # else:
-    #     return render_template('404.j2'), 404
+    page_list = []
+    for page in db.pages.find():
+        page_list.append(page["name"])
+
+    if page in page_list:
+        if page == 'home':
+            return redirect(url_for('index'))
+        else:
+            return render_template('site/home.j2', page_title=page, module_data=page_list[page])
+    else:
+        return render_template('404.j2'), 404
 
 
 @app.route('/login/', methods=['GET', 'POST'])

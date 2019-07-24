@@ -45,6 +45,7 @@
     "sass-loader": "^7.1.0",
     "showdown": "^1.9.0",
     "style-loader": "^0.23.1",
+    "swipejs": "^2.2.14",
     "tar": ">=4.4.2",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.1",
