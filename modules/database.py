@@ -7,9 +7,9 @@ from pymongo import MongoClient
 #     authSource="cms"
 # )
 client = MongoClient(
-    "mongodb://206.189.209.148:27017/cms_dev",
+    "206.189.209.148:27017",
     username="jackg",
-    password="starts bidder induction eminem",
+    password="devon play refers sold",
     authSource="cms_dev"
 )
-db = client.cms
+db = client.cms_dev
