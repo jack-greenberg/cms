@@ -222,7 +222,11 @@ export class PostImageEditor extends React.Component {
                                 id={"image-" + this.props.contentId}
                             />
                         :
-                            null
+                            <img
+                                className="image-preview__image  js-image-preview__image"
+                                id={"image-" + this.props.contentId}
+                                style={{display: 'none'}}
+                            />
                         }
                     </div>
                     <Dropzone handleFileChange={this.handleFileChange} contentId={this.props.contentId} />

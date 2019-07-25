@@ -2,6 +2,7 @@ import React from 'react';
 import { PageContext } from './index.js';
 import { Route, NavLink } from "react-router-dom";
 import { client } from './index.js';
+var $ = require("jquery");
 
 export class Navigation extends React.Component {
     /*
