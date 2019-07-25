@@ -41,6 +41,12 @@ export class PostTextEditor extends React.Component {
     componentDidMount() {
         this.inputRef.current.innerText = this.state.content;
         autosize($('#' + this.inputId));
+
+        this.inputRef.current.addEventListener("paste", e => {
+            e.preventDefault();
+            var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            document.execCommand("insertHTML", false, text);
+        })
     }
     handleInput(e) {
         this.setState({
@@ -222,7 +228,11 @@ export class PostImageEditor extends React.Component {
                                 id={"image-" + this.props.contentId}
                             />
                         :
-                            null
+                            <img
+                                className="image-preview__image  js-image-preview__image"
+                                id={"image-" + this.props.contentId}
+                                style={{display: 'none'}}
+                            />
                         }
                     </div>
                     <Dropzone handleFileChange={this.handleFileChange} contentId={this.props.contentId} />
