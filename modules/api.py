@@ -104,7 +104,8 @@ class PostAPI(MethodView):
         return jsonify(json.loads(json_util.dumps(emptyPost))), 200
 
     def delete(self, post_id):
-        # delete a single post
+        if post_id is None:
+            return jsonify("No postId specified"), 400
         pass
 
     def put(self, post_id):
