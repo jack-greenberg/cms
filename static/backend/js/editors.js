@@ -41,6 +41,12 @@ export class PostTextEditor extends React.Component {
     componentDidMount() {
         this.inputRef.current.innerText = this.state.content;
         autosize($('#' + this.inputId));
+
+        this.inputRef.current.addEventListener("paste", e => {
+            e.preventDefault();
+            var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            document.execCommand("insertHTML", false, text);
+        })
     }
     handleInput(e) {
         this.setState({
