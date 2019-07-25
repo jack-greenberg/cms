@@ -8,8 +8,8 @@ from pymongo import MongoClient
 # )
 client = MongoClient(
     "206.189.209.148:27017",
-    username="jackg",
-    password="devon play refers sold",
-    authSource="cms_dev"
+    username="cmsUser",
+    password="russell textile classroom does",
+    authSource="cms_production"
 )
-db = client.cms_dev
+db = client.cms_production

@@ -23,8 +23,6 @@ class App extends React.Component {
     updatePostIndex(dir) {
         this.setState({
             currentPost: Number(this.state.currentPost + dir).mod(this.state.postData.length),
-        }, () => {
-            console.log(this.state.currentPost);
         })
     }
     componentDidMount() {

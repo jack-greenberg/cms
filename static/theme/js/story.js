@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PostContext } from './index';
+import { Transition } from 'react-transition-group';
+var $ = require('jquery');
 import showdown from 'showdown';
 var converter = new showdown.Converter({
     simpleLineBreaks: false,
@@ -11,23 +13,71 @@ var converter = new showdown.Converter({
 });
 converter.setFlavor('github');
 
+const duration = 200;
+
+const defaultStyle = {
+    transition: `opacity ${duration}ms ease-in-out`,
+    opacity: 1,
+}
+
+const transitionStyles = {
+    entering: { opacity: 1 },
+    entered:  { opacity: 0 },
+    exiting:  { opacity: 0 },
+    exited:  { opacity: 1 },
+};
+
 export class Story extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             currentPost: this.props.currentPost,
+            transition: false,
+        }
+    }
+    static getDerivedStateFromProps(props, currentState) {
+        if ((currentState.currentPost !== props.currentPost) && !currentState.transition) {
+            return {transition: true, currentPost: currentState.currentPost}
+        } else if (currentState.transition) {
+            return {transition: false, currentPost: props.currentPost}
+        };
+        return null;
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log(this.state.transition)
+        if ((this.state.currentPost !== this.props.currentPost) && this.state.transition) {
+            console.log("Test")
+            setTimeout(() => {
+                this.setState({
+                    transition: true,
+                    currentPost: this.props.currentPost,
+                })
+            }, duration)
         }
     }
     render() {
-        console.log(this.props.currentPost);
-        let bodyText = converter.makeHtml(this.props.postData[this.props.currentPost].content[0].value)
-
+        let bodyText = converter.makeHtml(this.props.postData[this.state.currentPost].content[0].value);
         return (
-            <article className="story">
-                <div className="story__body" id='post-body' dangerouslySetInnerHTML={{'__html': bodyText}}>
-                </div>
-            </article>
+            <div className="story-container">
+                <Transition
+                    in={this.state.transition}
+                    timeout={0}
+                >
+                    {state => (
+                        <article
+                            className="story"
+                            id='post-body'
+                            dangerouslySetInnerHTML={{'__html': bodyText}}
+                            style={{
+                                ...defaultStyle,
+                                ...transitionStyles[state]
+                            }}
+                        >
+                        </article>
+                    )}
+                </Transition>
+            </div>
         )
     }
 }

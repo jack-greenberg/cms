@@ -1,7 +1,10 @@
 @import 'components';
 @import 'reset';
-// @import 'github-markdown';
 @import 'post';
+
+html {
+    scroll-behavior: smooth;
+}
 
 .title {
     font-family: $titlefont;
@@ -45,13 +48,12 @@
         width: 15em;
         z-index: 999;
         padding: 1em;
-        margin: 0 auto;
+        margin: 0 auto .5em;
         background-color: $white;
         text-align: center;
         border-radius: 5px;
         border: 1px solid $black;
         box-shadow: 3px 3px 0px $black;
-        position: relative;
 
         button {
             width: 50%;
@@ -73,8 +75,6 @@
     background-color: $blue;
     color: $pink;
 }
-
-
 
 .swipe {
     overflow: hidden;

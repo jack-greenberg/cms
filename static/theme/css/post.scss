@@ -1,21 +1,23 @@
 .story {
+    padding: 3em 1em;
+    background-color: $blue;
+    color: $pink;
 
-    &__body {
-        padding: 3em 1em;
+    &-container {
+        background-color: $blue;
+    }
+    h2 {
+        font-family: $titlefont;
+        font-size: 1.75em;
+        text-align: center;
+        margin-bottom: 2em;
+    }
+    p {
+        text-indent: 1em;
+        font-family: $sans;
 
-        h2 {
-            font-family: $titlefont;
-            font-size: 1.75em;
-            text-align: center;
-            margin-bottom: 2em;
-        }
-        p {
-            text-indent: 1em;
-            font-family: $sans;
-
-            &:not(:last-child) {
-                margin-bottom: 1em;
-            }
+        &:not(:last-child) {
+            margin-bottom: 1em;
         }
     }
 }
