@@ -42,8 +42,8 @@ export class Timeline extends React.Component {
                 )
             } else {
                 return (
-                    <div className="card" key={index} data-current={false}>
-                        <div className="inner-card">
+                    <div key={index} data-current={false}>
+                        <div className="card">
                             <button className="swipe-prev" onClick={this.prev}></button>
                             <p>{post.title}</p>
                             <button className="swipe-next" onClick={this.next}></button>
@@ -60,8 +60,6 @@ export class Timeline extends React.Component {
                         {cards}
                     </div>
                 </div>
-                {/*<h2 className="text">{this.props.postData[this.state.currentPost].title}</h2>*/}
-                {/*<p className="text">{this.props.postData[(this.state.currentPost + 1) % this.props.postData.length].title}</p>*/}
             </div>
         )
     }
