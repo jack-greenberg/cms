@@ -24,6 +24,7 @@ export class SinglePost extends React.Component {
     constructor(props) {
         super(props);
         this.changeView = this.changeView.bind(this);
+        this.delete = this.delete.bind(this);
 
         this.state = {
             postData: null,
@@ -41,6 +42,15 @@ export class SinglePost extends React.Component {
         .catch(err => {
             console.log(err.config);
         })
+    };
+    delete() {
+        if (window.confirm("Are you sure you want to delete this post?")) {
+            client.delete('/api/v1/posts/' + this.state.postData['_id']['$oid'])
+            .then(response => {
+                console.log(response);
+                window.location.href = '/admin/posts/';
+            })
+        }
     }
     changeView(e) {
         this.setState({
@@ -53,7 +63,7 @@ export class SinglePost extends React.Component {
             var viewComponent;
             switch(this.state.view) {
                 case "general":
-                    viewComponent = <General postData={this.state.postData} />
+                    viewComponent = <General postData={this.state.postData} delete={this.delete} />
                     break;
                 case "content":
                     viewComponent = <Content postData={this.state.postData} />
@@ -160,7 +170,6 @@ class General extends React.Component {
         return (
             <article className="main__general  flex-wrapper">
                 <section className="section  main__general__basic">
-                    {/*<h2 className="section__heading">{pad(this.props.postData['_id']['$oid'], 4)}</h2>*/}
                     <TextInput important storedValue={this.props.postData['title']} endpoint="posts" pk={this.props.postData['_id']['$oid']} name="title" label="Title" />
                     <TextInput storedValue={this.props.postData.author} endpoint="posts" pk={this.props.postData['_id']['$oid']} name="author" label="Author" />
                     <div className="flex-wrapper  flex-wrapper--between">
@@ -168,6 +177,9 @@ class General extends React.Component {
                             {buttonText}
                         </button>
                         <a href={"/admin/posts/private/" + this.props.postData['_id']['$oid'] + "/"} className="link">Private link</a>
+                        <button onClick={this.props.delete} className="btn  btn--text">
+                            Delete Post
+                        </button>
                     </div>
                 </section>
                 <Tags tags={this.props.postData['tags']} postId={this.props.postData['_id']['$oid']} />
