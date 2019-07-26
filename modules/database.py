@@ -13,4 +13,4 @@ client = MongoClient(
     password=db_data.pw,
     authSource=db_data.dbName
 )
-db = client.cms_production
+db = client[db_data.dbName]
