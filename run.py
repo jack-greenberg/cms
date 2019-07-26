@@ -106,23 +106,25 @@ def start_session():
 @app.route('/')
 def index():
     return "coming soon"
-    # return render_template('jacksite/home.j2', page_title="Home", module_data=page_data['Home'])
+
+@app.route('/tags/')
+def tags():
+    tagList = json.loads(json_util.dumps(db.posts.find({}, {'tags': 1})))
+    noIdTagList = [ item['tags'] for item in tagList ]
+    allTags = [ tag for tagGroup in noIdTagList for tag in tagGroup ]
+    return render_template('site/tags.j2', tagList=allTags)
+
+@app.route('/tags/<tag>/')
+def singleTag(tag):
+    _postList = db.posts.find(
+        {'tags': tag}
+    )
+    postList = json.loads(json_util.dumps(_postList))
+    return tag
 
 @app.route('/<page>/')
 def subpage(page):
     return "coming soon"
-    # page_list = []
-    # for page in db.pages.find():
-    #     page_list.append(page["name"])
-    #
-    # if page in page_list:
-    #     if page == 'home':
-    #         return redirect(url_for('index'))
-    #     else:
-    #         return render_template('site/home.j2', page_title=page, module_data=page_list[page])
-    # else:
-    #     return render_template('404.j2'), 404
-
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():

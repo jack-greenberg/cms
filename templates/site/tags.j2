@@ -1,0 +1,9 @@
+{% extends 'base.j2' %}
+{% block title %}Tags{% endblock %}
+{% block content %}
+
+{% for tag in tagList %}
+    <a href="/tags/{{ tag }}/">{{ tag }}</a><br>
+{% endfor %}
+
+{% endblock %}
