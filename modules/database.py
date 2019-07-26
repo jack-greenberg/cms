@@ -5,7 +5,7 @@ import yaml
 
 file = open(join(dirname(__file__), "../admin/pw.yaml"))
 
-db_data = yaml.load(file.read())['production' if True else 'dev']['db']
+db_data = yaml.load(file.read(), Loader=yaml.SafeLoader)['production' if True else 'dev']['db']
 
 client = MongoClient(
     db_data['host'] + ':' + str(db_data['port']),
