@@ -3,14 +3,14 @@ import sys
 from os.path import dirname, join
 import yaml
 
-file = open(join(dirname(__file__), '../pw.yaml'))
+file = open(join(dirname(__file__), "../admin/pw.yaml"))
 
-db_data = yaml.load(file.read())['dev' if true else 'production']['db']
+db_data = yaml.load(file.read())['dev' if True else 'production']['db']
 
 client = MongoClient(
-    db_data.host + ':' + db_data.port,
-    username=db_data.user,
-    password=db_data.pw,
-    authSource=db_data.dbName
+    db_data['host'] + ':' + str(db_data['port']),
+    username=db_data['user'],
+    password=db_data['pw'],
+    authSource=db_data['dbName']
 )
-db = client[db_data.dbName]
+db = client[db_data['dbName']]
