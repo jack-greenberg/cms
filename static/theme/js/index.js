@@ -32,6 +32,19 @@ class App extends React.Component {
             this.setState({
                 postData: response.data,
             })
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key == 'ArrowLeft') {
+                window.mySwipe.prev();
+                this.setState({
+                    currentPost: Number(this.state.currentPost - 1).mod(this.state.postData.length)
+                })
+            } else if (e.key == 'ArrowRight') {
+                window.mySwipe.next();
+                this.setState({
+                    currentPost: Number(this.state.currentPost + 1).mod(this.state.postData.length)
+                })
+            };
         })
     }
     render() {

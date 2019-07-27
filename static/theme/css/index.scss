@@ -9,12 +9,20 @@ html {
 .title {
     font-family: $titlefont;
 
-    &-1 { font-size: 2em; }
+    &-1 { font-size: 2.5em; }
     &-2 { font-size: 1.75em; }
     &-3 { font-size: 1.5em; }
 }
 .text {
     font-family: $mono;
+}
+.help-text {
+    font-size: .8em;
+    font-family: $mono;
+    color: $gray;
+    text-align: center;
+    max-width: 15em;
+    margin: 2em auto 0;
 }
 
 .header {

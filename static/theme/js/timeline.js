@@ -60,6 +60,9 @@ export class Timeline extends React.Component {
                         {cards}
                     </div>
                 </div>
+                <div className="help-text">
+                    You can use your arrow keys to navigate, or click on the left or right of the white box. On mobile you can swipe.
+                </div>
             </div>
         )
     }
