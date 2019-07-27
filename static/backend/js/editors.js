@@ -6,7 +6,22 @@ var $ = require('jquery');
 import showdown from 'showdown';
 import {useDropzone} from 'react-dropzone';
 
+function addKeyboardCommand(node, key, callback) {
+    node.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key == key) {
+            e.preventDefault();
+            callback();
+            return false;
+        }
+    })
+}
+function preventReload(e) {
+    var confirmationMessage = 'It looks like you have been editing something. '
+        + 'If you leave before saving, your changes will be lost.';
 
+    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+}
 /* * * * * * * * * * *
 POST EDITOR STUFF HERE
 * * * * * * * * * * */
@@ -28,7 +43,6 @@ export class PostTextEditor extends React.Component {
         this.preview = this.preview.bind(this);
         this.save = this.save.bind(this);
         this.delete = this.delete.bind(this);
-
         this.inputId = "post-" + this.props.postId + '--' + this.props.contentId;
         this.inputRef = React.createRef();
 
@@ -47,11 +61,23 @@ export class PostTextEditor extends React.Component {
             var text = (e.originalEvent || e).clipboardData.getData('text/plain');
             document.execCommand("insertHTML", false, text);
         })
+
+        addKeyboardCommand(this.inputRef.current, 's', () => {
+            if (this.state.content !== this.state.tempContent) {
+                this.save();
+            };
+        });
     }
     handleInput(e) {
         this.setState({
             tempContent: e.target.innerText,
-            edited: this.state.content == this.state.tempContent
+            edited: this.state.content == this.state.tempContent,
+        }, () => {
+            if (this.state.content !== this.state.tempContent) {
+                window.addEventListener("beforeunload", preventReload);
+            } else {
+                window.removeEventListener("beforeunload", preventReload);
+            }
         });
     }
     save() {
