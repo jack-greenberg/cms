@@ -71,7 +71,7 @@ export class PostTextEditor extends React.Component {
     handleInput(e) {
         this.setState({
             tempContent: e.target.innerText,
-            edited: this.state.content == this.state.tempContent,
+            edited: this.state.content !== this.state.tempContent,
         }, () => {
             if (this.state.content !== this.state.tempContent) {
                 window.addEventListener("beforeunload", preventReload);
