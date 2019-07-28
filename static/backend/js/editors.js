@@ -79,6 +79,15 @@ export class PostTextEditor extends React.Component {
                 window.removeEventListener("beforeunload", preventReload);
             }
         });
+
+        // var html = this.inputRef.current.innerHTML;
+        // var pattern = RegExp('\_.+\_', 'img');
+        // console.log(html.match(pattern));
+        // try {
+            // this.inputRef.current.innerHTML = html.replace(pattern, '<em>' + html.match(pattern).pop().slice(1, -1) + '</em>')
+        // } catch (TypeError) {
+            // return;
+        // };
     }
     save() {
         client.put('/api/v1/content/' + this.props.contentId, {
