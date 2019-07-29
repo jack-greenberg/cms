@@ -170,20 +170,18 @@ class ContentAPI(MethodView):
                 '_id': ObjectId(),
                 'type': type,
                 'postId': ObjectId(postId),
-                'value': {
-                    'src': '',
-                    'srcset': [],
-                    'altText': '',
-                    'caption': '',
-                    'imageId': '',
-                }
+                'src': '',
+                'srcset': [],
+                'altText': '',
+                'caption': '',
+                'imageId': ''
             }
         elif type == 'video':
             new_doc = {
                 '_id': ObjectId(),
                 'type': type,
                 'postId': ObjectId(postId),
-                'value': ''
+                'youtubeId': ''
             }
         else:
             return jsonify("Wrong type"), 400
