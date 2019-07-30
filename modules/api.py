@@ -169,13 +169,11 @@ class ContentAPI(MethodView):
                 '_id': ObjectId(),
                 'type': type,
                 'postId': ObjectId(postId),
-                'value': {
-                    'src': '',
-                    'srcset': [],
-                    'altText': '',
-                    'caption': '',
-                    'imageId': '',
-                }
+                'src': '',
+                'srcset': [],
+                'altText': '',
+                'caption': '',
+                'imageId': '',
             }
         elif type == 'video':
             new_doc = {
