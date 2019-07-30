@@ -25,6 +25,18 @@
                 margin-bottom: 1em;
             }
         }
+        a {
+            color: $pink;
+        }
+        blockquote {
+            padding-left: 1em;
+            border-left: 4px solid $pink;
+            margin: 1em 0;
+
+            p {
+                font-style: italic;
+            }
+        }
     }
     &__image {
         margin: 2em 0;
