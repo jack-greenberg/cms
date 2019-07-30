@@ -82,7 +82,7 @@ class PostAPI(MethodView):
                 post_data['content'][i] = content_result
 
                 if content_result is None:
-                    db.posts.update({}, {
+                    db.posts.update_many({}, {
                         "$pull": {'content': content_id}
                     })
             post_data['content'] = [ i for i in post_data['content'] if i != None ]
