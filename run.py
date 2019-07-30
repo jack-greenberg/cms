@@ -39,7 +39,6 @@ def make_date(date):
 
 @app.template_filter()
 def retrieve_content(contentId):
-    print(db.content.find_one({'_id': contentId}))
     return db.content.find_one({'_id': contentId})
 
 env = jinja2.Environment(autoescape=True)
