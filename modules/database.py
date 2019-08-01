@@ -3,7 +3,7 @@ import sys
 from os.path import dirname, join
 import yaml
 
-file = open(join(dirname(__file__), "../admin/pw.yaml"))
+file = open(join(dirname(__file__), "../admin/config.yml"))
 
 db_data = yaml.load(file.read(), Loader=yaml.SafeLoader)['dev' if True else 'production']['db']
 
