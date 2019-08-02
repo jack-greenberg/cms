@@ -41,22 +41,35 @@ export class PostTextEditor extends React.Component {
 
         this.handleInput = this.handleInput.bind(this);
 
+        this.contentId = this.props.contentId;
+        this.cursor = {};
         this.state = {
             content: this.props.content,
-            tempContent: this.props.content,
+            tempContent: converter.makeHtml(this.props.content),
         }
     }
+    shouldComponentUpdate(nextProps, nextState) {
+        this.cursor = {
+            sel: document.getSelection(),
+            range: document.createRange(),
+            childNodes: Array.from(document.getElementById(this.contentId).childNodes),
+            currentChildNodeIndex: Array.from(document.getElementById(this.contentId).childNodes).indexOf(document.getSelection().focusNode),
+        };
+        console.log(document.getSelection());
+        return true;
+    }
+    componentDidUpdate() {
+        console.log(this.cursor);
+        if (this.cursor.currentChildNodeIndex === -1) {
+            this.cursor.currentChildNodeIndex = this.cursor.childNodes.length - 1;
+        }
+        console.log(this.cursor.childNodes[this.cursor.currentChildNodeIndex], this.cursor.sel.focusOffset);
+        this.cursor.range.setStart(this.cursor.childNodes[this.cursor.currentChildNodeIndex], this.cursor.sel.focusOffset);
+    }
     handleInput(e) {
-        // var cursorPos = window.getSelection().anchorOffset;
-        //
-        // console.log(this.inputRef.current);
-        //
-        // this.inputRef.current.innerHTML = converter.makeHtml(this.inputRef.current.innerText)
-        // this.setState({
-        //     tempContent: e.target.innerHTML,
-        // }, () => {
-        //
-        // });
+        this.setState({
+            tempContent: this.element.innerHTML,
+        });
     }
     render() {
         return (
@@ -85,10 +98,10 @@ export class PostTextEditor extends React.Component {
                     contentEditable
                     style={{display: 'inline-block', width: '100%'}}
                     className="text-editor__input"
-                    id={this.inputId}
+                    id={this.contentId}
                     onInput={this.handleInput}
                     ref={node => this.element = node}
-                    dangerouslySetInnerHTML={{__html: converter.makeHtml(this.state.content)}}
+                    dangerouslySetInnerHTML={{__html: this.state.tempContent}}
                 ></div>
             </section>
         )
