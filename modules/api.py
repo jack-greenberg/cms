@@ -118,6 +118,10 @@ class PostAPI(MethodView):
         except KeyError:
             pass
         requestData['lastEdited'] = datetime.now()
+
+        if requestData['content']:
+            requestData['content'] = [ ObjectId(module) for module in requestData['content'] ]
+
         new_doc = db.posts.find_one_and_update({'_id': ObjectId(post_id)}, {
             "$set": requestData,
         }, return_document=ReturnDocument.AFTER)
