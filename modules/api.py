@@ -119,8 +119,12 @@ class PostAPI(MethodView):
             pass
         requestData['lastEdited'] = datetime.now()
 
-        if requestData['content']:
-            requestData['content'] = [ ObjectId(module) for module in requestData['content'] ]
+        try:
+            if requestData['content']:
+                requestData['content'] = [ ObjectId(module) for module in requestData['content'] ]
+        except KeyError:
+            pass
+
 
         new_doc = db.posts.find_one_and_update({'_id': ObjectId(post_id)}, {
             "$set": requestData,
@@ -167,7 +171,7 @@ class ContentAPI(MethodView):
                 '_id': ObjectId(),
                 'type': type,
                 'postId': ObjectId(postId),
-                'value': ''
+                'value': '',
             }
         elif type == 'image':
             new_doc = {
@@ -178,14 +182,18 @@ class ContentAPI(MethodView):
                 'srcset': [],
                 'altText': '',
                 'caption': '',
-                'imageId': ''
+                'imageId': '',
+                'alignment': '',
             }
         elif type == 'video':
             new_doc = {
                 '_id': ObjectId(),
                 'type': type,
                 'postId': ObjectId(postId),
-                'youtubeId': ''
+                'youtubeId': '',
+                'title': '',
+                'channel': '',
+                'thumbnail': '',
             }
         else:
             return jsonify("Wrong type"), 400
