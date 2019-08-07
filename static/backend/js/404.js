@@ -1,13 +1,12 @@
 import React from 'react';
 
-export class NoMatch extends React.Component {
+export default class Error404 extends React.Component {
     /*
         404 component (renders an animation of a confused periscope, and a link to /admin/)
     */
     render() {
         return (
-            <>
-                <main className="error-page">
+            <main className="error-page">
                 <h1 className="error-page__title">404 - Can't find that one...</h1>
 
                 <svg className="periscope" width="312" height="242" viewBox="0 0 312 242" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -44,9 +43,8 @@ export class NoMatch extends React.Component {
                     </defs>
                 </svg>
 
-                <a className="error-page__link" href="/admin/">Go back to the Backend</a>
-                </main>
-            </>
+                <a className="error-page__link" href="/admin/">Go back to safety.</a>
+            </main>
         )
     }
 }

@@ -1,0 +1,133 @@
+@import 'components';
+@import 'reset.scss';
+
+.main {
+    min-height: 100vh;
+    background-color: $canvas;
+    padding-top: 6em;
+}
+.login-form-wrapper {
+    background-color: $white;
+    width: 90%;
+    max-width: 30em;
+    margin: 0 auto;
+    padding: 2em;
+    box-shadow: $shadow;
+}
+.login-form {
+    max-width: 16.25rem;
+    margin: 0 auto;
+
+    &__title {
+        font-size: 1.5em;
+        font-family: $sans;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 1em;
+    }
+    .input__label {
+        font-size: .7em;
+        font-family: $sans;
+        color: $gray;
+        margin-left: 1em;
+        display: block;
+
+        &--checkbox {
+            display: inline;
+            margin-left: .5em;
+        }
+    }
+    .input--text {
+        font-size: 1em;
+        font-family: $sans;
+        padding: .4em;
+        appearance: none;
+        box-shadow: 0 0 0 1px $gray--lighter;
+        border: none;
+        border-radius: 2px;
+        background-color: transparent;
+        width: 100%;
+        z-index: 99;
+        position: relative;
+        display: block;
+        margin-bottom: 1em;
+
+        &:focus, &:active {
+            outline: none;
+        }
+    }
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: row-reverse;
+        margin-bottom: 1em; // will change when the flex-container becomes a row on bigger screens
+        @media only screen and (min-width: $small) {
+            margin-bottom: 0;
+        }
+    }
+    .input--checkbox {
+        appearance: none;
+        width: 1.5em;
+        height: 1.5em;
+        border-radius: 2px;
+        box-shadow: 0 0 0 1px $gray;
+        background-color: $white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:focus, &:active {
+            outline: none;
+        }
+
+        &:checked::after {
+            content: "";
+            display: inline-block;
+            height: .4em;
+            width: .9em;
+            border-left: .2em solid;
+            border-bottom: .2em solid;
+            transform: rotate(-45deg) translateY(-.075em) translateX(.075em);
+        }
+    }
+    .btn {
+        font-size: 1.25em;
+        font-family: $sans;
+        color: $white;
+        background-color: $green;
+        border: none;
+        border-radius: 2px;
+        appearance: none;
+        padding: .25em .75em;
+
+        &:focus {
+            outline: none;
+        }
+        &:active {
+            outline: none;
+            background-color: darken($green, 20%)
+        }
+    }
+}
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    flex-direction: column;
+
+    @media only screen and (min-width: $small) {
+        flex-direction: row;
+    }
+}
+.back-link {
+    font-size: .9em;
+    font-family: $sans;
+    text-align: center;
+    margin-top: 5em;
+
+    a {
+        color: inherit;
+    }
+}

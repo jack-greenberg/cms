@@ -173,12 +173,11 @@ def login():
 
     return render_template('admin/login.j2')
 
-@app.route('/logout/', methods=['POST'])
+@app.route('/logout/')
 def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
-    response = jsonify({'success': 'true'})
-    return response, 200
+    return redirect(url_for(index)), 200
 
 @app.route('/admin/') # admin main (<Home />)
 @login_required
