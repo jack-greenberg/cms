@@ -1,0 +1,39 @@
+.nav {
+    display: none;
+
+    &--open {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50vw;
+        height: 100vh; // Should we keep this?
+        z-index: 99;
+        background-color: $white;
+        box-shadow: $shadow-border;
+        padding: 1em;
+    }
+    ul {
+        list-style-type: none;
+    }
+    &__item {
+        font-size: 1em;
+        font-family: $sans;
+        font-weight: $font-semibold;
+        color: $black;
+
+        &:not(:last-child) {
+            margin-bottom: 1em;
+        }
+        &__link {
+            color: inherit;
+            text-decoration: none;
+
+            &--active {
+                color: $blue;
+            }
+        }
+    }
+}

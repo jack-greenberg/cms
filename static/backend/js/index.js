@@ -8,8 +8,6 @@ import client from './api';
 import LoadingScreen from './loading-screen';
 import { ErrorBoundary } from './errorboundary';
 
-
-
 class App extends React.Component {
     constructor(props) {
         super(props);

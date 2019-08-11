@@ -1,7 +1,7 @@
-@import 'vars';
 @import 'fonts';
-@import 'mixins';
 @import 'colors';
+@import 'mixins';
+@import 'vars';
 
 @import 'reset';
 // @import 'healthcheck';
@@ -9,3 +9,8 @@
 @import 'loading-screen';
 @import '404';
 @import 'errorboundary';
+
+@import 'components/header';
+@import 'components/nav';
+
+@import 'components/button';

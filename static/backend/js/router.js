@@ -26,7 +26,7 @@ export default class Router extends React.Component {
                         };
                     })}
                     <Route path="/settings/" render={(props) => <Settings {...props} />} />
-                    <Route component={Error404} /> {/* 404 */}
+                    <Route component={Error404} />
                 </Switch>
                 <Footer />
             </BrowserRouter>
