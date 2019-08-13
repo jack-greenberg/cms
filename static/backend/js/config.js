@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { Home } from './pages/home';
+import { Posts } from './pages/posts';
+import { Post } from './pages/post';
 var cf;
 
 export default cf = {
@@ -22,9 +24,9 @@ export default cf = {
         {
             name: "Posts",
             url: "/posts/",
-            // component: <Posts />,
-            // subPage: "post",
-            // subPageComponent: Post,
+            component: Posts,
+            subPage: "post",
+            subPageComponent: Post,
         },
     ],
 };

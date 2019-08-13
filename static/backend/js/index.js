@@ -8,6 +8,8 @@ import client from './api';
 import LoadingScreen from './loading-screen';
 import { ErrorBoundary } from './errorboundary';
 
+export const AppContext = React.createContext({});
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -18,19 +20,27 @@ class App extends React.Component {
         }
     }
     componentDidMount() {
-        client.get('/api/v1/siteData')
-        .then(res => {
-            console.log(res);
+        if (window.location.pathname !== '/admin/login/') {
+            client.get('/api/v1/siteData')
+            .then(res => {
+                console.log(res);
+                this.setState({
+                    data: res.data,
+                    ready: true,
+                })
+            })    
+        } else {
             this.setState({
-                data: res.data,
                 ready: true,
             })
-        })
+        }
     };
     render() {
         if (this.state.ready) {
             return (
-                <Router />
+                <AppContext.Provider value={this.state.data}>
+                    <Router />
+                </AppContext.Provider>
             );
         } else {
             return <LoadingScreen />;

@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { Header } from './components/header';
 import { Footer } from './components/footer';
+import { Login } from './pages/login';
 
 import Error404 from './404';
 
@@ -11,7 +12,7 @@ export default class Router extends React.Component {
     render() {
         return (
             <BrowserRouter basename={cf.url}>
-                <Header />
+                {/* <Header /> */}
                 <Switch>
                     {cf.nav.map((page, index) => {
                         let Page = page.component;
@@ -26,9 +27,10 @@ export default class Router extends React.Component {
                         };
                     })}
                     <Route path="/settings/" render={(props) => <Settings {...props} />} />
+                    <Route path="/login/" render={(props) => <Login {...props} />} />
                     <Route component={Error404} />
                 </Switch>
-                <Footer />
+                {/* <Footer /> */}
             </BrowserRouter>
         )
     }

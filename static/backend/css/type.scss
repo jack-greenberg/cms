@@ -1,0 +1,56 @@
+.h1 {
+    font-size: 2em;
+    font-weight: 800;
+}
+.h2 {
+    font-size: 1.8em;
+    font-weight: 800;
+}
+.h3 {
+    font-size: 1.6em;
+    font-weight: 700;
+}
+.h4 {
+    font-size: 1.4em;
+    font-weight: 700;
+}
+.h5 {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+.h6 {
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.f {
+    &-1 {
+        font-size: 1em;
+    }
+}
+
+.link {
+    color: inherit;
+    text-decoration: none;
+
+    &-underline {
+        text-decoration: underline;
+    }
+}
+
+.dim {
+    opacity: 1;
+    transition: opacity .15s ease-in;
+
+    &:hover,
+    &:focus {
+        opacity: .5;
+    }
+    &:active {
+        opacity: .8;
+    }
+}
+
+.sans {
+    font-family: $sans;
+}

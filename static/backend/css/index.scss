@@ -1,10 +1,9 @@
+@import 'reset';
+// @import 'healthcheck';
 @import 'fonts';
 @import 'colors';
 @import 'mixins';
 @import 'vars';
-
-@import 'reset';
-// @import 'healthcheck';
 
 @import 'loading-screen';
 @import '404';
@@ -12,5 +11,7 @@
 
 @import 'components/header';
 @import 'components/nav';
-
 @import 'components/button';
+
+@import 'type';
+// @import 'tachyons';
