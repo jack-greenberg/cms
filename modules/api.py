@@ -134,7 +134,7 @@ class PostAPI(MethodView):
 class ContentAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, content_id):
-        if post_id is None:
+        if content_id is None:
             return jsonify("No contentId specified"), 400
         else:
             result = db.content.find_one({'_id': ObjectId(content_id)})

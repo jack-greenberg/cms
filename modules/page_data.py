@@ -6,5 +6,5 @@ page_data = {}
 page_list = []
 
 for page in db.pages.find():
-    page_data[page["name"]] = (json.loads(json_util.dumps(page)));
+    page_data[page["name"]] = (json.loads(json_util.dumps(page)))
     page_list.append(page["name"])

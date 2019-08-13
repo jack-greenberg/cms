@@ -8,11 +8,11 @@ import sys, os
 import config
 from modules.auth import User, authenticate
 from modules.database import db
-from bson import json_util
+from bson import json_util, ObjectId
 import json
 import bcrypt
 from functools import wraps
-from modules.api import *
+from modules.api import SiteAPI, PostAPI, ContentAPI, PageAPI
 import jinja2, markdown
 
 """
@@ -27,7 +27,6 @@ app.config['JWT_REFRESH_COOKIE_PATH'] = '/api/token-refresh/'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 jwt = JWTManager(app)
-
 
 @app.template_filter()
 def safe_markdown(text):
@@ -65,7 +64,7 @@ register_api(PageAPI, 'page_api', '/api/v1/pages/', pk='page_name', pk_type='str
 # Sets development or production mode (uses info from ./config.py)
 @click.command()
 @click.option('--mode', '-m', default='development', help='Production mode (production, development)', required=True)
-def run(mode):
+def run(mode=None):
     if (mode == 'development'):
         app.config.from_object('config.DevelopmentConfig')
     elif (mode == 'production'):
@@ -177,7 +176,7 @@ def login():
 def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
-    return redirect(url_for(index)), 200
+    return redirect(url_for('index'))
 
 @app.route('/admin/') # admin main (<Home />)
 @login_required
@@ -199,11 +198,11 @@ def admin_pages_sub(page=None):
 def admin_posts_sub(post_id=None):
     return render_template('admin/admin.j2')
 
-@app.route('/admin/posts/private/<post_id>/') # admin _private_ post link (needs login)
+@app.route('/admin/posts/<post_id>/preview/') # admin _private_ post link (needs login)
 @login_required
 def private_post(post_id=None):
     # get post data from db
-    post_data = db.posts.find_one({'_id': ObjectId(post_id)})
+    post_data = db.posts.find_one({'_id': ObjectId(post_id) })
     return render_template('post.j2', post_data=post_data, private=True)
 
 @app.route('/api/token-refresh/', methods=['POST']) # refresh the token
