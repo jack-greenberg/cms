@@ -181,22 +181,38 @@ def logout():
 @app.route('/admin/') # admin main (<Home />)
 @login_required
 def admin_root():
-    return render_template('admin/admin.j2')
+    siteData = {}
+    for doc in db.siteData.find():
+        siteData[doc["name"]] = json.loads(json_util.dumps(doc))
+    print(type(siteData))
+    return render_template('admin/admin.j2', siteData=siteData)
 
 @app.route('/admin/<page>/') # admin subpage (<Pages /> | <Posts /> | <Settings />)
 @login_required
 def admin_sub(page=None):
-    return render_template('admin/admin.j2')
+    siteData = {}
+    for doc in db.siteData.find():
+        siteData[doc["name"]] = json.loads(json_util.dumps(doc))
+    print(type(siteData))
+    return render_template('admin/admin.j2', siteData=siteData)
 
 @app.route('/admin/pages/<page>/') # admin singular page (<SinglePage />)
 @login_required
 def admin_pages_sub(page=None):
-    return render_template('admin/admin.j2')
+    siteData = {}
+    for doc in db.siteData.find():
+        siteData[doc["name"]] = json.loads(json_util.dumps(doc))
+    print(type(siteData))
+    return render_template('admin/admin.j2', siteData=siteData)
 
 @app.route('/admin/posts/<post_id>/') # admin single post (<SinglePost />)
 @login_required
 def admin_posts_sub(post_id=None):
-    return render_template('admin/admin.j2')
+    siteData = {}
+    for doc in db.siteData.find():
+        siteData[doc["name"]] = json.loads(json_util.dumps(doc))
+    print(type(siteData))
+    return render_template('admin/admin.j2', siteData=siteData)
 
 @app.route('/admin/posts/<post_id>/preview/') # admin _private_ post link (needs login)
 @login_required

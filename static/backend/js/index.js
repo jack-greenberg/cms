@@ -15,25 +15,28 @@ class App extends React.Component {
         super(props);
 
         this.state = {
-            ready: false,
-            data: undefined,
+            //! This can be removed because of the comment below
+            ready: true,
+            data: siteData,
         }
     }
     componentDidMount() {
-        if (window.location.pathname !== '/admin/login/') {
-            client.get('/api/v1/siteData')
-            .then(res => {
-                console.log(res);
-                this.setState({
-                    data: res.data,
-                    ready: true,
-                })
-            })    
-        } else {
-            this.setState({
-                ready: true,
-            })
-        }
+        // var siteData = document.getElementById("siteData").value
+        console.log(siteData) //! This is set in admin.j2, in the script with `const siteData = {{ siteData|tojson }}`
+        // if (window.location.pathname !== '/admin/login/') {
+        //     client.get('/api/v1/siteData')
+        //     .then(res => {
+        //         console.log(res);
+        //         this.setState({
+        //             data: res.data,
+        //             ready: true,
+        //         })
+        //     })    
+        // } else {
+        //     this.setState({
+        //         ready: true,
+        //     })
+        // }
     };
     render() {
         if (this.state.ready) {
