@@ -21,14 +21,14 @@ export default class Navigation extends React.Component {
     render() {
         return (
             <>
-                <button className="Button  Button--icon" onClick={this.toggleNav}><Icon.Menu /></button>
+                <button className="Button  Button--icon  Nav-trigger" onClick={this.toggleNav}><Icon.Menu /></button>
                 {this.state.open && <button onClick={this.toggleNav} className="outside-click"> </button>}
-                <nav className={this.props.className + "  nav" + (this.state.open ? "  nav--open" : "")}>
-                    <ul className="nav__primary">
+                <nav className={this.props.className + "  Nav" + (this.state.open ? "  Nav--open" : "")}>
+                    <ul className="Nav__primary">
                         {cf.nav.map((page, index) => {
                             return (
-                                <li className="nav__item" key={index}>
-                                    <NavLink to={page.url} className="nav__item__link" activeClassName="nav__item__link--active" exact>
+                                <li className="Nav__item  f-2" key={index}>
+                                    <NavLink to={page.url} className="Nav__item__link  link  dim" activeClassName="Nav__item__link--active" exact>
                                         {page.name}
                                     </NavLink>
                                 </li>
@@ -44,10 +44,10 @@ export default class Navigation extends React.Component {
 class SecondaryNav extends React.Component {
     render() {
         return (
-            <ul className="nav__secondary">
-                <li className="nav__item"><a href="/"className="nav__item__link">Docs</a></li>
-                <li className="nav__item"><NavLink to="/settings/" className="nav__item__link" activeClassName="nav__link--active">Settings</NavLink></li>
-                <li className="nav__item"><a href="/logout/" className="nav__item__link">Sign out</a></li>
+            <ul className="Nav__secondary">
+                <li className="Nav__item"><a href="/"className="Nav__item__link">Docs</a></li>
+                <li className="Nav__item"><NavLink to="/settings/" className="Nav__item__link" activeClassName="Nav__link--active">Settings</NavLink></li>
+                <li className="Nav__item"><a href="/logout/" className="Nav__item__link">Sign out</a></li>
             </ul>
         )
     }

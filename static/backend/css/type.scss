@@ -1,32 +1,44 @@
 .h1 {
     font-size: 2em;
     font-weight: 800;
+    font-family: $sans;
 }
 .h2 {
     font-size: 1.8em;
     font-weight: 800;
+    font-family: $sans;
 }
 .h3 {
     font-size: 1.6em;
     font-weight: 700;
+    font-family: $sans;
 }
 .h4 {
     font-size: 1.4em;
     font-weight: 700;
+    font-family: $sans;
 }
 .h5 {
     font-size: 1.2em;
     font-weight: 600;
+    font-family: $sans;
 }
 .h6 {
     font-size: 1em;
     font-weight: 600;
+    font-family: $sans;
 }
 
 .f {
     &-1 {
         font-size: 1em;
     }
+    &-2 {
+        font-size: 1.2em;
+    }
+}
+[class*="f-"] {
+    font-family: $sans;
 }
 
 .link {
@@ -53,4 +65,14 @@
 
 .sans {
     font-family: $sans;
+}
+
+// Layout
+.inline {
+    display: inline;
+}
+
+// Colors
+.blue {
+    color: $blue;
 }

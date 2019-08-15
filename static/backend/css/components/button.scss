@@ -1,11 +1,14 @@
 .Button {
-    display: block;
+    display: inline-flex;
+    align-items: center;
 
-    &--icon {
-
-        svg {
-            display: block;
-        }
+    &:not(.link) {
+        padding: 4px;
+        border-radius: 2px;
+    }
+    &--green {
+        background-color: $green;
+        color: $white;
     }
 }
 

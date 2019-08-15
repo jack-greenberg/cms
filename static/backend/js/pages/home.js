@@ -4,9 +4,9 @@ import { Input } from '../components/inputs/';
 import { AppContext } from '../index';
 
 export class Home extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+    /*
+    TODO: decide on content for home page
+    */
     render() {
         return (
             <>

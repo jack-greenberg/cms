@@ -4,8 +4,8 @@ import cf from '../config';
 export class Footer extends React.Component {
     render() {
         return (
-            <footer className="footer">
-                <p>Thanks! Built with &lt;3 by Jack</p>
+            <footer className="Footer  p-1  f-1">
+                <p>Thanks! Built with <span className="emoji">❤️</span> by Jack</p> 
             </footer>
         )
     }

@@ -1,4 +1,4 @@
-.nav {
+.Nav {
     display: none;
 
     &--open {
@@ -9,7 +9,7 @@
         top: 0;
         right: 0;
         width: 50vw;
-        height: 100vh; // Should we keep this?
+        height: 100vh; //? Should we keep this?
         z-index: 99;
         background-color: $white;
         box-shadow: $shadow-border;
