@@ -1,5 +1,5 @@
 .Details {
-    padding: 0 8px;
+    // padding: 0 8px;
 
     &[open] {
         // box-shadow: $shadow-border;
@@ -26,8 +26,8 @@
     }
     &__content {
         line-height: 1.5;
-        box-shadow: $box-shadow;//$inner-shadow;
-        padding: 8px;
+        // box-shadow: $box-shadow;//$inner-shadow;
+        padding: 0 12px;
         border-radius: 2px;
     }
 }
