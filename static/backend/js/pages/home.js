@@ -2,6 +2,8 @@ import React from 'react';
 import { Form } from '../components/inputs/form';
 import { Input } from '../components/inputs/';
 import { AppContext } from '../index';
+import { Header } from '../components/header';
+import { Footer } from '../components/footer';
 
 export class Home extends React.Component {
     /*
@@ -10,6 +12,7 @@ export class Home extends React.Component {
     render() {
         return (
             <>
+                <Header />
                 <main className="main">
                     <AppContext.Consumer>
                         {value => {
@@ -58,6 +61,7 @@ export class Home extends React.Component {
                         </Form> */}
                     {/* </AppContext.Consumer> */}
                 </main>
+                <Footer />
             </>
         );
     };
