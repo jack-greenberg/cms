@@ -37,7 +37,7 @@
         font-size: 1.2em;
     }
 }
-[class*="f-"] {
+[class*='f-'] {
     font-family: $sans;
 }
 
@@ -66,6 +66,12 @@
 .sans {
     font-family: $sans;
 }
+.bold {
+    font-weight: 700;
+}
+.underline {
+    text-decoration: underline;
+}
 
 // Layout
 .inline {
@@ -75,4 +81,7 @@
 // Colors
 .blue {
     color: $blue;
+}
+.green {
+    color: $green;
 }
