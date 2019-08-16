@@ -1,8 +1,9 @@
 import React from 'react'
-import { Text } from './input-text'
+import { Text, FormattedText } from './input-text'
 import { Checkbox } from './checkbox'
 
 export var Input = {
-  Text: Text,
-  Checkbox: Checkbox,
+    Text: Text,
+    FormattedText: FormattedText,
+    Checkbox: Checkbox,
 }

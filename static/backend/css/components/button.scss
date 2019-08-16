@@ -3,12 +3,17 @@
     align-items: center;
 
     &:not(.link) {
-        padding: 4px;
+        // padding: 4px;
         border-radius: 2px;
     }
     &--green {
+        padding: 2px 8px;
         background-color: $green;
         color: $white;
+    }
+    &--outline--green {
+        padding: 0 4px;
+        box-shadow: 0 0 0 2px $green;
     }
 }
 
