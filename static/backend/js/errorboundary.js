@@ -10,8 +10,6 @@ export class ErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, info) {
-        console.log(error.toString());
-
         this.setState({
             hasError: true,
             error: error,
@@ -21,7 +19,7 @@ export class ErrorBoundary extends React.Component {
 
     render() {
         if (this.state.hasError && this.state.error && this.state.info) {
-            var locationMatch = /\(webpack-internal:\/\/\/\.(\/[A-Z0-9\_\-\.]+)*\.js:([0-9]+):([0-9]+)\)\n/img
+            var locationMatch = /(\()?((\S+@)?@)?webpack-internal:\/\/\/\.(\/[A-Z0-9\_\-\.]+)*\.js:([0-9]+):([0-9]+)(\))?\n/img
             var fullLocation = this.state.error.stack.match(locationMatch);
             var location = fullLocation[0].match(/[^\s\/]*\.js:([0-9]+):([0-9]+)/ig)[0];
 
