@@ -184,7 +184,6 @@ def admin_root():
     siteData = {}
     for doc in db.siteData.find():
         siteData[doc["name"]] = json.loads(json_util.dumps(doc))
-    print(type(siteData))
     return render_template('admin/admin.j2', siteData=siteData)
 
 @app.route('/admin/<page>/') # admin subpage (<Pages /> | <Posts /> | <Settings />)
@@ -193,7 +192,6 @@ def admin_sub(page=None):
     siteData = {}
     for doc in db.siteData.find():
         siteData[doc["name"]] = json.loads(json_util.dumps(doc))
-    print(type(siteData))
     return render_template('admin/admin.j2', siteData=siteData)
 
 @app.route('/admin/pages/<page>/') # admin singular page (<SinglePage />)
@@ -202,7 +200,6 @@ def admin_pages_sub(page=None):
     siteData = {}
     for doc in db.siteData.find():
         siteData[doc["name"]] = json.loads(json_util.dumps(doc))
-    print(type(siteData))
     return render_template('admin/admin.j2', siteData=siteData)
 
 @app.route('/admin/posts/<post_id>/') # admin single post (<SinglePost />)
@@ -211,7 +208,6 @@ def admin_posts_sub(post_id=None):
     siteData = {}
     for doc in db.siteData.find():
         siteData[doc["name"]] = json.loads(json_util.dumps(doc))
-    print(type(siteData))
     return render_template('admin/admin.j2', siteData=siteData)
 
 @app.route('/admin/posts/<post_id>/preview/') # admin _private_ post link (needs login)

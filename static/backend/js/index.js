@@ -15,29 +15,29 @@ class App extends React.Component {
         super(props);
 
         this.state = {
-            //! This can be removed because of the comment below
+            //! This can be removed because of the comment below @ data:siteData
             ready: true,
-            data: siteData,
+            data: siteData, //! This is set in admin.j2, in the script with `const siteData = {{ siteData|tojson }}`
         }
     }
-    componentDidMount() {
-        // var siteData = document.getElementById("siteData").value
-        console.log(siteData) //! This is set in admin.j2, in the script with `const siteData = {{ siteData|tojson }}`
-        // if (window.location.pathname !== '/admin/login/') {
-        //     client.get('/api/v1/siteData')
-        //     .then(res => {
-        //         console.log(res);
-        //         this.setState({
-        //             data: res.data,
-        //             ready: true,
-        //         })
-        //     })    
-        // } else {
-        //     this.setState({
-        //         ready: true,
-        //     })
-        // }
-    };
+    // componentDidMount() {
+    //     // var siteData = document.getElementById("siteData").value
+    //     console.log(siteData) 
+    //     // if (window.location.pathname !== '/admin/login/') {
+    //     //     client.get('/api/v1/siteData')
+    //     //     .then(res => {
+    //     //         console.log(res);
+    //     //         this.setState({
+    //     //             data: res.data,
+    //     //             ready: true,
+    //     //         })
+    //     //     })    
+    //     // } else {
+    //     //     this.setState({
+    //     //         ready: true,
+    //     //     })
+    //     // }
+    // };
     render() {
         if (this.state.ready) {
             return (
