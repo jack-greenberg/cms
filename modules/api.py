@@ -10,13 +10,6 @@ from modules.image_processor import process_image
 import os
 from pymongo import ReturnDocument
 
-""" API
- URL (/api/v1/...)  | METHOD| DESCRIPTION
-----------------------------------------------------
- /siteData/         | GET   | Return all the bits
-                    |       | of site data
-----------------------------------------------------
-"""
 class SiteAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, type):

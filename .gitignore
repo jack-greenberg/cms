@@ -16,7 +16,7 @@ build/
 *.egg-info/
 
 /tmp
-/admin/
+private/
 
-static/images/
+theme/static/images
 .vscode/
