@@ -1,63 +1,75 @@
 import React from 'react';
 import { Button } from '../button';
 import { useDropzone } from 'react-dropzone';
+import Dropzone from 'react-dropzone';
 
-function Dropzone(props) {
-    //* Taken from https://react-dropzone.js.org
-    const {acceptedFiles, rejectedFiles, getRootProps, getInputProps} = useDropzone({
-        accept: 'image/jpeg, image/png, image/jpg',
-        multiple: false,
-        noDrag: false,
-        onDrop: acceptedFiles => {
-            props.handleFileChange(acceptedFiles);
-        }
-    });
-    const files = acceptedFiles.map(file => (
-        <li key={file.path}>
-            {file.path} - {file.size} bytes
-        </li>
-    ));
-
-    return (
-        <div {...getRootProps({className: 'dropzone'})}>
-            <input {...getInputProps()} id={"file-" + props.contentId} />
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-            <p>Drag and drop files here</p><br />
-            <p>or</p><br />
-            <Button>Select</Button>
-        </div>
-  );
-}
-
+//* Taken from https://react-dropzone.js.org
+const dropzoneRef = React.createRef();
+const openDialog = () => {
+    if (dropzoneRef.current) {
+        dropzoneRef.current.open()
+    }
+};
 export class Image extends React.Component {
     constructor(props) {
         super(props);
 
         this.handleFileChange = this.handleFileChange.bind(this)
+        this.changeImage = this.changeImage.bind(this)
+
+        this.dropzoneRef = React.createRef();
 
         this.state = {
-            image: undefined,
+            tempImage: undefined,
         }
     }
     handleFileChange(file) {
+        console.log(file);
         var reader = new FileReader();
 
         reader.addEventListener("load", (event) => {
-            // $("#image-" + this.props.contentId).attr("src", event.target.result);
-            // $("#image-" + this.props.contentId).css('display', 'block');
+            document.getElementById('image-' + this.props.id).src = event.target.result
+            document.getElementById('image-' + this.props.id).style.display = 'block'
+            document.getElementById('input-' + this.props.id).parentElement.style.display = 'none'
         }, false)
 
         reader.readAsDataURL(new Blob(file));
         this.setState({
-            imageEdited: true,
-            tempFile: file,
+            tempImage: file,
         });
+    }
+    changeImage() {
+        console.log(dropzoneRef, dropzoneRef.current)
+        if (dropzoneRef.current) {
+            dropzoneRef.current.open()
+        }        
     }
     render() {
         return (
             <>
-                <label htmlFor={"file-" + this.props.contentId}>{this.props.label}</label>
-                <Dropzone handleFileChange={this.handleFileChange} />
+                <label htmlFor={this.props.id}>{this.props.label}</label>
+                <img src="" alt="Image preview" style={{display: "none", width: "100%"}} id={"image-" + this.props.id} className="mb-2" />
+                {this.state.tempImage
+                    ? (
+                        <div className="flex  flex-justifyBetween  flex-alignCenter  mb-2">
+                            <button className="link  blue  dim  f-1" onClick={openDialog}>Change image</button>
+                            <button className="link  red  dim  f-1">Remove image</button>
+                        </div>
+                    )
+                    : null
+                }
+                <Dropzone ref={dropzoneRef} accept={'image/jpeg, image/png, image/jpg'} onDrop={file => this.handleFileChange(file)}>
+                    {({getRootProps, getInputProps, acceptedFiles}) => {
+                        return (
+                            <div {...getRootProps({className: 'Dropzone  p-1  center'})}>
+                                <input {...getInputProps()} id={"input-" + this.props.id} />
+                                <p className="f-1">Drag and drop files here</p><br />
+                                <p className="f-1" style={{color: '#999'}}>or</p><br />
+                                <button className="Button  Button--blue  dim  f-1">Select</button>
+                            </div>
+                        );
+                    }}
+                </Dropzone>
             </>
         )
     }
