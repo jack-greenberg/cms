@@ -199,14 +199,16 @@ class Content extends React.Component {
                     )
                     break;
                 case "image":
-                    console.log(contentModule)
                     return (
                         <React.Fragment key={index}>
                             <Input.Image
                                 id={id(contentModule['_id'])}
                                 className="my-2"
+                                src={contentModule.src}
+                                srcset={contentModule.srcset}
+                                src={contentModule.src}
                             />
-                            <Input.Text placeholder="Caption" />
+                            <Input.Text placeholder="Caption" defaultValue={contentModule.caption} />
                         </React.Fragment>
                     )
                     break;

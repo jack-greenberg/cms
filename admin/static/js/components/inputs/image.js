@@ -3,19 +3,13 @@ import { Button } from '../button';
 import { useDropzone } from 'react-dropzone';
 import Dropzone from 'react-dropzone';
 
-//* Taken from https://react-dropzone.js.org
-const dropzoneRef = React.createRef();
-const openDialog = () => {
-    if (dropzoneRef.current) {
-        dropzoneRef.current.open()
-    }
-};
 export class Image extends React.Component {
     constructor(props) {
         super(props);
 
         this.handleFileChange = this.handleFileChange.bind(this)
         this.changeImage = this.changeImage.bind(this)
+        this.removeImage = this.removeImage.bind(this)
 
         this.dropzoneRef = React.createRef();
 
@@ -23,14 +17,20 @@ export class Image extends React.Component {
             tempImage: undefined,
         }
     }
+    componentDidMount() {
+        if (this.props.src) {
+            // document.getElementById('image-' + this.props.id).style.display = 'block'
+            // document.getElementById('image-' + this.props.id).src = this.props.src
+            document.getElementById('input-' + this.props.id).parentElement.style.display = 'none'
+        }
+    }
     handleFileChange(file) {
-        console.log(file);
         var reader = new FileReader();
 
         reader.addEventListener("load", (event) => {
             document.getElementById('image-' + this.props.id).src = event.target.result
             document.getElementById('image-' + this.props.id).style.display = 'block'
-            document.getElementById('input-' + this.props.id).parentElement.style.display = 'none'
+            document.getElementById('dropzone-' + this.props.id).style.display = 'none'
         }, false)
 
         reader.readAsDataURL(new Blob(file));
@@ -39,29 +39,37 @@ export class Image extends React.Component {
         });
     }
     changeImage() {
-        console.log(dropzoneRef, dropzoneRef.current)
-        if (dropzoneRef.current) {
-            dropzoneRef.current.open()
+        if (this.dropzoneRef.current) {
+            this.dropzoneRef.current.open()
         }        
+    }
+    removeImage() {
+        document.getElementById('image-' + this.props.id).src = null
+        document.getElementById('image-' + this.props.id).style.display = 'none'
+        document.getElementById('dropzone-' + this.props.id).style.display = 'block'
+        this.setState({
+            tempFile: undefined,
+        })
     }
     render() {
         return (
-            <>
+            <div className="ImageInput__wrapper  my-2">
                 <label htmlFor={this.props.id}>{this.props.label}</label>
-                <img src="" alt="Image preview" style={{display: "none", width: "100%"}} id={"image-" + this.props.id} className="mb-2" />
-                {this.state.tempImage
+                <img src={this.props.src} alt={this.props.caption ? this.props.caption : "Image preview"} style={{display: this.props.src ? "block" : "none", width: "100%"}} id={"image-" + this.props.id} className="mb-2" />
+                {this.state.tempImage || this.props.src
                     ? (
-                        <div className="flex  flex-justifyBetween  flex-alignCenter  mb-2">
-                            <button className="link  blue  dim  f-1" onClick={openDialog}>Change image</button>
-                            <button className="link  red  dim  f-1">Remove image</button>
+                        <div className="flex  flex-justifyEnd  flex-alignCenter  mb-2">
+                            <button className="link  blue  dim  f-1" onClick={this.changeImage}>Change image</button>
+                            {/* <button className="link  red  dim  f-1" onClick={this.removeImage}>Remove image</button> */}
                         </div>
                     )
                     : null
                 }
-                <Dropzone ref={dropzoneRef} accept={'image/jpeg, image/png, image/jpg'} onDrop={file => this.handleFileChange(file)}>
+                <Dropzone ref={this.dropzoneRef} accept={'image/jpeg, image/png, image/jpg'} onDrop={file => this.handleFileChange(file)}>
                     {({getRootProps, getInputProps, acceptedFiles}) => {
+                        //* Taken from https://react-dropzone.js.org
                         return (
-                            <div {...getRootProps({className: 'Dropzone  p-1  center'})}>
+                            <div {...getRootProps({className: 'Dropzone  p-1  center'})} id={'dropzone-' + this.props.id}>
                                 <input {...getInputProps()} id={"input-" + this.props.id} />
                                 <p className="f-1">Drag and drop files here</p><br />
                                 <p className="f-1" style={{color: '#999'}}>or</p><br />
@@ -70,7 +78,7 @@ export class Image extends React.Component {
                         );
                     }}
                 </Dropzone>
-            </>
+            </div>
         )
     }
 }
