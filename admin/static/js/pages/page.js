@@ -8,7 +8,7 @@ export class Page extends React.Component {
         return (
             <>
                 <Header />
-                <main>
+                <main className="Main">
                     <h1>Page</h1>
                 </main>
                 <Footer />

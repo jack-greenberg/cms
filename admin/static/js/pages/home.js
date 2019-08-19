@@ -13,7 +13,7 @@ export class Home extends React.Component {
         return (
             <>
                 <Header />
-                <main className="main">
+                <main className="Main">
                     <AppContext.Consumer>
                         {value => {
                             return (
