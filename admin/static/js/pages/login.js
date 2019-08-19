@@ -37,16 +37,17 @@ export class Login extends React.Component {
     render() {
         return (
             <>
-                <main className="main">
+                <main className="Main  p-1">
                     <div className="section">
-                        <h1 className="h1  sans">Admin Login</h1>
+                        <h1 className="h1  sans  mb-2">Admin Login</h1>
                         <form>
-                            <Input.Text label="Username" inputId="login-username" />
-                            <Input.Text label="Password" password inputId="login-password" />
+                            <Input.Text label="Username" inputId="login-username" className="mb-2" />
+                            <Input.Text label="Password" password inputId="login-password" className="mb-2" />
                             <Input.Checkbox label="Remember for 30 days" inputId="login-remember" defaultChecked={true} />
-                            <Button onClick={this.tryLogin} variants={['green', 'submit']}>
+                            {/* <Button onClick={this.tryLogin} variants={['green', 'submit']}>
                                 <span className="Button__label">Login</span>
-                            </Button>
+                            </Button> */}
+                            <button onClick={this.tryLogin} className="Button  Button--green  dim  f-1">Login</button>
                         </form>
                     </div>
                     <p className="f3  sans">Here by mistake? <a className="link  dim  link-underline  sans" href="/">Go back to safety</a></p>
