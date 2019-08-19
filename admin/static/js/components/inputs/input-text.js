@@ -25,9 +25,9 @@ export class Text extends React.Component {
 	render() {
 		return (
 			<>
-				<label className={"TextInput  f-2  " + this.props.className} htmlFor={this.props.inputId}>
+				<label className={"TextInput  f-1  " + this.props.className} htmlFor={this.props.inputId}>
 					<span className="TextInput__label">{this.props.label}</span>
-					<input className="TextInput__element  f-1" type={this.props.password ? "password" : "text"} id={this.props.inputId} defaultValue={this.props.defaultValue} />
+					<input className="TextInput__element  f-1" type={this.props.password ? "password" : "text"} id={this.props.inputId} defaultValue={this.props.defaultValue} placeholder={this.props.placeholder} />
 				</label>
 			</>
 		)
