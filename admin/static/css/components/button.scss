@@ -1,6 +1,7 @@
 .Button {
     display: inline-flex;
     align-items: center;
+    cursor: pointer;
 
     &:not(.link) {
         // padding: 4px;
@@ -11,9 +12,15 @@
         background-color: $green;
         color: $white;
     }
-    &--outline--green {
-        padding: 0 4px;
-        box-shadow: 0 0 0 2px $green;
+    &--red {
+        padding: 2px 8px;
+        background-color: $red;
+        color: $white;
+    }
+    &--blue {
+        padding: 2px 8px;
+        background-color: $blue;
+        color: $white;
     }
 }
 

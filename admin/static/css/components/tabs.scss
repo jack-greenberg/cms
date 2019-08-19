@@ -32,6 +32,7 @@
     &__tab {
         display: inline-block;
         color: $gray;
+        cursor: pointer;
 
         &--active {
             color: $black;
@@ -45,7 +46,11 @@
         &__button {
             display: inline-flex;
             align-items: center;
+            cursor: pointer;
 
+            &:focus {
+                outline: none;
+            }
             &--danger {
                 color: $red;
             }
