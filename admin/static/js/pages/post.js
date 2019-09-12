@@ -6,6 +6,7 @@ import { client } from '../api';
 import { Header } from '../components/header';
 import { Footer } from '../components/footer';
 import { Input } from '../components/inputs/';
+import { Form } from '../components/inputs/form';
 
 import * as Icon from 'react-feather';
 import { makeDate } from '../helpers';
@@ -55,6 +56,7 @@ export class Post extends React.Component {
         if (window.confirm("Are you sure you want to publish this post?\n\nIt will be available to the public.")) {
             client.put('/api/v1/posts/' + this.postId, {
                 status: 'live',
+                published: (new Date()).toUTCString(),
             })
             .then(res => {
                 console.log(res.data)
@@ -171,9 +173,9 @@ class Content extends React.Component {
     constructor(props) {
         super(props);
         this.addContent = this.addContent.bind(this)
+        this.handleChange = this.handleChange.bind(this)
     }
     addContent(e) {
-        console.log(e.target.value);
         client.post('/api/v1/content/', {
             type: e.target.value,
             postId: this.props.post['_id']['$oid'],
@@ -183,37 +185,22 @@ class Content extends React.Component {
             this.props.addContent(res.data);
         })
     }
+    handleChange(newContent) {
+        var oldContent = this.props.post.content;
+    }
     render() {
         var content = this.props.post.content;
         
         var renderedContent = content.map((contentModule, index) => {
             switch(contentModule.type) {
                 case "text":
-                    return (
-                        <Input.FormattedText
-                            key={index}
-                            id={id(contentModule['_id'])}
-                            value={contentModule.value}
-                            className="my-2"
-                        />
-                    )
+                    return <TextEditor content={contentModule} key={index} handleChange={this.handleChange} formId={"content-" + this.props.post['_id']['$oid']} />
                     break;
                 case "image":
-                    return (
-                        <React.Fragment key={index}>
-                            <Input.Image
-                                id={id(contentModule['_id'])}
-                                className="my-2"
-                                src={contentModule.src}
-                                srcset={contentModule.srcset}
-                                src={contentModule.src}
-                            />
-                            <Input.Text placeholder="Caption" defaultValue={contentModule.caption} />
-                        </React.Fragment>
-                    )
+                    return <ImageEditor content={contentModule} key={index} handleChange={this.handleChange} formId={"content-" + this.props.post['_id']['$oid']} />
                     break;
                 case "video":
-                    return <Input.Text label="YouTube Id" key={index} id={id(contentModule['_id'])} />
+                    return <VideoEditor content={contentModule} key={index} handleChange={this.handleChange} formId={"content-" + this.props.post['_id']['$oid']} />
                     break;
                 default:
                     throw new Error("No content module by that name")
@@ -222,18 +209,20 @@ class Content extends React.Component {
         })
         return (
             <section>
-                {renderedContent}
-                <details className="Details  flex  flex-alignCenter  flex-justifyBetween  my-2">
-                    <summary className="Details__summary  Details__summary--nomarker  mb-1  flex  flex-alignCenter" style={{pointerEvents: 'none', cursor: 'default'}}>
-                        <div className="Button  Button--green  inline  f-1  dim  mr-2" style={{pointerEvents: 'auto', cursor: 'pointer'}}>Add content</div>
-                        <p className="blue  link  bold  underline  Details__summary--openonly  f-1" role="button" style={{pointerEvents: 'auto', cursor: 'pointer'}}>Cancel</p>
-                    </summary>
-                    <p className="f-1  ml-1">
-                        <button className="link  blue  dim  mr-2" onClick={this.addContent} value="text">Text</button>
-                        <button className="link  blue  dim  mr-2" onClick={this.addContent} value="image">Image</button>
-                        <button className="link  blue  dim" onClick={this.addContent} value="video">Video</button>
-                    </p>
-                </details>
+                <Form id={"content-" + this.props.post['_id']['$oid']}>
+                    {renderedContent}
+                    <details className="Details  flex  flex-alignCenter  flex-justifyBetween  my-2">
+                        <summary className="Details__summary  Details__summary--nomarker  mb-1  flex  flex-alignCenter" style={{pointerEvents: 'none', cursor: 'default'}}>
+                            <div className="Button  Button--green  inline  f-1  dim  mr-2" style={{pointerEvents: 'auto', cursor: 'pointer'}}>Add content</div>
+                            <p className="blue  link  bold  underline  Details__summary--openonly  f-1" role="button" style={{pointerEvents: 'auto', cursor: 'pointer'}}>Cancel</p>
+                        </summary>
+                        <p className="f-1  ml-1">
+                            <button className="link  blue  dim  mr-2" onClick={this.addContent} value="text">Text</button>
+                            <button className="link  blue  dim  mr-2" onClick={this.addContent} value="image">Image</button>
+                            <button className="link  blue  dim" onClick={this.addContent} value="video">Video</button>
+                        </p>
+                    </details>
+                </Form>
             </section>
         )
     }
@@ -305,6 +294,59 @@ class DangerZone extends React.Component {
                 )
                 : null}
             </section>
+        )
+    }
+}
+
+//* Content Editors
+class TextEditor extends React.Component {
+    render() {
+        return (
+            <Input.FormattedText
+                id={this.props.content['_id']['$oid']}
+                value={this.props.content.value}
+                className="my-2"
+                onChange={this.props.handleChange}
+                formId={this.props.formId}
+            />
+        )
+    }
+}
+class ImageEditor extends React.Component {
+    render() {
+        return (
+            <>
+                <Input.Image
+                    id={this.props.content['_id']['$oid']}
+                    className="my-2"
+                    src={this.props.content.src}
+                    srcset={this.props.content.srcset}
+                    onChange={this.props.handleChange}
+                    formId={this.props.formId}
+                />
+                <Input.Text
+                    id={this.props.content['_id']['$oid']}
+                    placeholder="Caption"
+                    defaultValue={this.props.content.caption}
+                    className="my-2"
+                    onChange={this.props.handleChange}
+                    formId={this.props.formId}
+                />
+            </>
+        )
+    }
+}
+class VideoEditor extends React.Component {
+    render() {
+        return (
+            <Input.Text
+                placeholder="YouTube Id"
+                id={this.props.content['_id']['$oid']}
+                defaultValue={this.props.content.youtubeId}
+                className="my-2"
+                onChange={this.props.handleChange}
+                formId={this.props.formId}
+            />
         )
     }
 }
