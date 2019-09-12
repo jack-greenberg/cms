@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from flask.views import MethodView
 from flask_jwt_extended import fresh_jwt_required
 from modules.database import db
-from datetime import datetime
+from datetime import datetime, timezone
 from modules.image_processor import process_image
 import os
 from pymongo import ReturnDocument
@@ -95,7 +95,7 @@ class PostAPI(MethodView):
             "title": "New Post",
             "author": "",
             "status": "draft",
-            "lastEdited": datetime.now(),
+            "lastEdited": datetime.now(timezone.utc),
             "published": None,
             "tags": [],
             "content": [],
@@ -113,23 +113,23 @@ class PostAPI(MethodView):
         # update a single post
         requestData = json.loads(request.get_data(as_text=True))
         try:
-            if requestData['status'] == 'live':
+            if requestData['published']:
                 requestData['published'] = datetime.strptime(requestData['published'], "%a, %d %b %Y %H:%M:%S %Z")
         except KeyError:
             pass
-        requestData['lastEdited'] = datetime.now()
+
+        requestData['lastEdited'] = datetime.now(timezone.utc)
 
         try:
             if requestData['content']:
-                requestData['content'] = [ ObjectId(module) for module in requestData['content'] ]
+                requestData['content'] = [ ObjectId(module_id) for module_id in requestData['content'] ]
         except KeyError:
             pass
 
-
-        new_doc = db.posts.find_one_and_update({'_id': ObjectId(post_id)}, {
+        updated_doc = db.posts.find_one_and_update({'_id': ObjectId(post_id)}, {
             "$set": requestData,
         }, return_document=ReturnDocument.AFTER)
-        return jsonify(json.loads(json_util.dumps(new_doc))), 201
+        return jsonify(json.loads(json_util.dumps(updated_doc))), 201
 class ContentAPI(MethodView):
     decorators = [fresh_jwt_required]
     def get(self, content_id):
