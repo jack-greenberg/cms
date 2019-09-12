@@ -19,8 +19,6 @@ export class Image extends React.Component {
     }
     componentDidMount() {
         if (this.props.src) {
-            // document.getElementById('image-' + this.props.id).style.display = 'block'
-            // document.getElementById('image-' + this.props.id).src = this.props.src
             document.getElementById('input-' + this.props.id).parentElement.style.display = 'none'
         }
     }
@@ -60,7 +58,6 @@ export class Image extends React.Component {
                     ? (
                         <div className="flex  flex-justifyEnd  flex-alignCenter  mb-2">
                             <button className="link  blue  dim  f-1" onClick={this.changeImage}>Change image</button>
-                            {/* <button className="link  red  dim  f-1" onClick={this.removeImage}>Remove image</button> */}
                         </div>
                     )
                     : null
