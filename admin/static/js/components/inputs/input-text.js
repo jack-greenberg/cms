@@ -27,7 +27,7 @@ export class Text extends React.Component {
 			<>
 				<label className={"TextInput  f-1  " + this.props.className} htmlFor={this.props.inputId}>
 					<span className="TextInput__label">{this.props.label}</span>
-					<input className="TextInput__element  f-1" type={this.props.password ? "password" : "text"} id={this.props.inputId} defaultValue={this.props.defaultValue} placeholder={this.props.placeholder} />
+					<input className="TextInput__element  f-1" type={this.props.password ? "password" : "text"} name={this.props.name} onKeyUp={this.props.onChange} id={this.props.inputId} defaultValue={this.props.defaultValue} placeholder={this.props.placeholder} />
 				</label>
 			</>
 		)
@@ -38,7 +38,7 @@ export class FormattedText extends React.Component {
 	render() {
 		return (
 			<div className={"FormattedTextInput__wrapper  " + this.props.className}>
-				<div className="FormattedTextInput__toolbar flex flex-justifyBetween flex-alignCenter">
+				{/* <div className="FormattedTextInput__toolbar flex flex-justifyBetween flex-alignCenter">
 					<div>
 						<Button><Icon.Bold className="Icon" /></Button>
 						<Button><Icon.Italic className="Icon" /></Button>
@@ -50,13 +50,14 @@ export class FormattedText extends React.Component {
 					<div>
 						<Button><Icon.Eye className="Icon" /></Button>
 					</div>
-				</div>
+				</div> */}
 				<div
 	                contentEditable
 	                style={{display: 'inline-block', width: '100%'}}
 					className="FormattedTextInput  f-1"
 					id={this.props.id}
-	                dangerouslySetInnerHTML={{__html: this.props.value}}
+					dangerouslySetInnerHTML={{__html: this.props.value}}
+					onInput={this.props.onChange}
 	            ></div>
 			</div>
 		)

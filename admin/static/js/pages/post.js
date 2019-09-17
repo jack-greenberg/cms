@@ -159,11 +159,57 @@ export class Post extends React.Component {
 }
 
 class Overview extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.handleChange = this.handleChange.bind(this);
+        this.saveChanges = this.saveChanges.bind(this);
+
+        this.state = {
+            edited: false,
+        }
+    }
+    handleChange(e) {
+        if (e.target.value !== this.props.post[e.target.name]) {
+            this.setState({
+                edited: true,
+            })
+        } else {
+            this.setState({
+                edited: false,
+            })
+        }
+    }
+    saveChanges() {
+        client.put('/api/v1/posts/' + this.props.post['_id']['$oid'], {
+            title: document.getElementById("post-title").value,
+        })
+        .then(res => {
+            console.log(res);
+            this.setState({
+                edited: false,
+            })
+        })
+    }
     render() {
         return (
             <section>
-                <Input.Text label="Title" defaultValue={this.props.post.title} className="my-2" />
-                <Input.Text label="Description / Subtitle" defaultValue={this.props.post.subtitle} className="my-2" />
+                <Input.Text
+                    label="Title"
+                    name="title"
+                    inputId="post-title"
+                    defaultValue={this.props.post.title}
+                    className="my-2"
+                    onChange={this.handleChange}
+                />
+                {/* <Input.Text
+                    label="Description / Subtitle"
+                    name="subtitle"
+                    defaultValue={this.props.post.subtitle}
+                    className="my-2"
+                    onChange={this.handleChange}
+                /> */}
+                {this.state.edited && <button className="Button  Button--green" onClick={this.saveChanges}>Save Changes</button>}
             </section>
         )
     }
@@ -172,8 +218,14 @@ class Overview extends React.Component {
 class Content extends React.Component {
     constructor(props) {
         super(props);
-        this.addContent = this.addContent.bind(this)
-        this.handleChange = this.handleChange.bind(this)
+        this.addContent = this.addContent.bind(this);
+        this.getNewChanges = this.getNewChanges.bind(this);
+        this.removeEdits = this.removeEdits.bind(this);
+        this.saveNewContent = this.saveNewContent.bind(this);
+
+        this.state = {
+            newContent: {},
+        }
     }
     addContent(e) {
         client.post('/api/v1/content/', {
@@ -185,8 +237,44 @@ class Content extends React.Component {
             this.props.addContent(res.data);
         })
     }
-    handleChange(newContent) {
-        var oldContent = this.props.post.content;
+    saveNewContent() {
+        for (var change /* key */ in this.state.newContent) {
+            client.put('/api/v1/content/' + change, this.state.newContent[change])
+            .then(res => {
+                console.log(res);
+                let newContentCopy = this.state.newContent;
+                delete newContentCopy[change];
+                this.setState({
+                    newContent: newContentCopy,
+                }, _ => {
+                    if (Object.entries(this.state.newContent).length === 0) {
+                        this.setState({
+                            edited: false,
+                        })
+                    }
+                });
+            })
+        }
+    }
+    getNewChanges(id, newChanges) {
+        let newContentClone = this.state.newContent;
+        newContentClone[id] = newChanges;
+        this.setState({
+            newContent: newContentClone,
+            edited: true,
+        }, () => {
+            console.log("Edits added")
+        })
+    }
+    removeEdits(id, newText) {
+        let newContentClone = this.state.newContent;
+        delete newContentClone[id]
+        this.setState({
+            newContent: newContentClone,
+            edited: false,
+        }, () => {
+            console.log("Edits Removed")
+        })
     }
     render() {
         var content = this.props.post.content;
@@ -194,13 +282,13 @@ class Content extends React.Component {
         var renderedContent = content.map((contentModule, index) => {
             switch(contentModule.type) {
                 case "text":
-                    return <TextEditor content={contentModule} key={index} handleChange={this.handleChange} formId={"content-" + this.props.post['_id']['$oid']} />
+                    return <TextEditor content={contentModule} key={index} formId={"content-" + this.props.post['_id']['$oid']} getNewChanges={this.getNewChanges} removeEdits={this.removeEdits} />
                     break;
                 case "image":
-                    return <ImageEditor content={contentModule} key={index} handleChange={this.handleChange} formId={"content-" + this.props.post['_id']['$oid']} />
+                    // return <ImageEditor content={contentModule} key={index} formId={"content-" + this.props.post['_id']['$oid']} getNewChanges={this.getNewChanges} />
                     break;
                 case "video":
-                    return <VideoEditor content={contentModule} key={index} handleChange={this.handleChange} formId={"content-" + this.props.post['_id']['$oid']} />
+                    // return <VideoEditor content={contentModule} key={index} formId={"content-" + this.props.post['_id']['$oid']} getNewChanges={this.getNewChanges} />
                     break;
                 default:
                     throw new Error("No content module by that name")
@@ -209,6 +297,10 @@ class Content extends React.Component {
         })
         return (
             <section>
+                <div className="flex  flex-alignCenter">
+                    {this.state.edited && <button className="Button  Button--green  mt-2" onClick={this.saveNewContent}>Save</button>}
+                    <button className="Button  Button--blue  mt-2">Manage</button>
+                </div>
                 <Form id={"content-" + this.props.post['_id']['$oid']}>
                     {renderedContent}
                     <details className="Details  flex  flex-alignCenter  flex-justifyBetween  my-2">
@@ -299,54 +391,109 @@ class DangerZone extends React.Component {
 }
 
 //* Content Editors
+/*
+* Currently trying to develop a method to cycle through all <*Editor edited={true} />s to send data to the API as a FormData js object
+*/
 class TextEditor extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.handleChange = this.handleChange.bind(this);
+        this.propogateEdit = this.propogateEdit.bind(this);
+
+        this.state = {
+            edited: false,
+        }
+    }
+    handleChange(e) {
+        let newText = e.target.innerText;
+        this.setState({
+            edited: newText !== this.props.content.value,
+        }, () => {
+            if (this.state.edited) {
+                this.propogateEdit({value: newText});
+            } else {
+                this.removeEdits({value: newText});
+            }
+        })
+    }
+    propogateEdit(newValue) {
+        this.props.getNewChanges(this.props.content['_id']['$oid'], newValue)
+    }
+    removeEdits(newText) {
+        this.props.removeEdits(this.props.content['_id']['$oid'], newText)
+    }
     render() {
         return (
             <Input.FormattedText
                 id={this.props.content['_id']['$oid']}
                 value={this.props.content.value}
                 className="my-2"
-                onChange={this.props.handleChange}
+                onChange={this.handleChange}
                 formId={this.props.formId}
             />
         )
     }
 }
-class ImageEditor extends React.Component {
-    render() {
-        return (
-            <>
-                <Input.Image
-                    id={this.props.content['_id']['$oid']}
-                    className="my-2"
-                    src={this.props.content.src}
-                    srcset={this.props.content.srcset}
-                    onChange={this.props.handleChange}
-                    formId={this.props.formId}
-                />
-                <Input.Text
-                    id={this.props.content['_id']['$oid']}
-                    placeholder="Caption"
-                    defaultValue={this.props.content.caption}
-                    className="my-2"
-                    onChange={this.props.handleChange}
-                    formId={this.props.formId}
-                />
-            </>
-        )
-    }
-}
-class VideoEditor extends React.Component {
-    render() {
-        return (
-            <Input.Text
-                placeholder="YouTube Id"
-                id={this.props.content['_id']['$oid']}
-                defaultValue={this.props.content.youtubeId}
-                className="my-2"
-                onChange={this.props.handleChange}
-                formId={this.props.formId}
-            />
-        )
-    }
-}
+// class ImageEditor extends React.Component {
+//     constructor(props) {
+//         super(props);
+
+//         this.handleChange = this.handleChange.bind(this);
+
+//         this.state = {
+//             edited: false,
+//         }
+//     }
+//     handleChange(e) {
+
+//     }
+//     render() {
+//         return (
+//             <>
+//                 <Input.Image
+//                     id={this.props.content['_id']['$oid']}
+//                     className="my-2"
+//                     src={this.props.content.src}
+//                     srcset={this.props.content.srcset}
+//                     onChange={this.handleChange}
+//                     formId={this.props.formId}
+//                 />
+//                 <Input.Text
+//                     id={this.props.content['_id']['$oid']}
+//                     placeholder="Caption"
+//                     defaultValue={this.props.content.caption}
+//                     className="my-2"
+//                     onChange={this.handleChange}
+//                     formId={this.props.formId}
+//                 />
+//             </>
+//         )
+//     }
+// }
+// class VideoEditor extends React.Component {
+//     constructor(props) {
+//         super(props);
+
+//         this.handleChange = this.handleChange.bind(this);
+
+//         this.state = {
+//             edited: false,
+//         }
+//     }
+//     handleChange(e) {
+
+//     }
+//     render() {
+//         return (
+//             <Input.Text
+//                 placeholder="YouTube Id"
+//                 id={this.props.content['_id']['$oid']}
+//                 defaultValue={this.props.content.youtubeId}
+//                 className="my-2"
+//                 onChange={this.props.handleChange}
+//                 formId={this.props.formId}
+//             />
+//         )
+//     }
+// }
