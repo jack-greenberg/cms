@@ -2,9 +2,9 @@ import React from 'react';
 import cf from './config';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-import { Header } from './components/header';
-import { Footer } from './components/footer';
-import { Login } from './pages/login';
+// import { Header } from './components/header';
+// import { Footer } from './components/footer';
+// import { Login } from './pages/login';
 
 import Error404 from './404';
 

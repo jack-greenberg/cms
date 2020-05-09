@@ -167,29 +167,55 @@ class Overview extends React.Component {
 
         this.state = {
             edited: false,
+            updates: {},
         }
     }
     handleChange(e) {
+        var updates = this.state.updates;
+        console.log(updates)
         if (e.target.value !== this.props.post[e.target.name]) {
+            updates[e.target.name] = e.target.value;
             this.setState({
                 edited: true,
+                updates: updates,
             })
         } else {
+            delete updates[e.target.name]
             this.setState({
-                edited: false,
+                edited: (Object.entries(updates).length === 0),
+                updates: updates,
             })
         }
     }
     saveChanges() {
-        client.put('/api/v1/posts/' + this.props.post['_id']['$oid'], {
-            title: document.getElementById("post-title").value,
-        })
-        .then(res => {
-            console.log(res);
-            this.setState({
-                edited: false,
+        for (var update /* key */ in this.state.updates) {
+            client.put('/api/v1/posts/' + this.props.post['_id']['$oid'], {
+                [update]: this.state.updates[update],
             })
-        })
+            .then(res => {
+                console.log(res);
+                var updatesCopy = this.state.updates;
+                delete updatesCopy[update];
+                this.setState({
+                    updates: updatesCopy,
+                }, _ => {
+                    if (Object.entries(this.state.updates).length === 0) {
+                        this.setState({
+                            edited: false,
+                        })
+                    }
+                });
+            })
+        }
+        // client.put('/api/v1/posts/' + this.props.post['_id']['$oid'], {
+        //     title: document.getElementById("post-title").value,
+        // })
+        // .then(res => {
+        //     console.log(res);
+        //     this.setState({
+        //         edited: false,
+        //     })
+        // })
     }
     render() {
         return (
@@ -202,13 +228,14 @@ class Overview extends React.Component {
                     className="my-2"
                     onChange={this.handleChange}
                 />
-                {/* <Input.Text
-                    label="Description / Subtitle"
-                    name="subtitle"
-                    defaultValue={this.props.post.subtitle}
+                <Input.Text
+                    label="Author"
+                    name="author"
+                    inputId="post-author"
+                    defaultValue={this.props.post.author}
                     className="my-2"
                     onChange={this.handleChange}
-                /> */}
+                />
                 {this.state.edited && <button className="Button  Button--green" onClick={this.saveChanges}>Save Changes</button>}
             </section>
         )
